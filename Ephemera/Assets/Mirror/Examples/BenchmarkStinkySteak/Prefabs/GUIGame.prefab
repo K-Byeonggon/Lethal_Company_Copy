@@ -396,6 +396,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -452,27 +453,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89b59180da8577947a00064507b6f488, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _buttonStartServer: {fileID: 305782034880601624}
-  _buttonStartClient: {fileID: 305782034420293122}
-  _textLatency: {fileID: 0}
   _updateLatencyTextInterval: 1
   _test_1:
-    ButtonExecute: {fileID: 1121039224619405962}
     SpawnCount: 500
-    Prefab: {fileID: 2997158864174378348, guid: 296e7798207e69a40a871087348da0c3,
-      type: 3}
+    Prefab: {fileID: 2997158864174378348, guid: 296e7798207e69a40a871087348da0c3, type: 3}
   _test_2:
-    ButtonExecute: {fileID: 2889977997276142763}
     SpawnCount: 500
-    Prefab: {fileID: 6859501204968983109, guid: a7278693f35741148b381178a112e24d,
-      type: 3}
+    Prefab: {fileID: 6859501204968983109, guid: a7278693f35741148b381178a112e24d, type: 3}
   _test_3:
-    ButtonExecute: {fileID: 7765268506151843427}
     SpawnCount: 500
-    Prefab: {fileID: 6660102892434074099, guid: 9925ea7d66c38ac48a88a572a9236cbe,
-      type: 3}
-  _networkManagerPrefab: {fileID: 6902534888765376180, guid: 62d3b9c46c08c934ea2ac02811b3028d,
-    type: 3}
+    Prefab: {fileID: 6660102892434074099, guid: 9925ea7d66c38ac48a88a572a9236cbe, type: 3}
+  _networkManagerPrefab: {fileID: 6902534888765376180, guid: 62d3b9c46c08c934ea2ac02811b3028d, type: 3}
 --- !u!1 &305782033979164040
 GameObject:
   m_ObjectHideFlags: 0
