@@ -17,4 +17,11 @@ public class CreateRoomUI : MonoBehaviour
         //클라이언트로써 게임에 참가할 수 있도록 만들어주는 함수
         //manager.StartClient();
     }
+    public void JoinRoom()
+    {
+        var manager = EphemeraRoomManager.singleton;
+
+        //클라이언트로써 게임에 참가할 수 있도록 만들어주는 함수
+        manager.StartClient();
+    }
 }
