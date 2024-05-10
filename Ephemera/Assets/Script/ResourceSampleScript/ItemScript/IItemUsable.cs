@@ -4,5 +4,6 @@ using UnityEngine;
 
 public interface IItemUsable
 {
-    public void Use(bool use);
+    public void UseItem();
+    
 }
