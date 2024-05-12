@@ -15,20 +15,22 @@ public class Item : MonoBehaviour,IUIVisible,IItemUsable,IItemObtainable
     [SerializeField]
     private Animator animator;
 
-    private PlayerEx player;
-    public void PickDown()
+    
+    public void PickDown(PlayerEx owner)
     {
-        //animator.SetTrigger("머시기머시기")
-
-        //이 아이템 게임 오브젝트의 월드포지션기준으로 부모관계만 해제
-        //player.transform.forward
+        Debug.Log("Pickdown");
+        owner.pickedItem.transform.SetParent(null);
+        transform.localPosition = owner.transform.forward;
     }
 
-    public void PickUp()
+    public void PickUp(PlayerEx owner)//gamemanager
     {
-        //OnGetItem();
-        Debug.Log("pickup");
-
+            if (owner != null)
+            {
+                transform.SetParent(owner.pickedItem);
+                transform.position = owner.pickedItem.position;
+            }
+        
     }
 
     public void ShowPickupUI()
@@ -49,10 +51,6 @@ public class Item : MonoBehaviour,IUIVisible,IItemUsable,IItemObtainable
 
     public void OnGetItem()
     {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            
-            
-        }
+        
     }
 }

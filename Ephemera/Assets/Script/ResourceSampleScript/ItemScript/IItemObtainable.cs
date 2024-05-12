@@ -5,6 +5,6 @@ using UnityEngine;
 public interface IItemObtainable
 {
     public void ShowPickupUI();
-    public void PickUp();
-    public void PickDown();
+    public void PickUp(PlayerEx owner);
+    public void PickDown(PlayerEx owner);
 }
