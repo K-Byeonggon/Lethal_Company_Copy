@@ -29,6 +29,7 @@ public class PlayerControl : MonoBehaviour
 
     private void Update()
     {
+        animator.SetFloat("IsWalk", mouseDelta.magnitude);
         if (!IsGrounded())
             moveVector.y -= gravity * Time.deltaTime;
         controller.Move(transform.TransformDirection(moveVector) * moveSpeed * runSpeed * Time.deltaTime);
