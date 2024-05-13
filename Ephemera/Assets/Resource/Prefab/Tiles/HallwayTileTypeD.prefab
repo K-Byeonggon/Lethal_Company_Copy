@@ -1,0 +1,311 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &778999814706454667
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3319294780991685153}
+  m_Layer: 0
+  m_Name: HallwayTileTypeD
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3319294780991685153
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 778999814706454667}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5.89, y: 0, z: -0.03}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2677727102329820953}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2537942381299283780
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8192348628963978196}
+  - component: {fileID: 3961009771040386666}
+  m_Layer: 0
+  m_Name: Doorway (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8192348628963978196
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2537942381299283780}
+  m_LocalRotation: {x: 0, y: -0.70710677, z: -0.70710677, w: 0}
+  m_LocalPosition: {x: 2.303, y: 9.169, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2677727102329820953}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: -90, y: -90, z: -90}
+--- !u!114 &3961009771040386666
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2537942381299283780}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32a188f8ee195cf4cb8b2fdccd193b79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DoorPrefabPriority: 0
+  ConnectorPrefabWeights: []
+  BlockerPrefabWeights:
+  - GameObject: {fileID: 3715161662903984486, guid: 1405a800452fbfb429269de94c013395, type: 3}
+    Weight: 1
+  AvoidRotatingDoorPrefab: 0
+  AvoidRotatingBlockerPrefab: 0
+  ConnectorSceneObjects: []
+  BlockerSceneObjects: []
+  Tags:
+    Tags: []
+  socketGroup_obsolete: -1
+  doorPrefabs_obsolete: []
+  blockerPrefabs_obsolete: []
+  socket: {fileID: -6211742065171527979, guid: b4cec3700c2d34548bb5b2c9c7291dc4, type: 2}
+  doorPrefabInstance: {fileID: 0}
+  doorComponent: {fileID: 0}
+  tile: {fileID: 0}
+  connectedDoorway: {fileID: 0}
+  hideConditionalObjects: 0
+  fileVersion: 1
+--- !u!1 &2551630722622403137
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3013782917283087561}
+  - component: {fileID: 2088431356970681125}
+  m_Layer: 0
+  m_Name: Doorway
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3013782917283087561
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2551630722622403137}
+  m_LocalRotation: {x: 0.5, y: -0.5, z: -0.5, w: 0.5}
+  m_LocalPosition: {x: -4.589, y: 2.282, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2677727102329820953}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: -90}
+--- !u!114 &2088431356970681125
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2551630722622403137}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32a188f8ee195cf4cb8b2fdccd193b79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DoorPrefabPriority: 0
+  ConnectorPrefabWeights: []
+  BlockerPrefabWeights:
+  - GameObject: {fileID: 3715161662903984486, guid: 1405a800452fbfb429269de94c013395, type: 3}
+    Weight: 1
+  AvoidRotatingDoorPrefab: 0
+  AvoidRotatingBlockerPrefab: 0
+  ConnectorSceneObjects: []
+  BlockerSceneObjects: []
+  Tags:
+    Tags: []
+  socketGroup_obsolete: -1
+  doorPrefabs_obsolete: []
+  blockerPrefabs_obsolete: []
+  socket: {fileID: -6211742065171527979, guid: b4cec3700c2d34548bb5b2c9c7291dc4, type: 2}
+  doorPrefabInstance: {fileID: 0}
+  doorComponent: {fileID: 0}
+  tile: {fileID: 0}
+  connectedDoorway: {fileID: 0}
+  hideConditionalObjects: 0
+  fileVersion: 1
+--- !u!1 &8895721838181738384
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3289556971897021571}
+  - component: {fileID: 9105417338495645167}
+  m_Layer: 0
+  m_Name: Doorway (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3289556971897021571
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8895721838181738384}
+  m_LocalRotation: {x: 0.5, y: 0.5, z: 0.5, w: 0.5}
+  m_LocalPosition: {x: 9.165, y: 2.282, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2677727102329820953}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 180, y: -90, z: -90}
+--- !u!114 &9105417338495645167
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8895721838181738384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32a188f8ee195cf4cb8b2fdccd193b79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DoorPrefabPriority: 0
+  ConnectorPrefabWeights: []
+  BlockerPrefabWeights:
+  - GameObject: {fileID: 3715161662903984486, guid: 1405a800452fbfb429269de94c013395, type: 3}
+    Weight: 1
+  AvoidRotatingDoorPrefab: 0
+  AvoidRotatingBlockerPrefab: 0
+  ConnectorSceneObjects: []
+  BlockerSceneObjects: []
+  Tags:
+    Tags: []
+  socketGroup_obsolete: -1
+  doorPrefabs_obsolete: []
+  blockerPrefabs_obsolete: []
+  socket: {fileID: -6211742065171527979, guid: b4cec3700c2d34548bb5b2c9c7291dc4, type: 2}
+  doorPrefabInstance: {fileID: 0}
+  doorComponent: {fileID: 0}
+  tile: {fileID: 0}
+  connectedDoorway: {fileID: 0}
+  hideConditionalObjects: 0
+  fileVersion: 1
+--- !u!1001 &2495992420155748594
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 3319294780991685153}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 5572187fee07b304a94fc3fe4abdaec5, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5572187fee07b304a94fc3fe4abdaec5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5572187fee07b304a94fc3fe4abdaec5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5572187fee07b304a94fc3fe4abdaec5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5572187fee07b304a94fc3fe4abdaec5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5572187fee07b304a94fc3fe4abdaec5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5572187fee07b304a94fc3fe4abdaec5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5572187fee07b304a94fc3fe4abdaec5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5572187fee07b304a94fc3fe4abdaec5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5572187fee07b304a94fc3fe4abdaec5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5572187fee07b304a94fc3fe4abdaec5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -6352585968480967466, guid: 5572187fee07b304a94fc3fe4abdaec5, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -4236084635187242655, guid: 5572187fee07b304a94fc3fe4abdaec5, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -4234036135620884281, guid: 5572187fee07b304a94fc3fe4abdaec5, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5572187fee07b304a94fc3fe4abdaec5, type: 3}
+      propertyPath: m_Name
+      value: HallwayTileTypeD
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5572187fee07b304a94fc3fe4abdaec5, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4015182940793790891, guid: 5572187fee07b304a94fc3fe4abdaec5, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 5572187fee07b304a94fc3fe4abdaec5, type: 3}
+--- !u!4 &2677727102329820953 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 5572187fee07b304a94fc3fe4abdaec5, type: 3}
+  m_PrefabInstance: {fileID: 2495992420155748594}
+  m_PrefabAsset: {fileID: 0}
