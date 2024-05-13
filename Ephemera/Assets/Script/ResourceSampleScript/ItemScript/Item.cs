@@ -8,7 +8,7 @@ public class Item : MonoBehaviour,IUIVisible,IItemUsable,IItemObtainable
 {
     [SerializeField] public bool isBothHandGrab;
     private float itemPrice;
-    private bool isUsable;
+    
 
     [SerializeField]
     private Image image;
@@ -19,18 +19,19 @@ public class Item : MonoBehaviour,IUIVisible,IItemUsable,IItemObtainable
     public void PickDown(PlayerEx owner)
     {
         Debug.Log("Pickdown");
-        owner.pickedItem.transform.SetParent(null);
-        transform.localPosition = owner.transform.forward;
+        transform.SetParent(null);
+        transform.position = owner.transform.position+owner.transform.forward;
+        owner.RemoveItem();
     }
 
     public void PickUp(PlayerEx owner)//gamemanager
     {
-            if (owner != null)
-            {
-                transform.SetParent(owner.pickedItem);
-                transform.position = owner.pickedItem.position;
-            }
-        
+        if (owner != null)
+        {
+            transform.SetParent(owner.pickedItem);
+            transform.position = owner.pickedItem.position;
+            owner.GetItem(this);
+        }
     }
 
     public void ShowPickupUI()
@@ -48,9 +49,10 @@ public class Item : MonoBehaviour,IUIVisible,IItemUsable,IItemObtainable
     {
         
     }
-
-    public void OnGetItem()
+    public float SellItem()
     {
-        
+
+        return itemPrice;
     }
+    
 }

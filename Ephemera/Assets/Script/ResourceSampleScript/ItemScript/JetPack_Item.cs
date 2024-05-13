@@ -15,7 +15,7 @@ public class JetPack_Item : Item, IItemUsable
         isJetPackEquipped = true;
     }
 
-    void FixedUpdate()
+    void Update()
     {
         UseItem();
     }
@@ -34,7 +34,6 @@ public class JetPack_Item : Item, IItemUsable
         rb.velocity= Vector3.zero;
         rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         jumpcount++;
-        
     }
 
     private void OnCollisionEnter(Collision collision)
