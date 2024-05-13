@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 using UnityEngine;
 
-public class ObjectPool : SingleTon<ObjectPool>
+public class PoolManager : SingleTon<PoolManager>
 {
     GameObject sceneRig;
     public GameObject SceneRig

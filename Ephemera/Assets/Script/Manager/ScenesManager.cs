@@ -25,6 +25,6 @@ public class ScenesManager : SingleTon<ScenesManager>
 
             yield return null;
         }
-        ObjectPool.Instance.SceneRig = GameObject.Find("SceneInstaller");
+        PoolManager.Instance.SceneRig = GameObject.Find("SceneInstaller");
     }
 }
