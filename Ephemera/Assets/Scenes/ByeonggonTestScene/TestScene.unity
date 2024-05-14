@@ -428,7 +428,7 @@ MonoBehaviour:
     Padding: 0
     DisallowOverhangs: 0
     Root: {fileID: 0}
-    DungeonFlow: {fileID: 11400000, guid: 584a7b8e58ec6ed4198fb957db11a368, type: 2}
+    DungeonFlow: {fileID: 11400000, guid: 94d5356bb027fb648a0f1cde8dd88e53, type: 2}
     fileVersion: 1
   GenerateOnStart: 1
   Root: {fileID: 0}
