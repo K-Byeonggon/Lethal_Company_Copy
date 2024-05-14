@@ -413,7 +413,7 @@ MonoBehaviour:
     RepeatMode: 0
     OverrideAllowTileRotation: 0
     AllowTileRotation: 0
-    DebugRender: 1
+    DebugRender: 0
     LengthMultiplier: 1
     PlaceTileTriggers: 1
     TileTriggerLayer: 2
