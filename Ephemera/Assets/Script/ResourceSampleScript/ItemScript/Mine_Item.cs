@@ -4,15 +4,23 @@ using UnityEngine;
 
 public class Mine_Item : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField]
+    private GameObject explosionPrefab; 
 
-    // Update is called once per frame
-    void Update()
+    private void OnCollisionEnter(Collision collision)
     {
-        
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            Debug.Log(collision.gameObject.name);
+            ActiveMine();
+        }
+    }
+    public void ActiveMine()
+    {
+        Debug.Log("Æã");
+
+        GameObject explosionObject =  PoolManager.Instance.GetGameObject(explosionPrefab);
+        explosionObject.transform.position = this.transform.position;
+        PoolManager.Instance.ReturnToPool(this.gameObject);
     }
 }
