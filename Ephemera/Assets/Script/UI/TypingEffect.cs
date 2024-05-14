@@ -55,9 +55,6 @@ public class TypingEffect : MonoBehaviour
 
             if (count >= loadingChar.Count())
                 count = 0;
-            Debug.Log(loadingChar[count].ToString());
-            Debug.Log(loadingChar);
-            Debug.Log(loadingUI);
             loadingUI.text = loadingChar[count].ToString();
             count++;
             yield return new WaitForSeconds(typingTime);

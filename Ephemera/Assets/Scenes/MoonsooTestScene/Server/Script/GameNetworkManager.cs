@@ -6,14 +6,8 @@ using static Mirror.Examples.CharacterSelection.NetworkManagerCharacterSelection
 public class GameNetworkManager : NetworkManager
 {
     [SerializeField]
-    GameObject playerMovePrefab;
-    public override void OnServerConnect(NetworkConnectionToClient conn) 
-    {
-        GameObject playerObject = Instantiate(playerMovePrefab);
-
-        // call this to use this gameobject as the primary controller
-        NetworkServer.AddPlayerForConnection(conn, playerObject);
-    }
+    GameObject playerObjectPrefab;
+    
 
     [SerializeField]
     public PrefabReference prefabReference;
@@ -22,17 +16,37 @@ public class GameNetworkManager : NetworkManager
 
     int playerCount = 0;
 
-    public static GameNetworkManager networkManager => NetworkManager.singleton as GameNetworkManager;
+    public static GameNetworkManager Instance => NetworkManager.singleton as GameNetworkManager;
 
-    //호스트가 시작될 때를 포함하여 서버가 시작될 때 호출됩니다.
+    //(서버에서 호출)호스트가 시작될 때를 포함하여 서버가 시작될 때 호출됩니다.
     public override void OnStartServer()
     {
         base.OnStartServer();
 
         NetworkServer.RegisterHandler<CreateCharacterMessage>(OnCreateCharacter);
     }
+    //(서버에서 호출)클라이언트가 연결될 때 호출
+    public override void OnServerConnect(NetworkConnectionToClient conn)
+    {
+        GameObject playerObject = Instantiate(playerObjectPrefab);
 
-    //서버에 연결되면 클라이언트에서 호출됩니다.
+        // call this to use this gameobject as the primary controller
+        NetworkServer.AddPlayerForConnection(conn, playerObject);
+        playerCount++;
+    }
+    //(서버에서 호출)클라이언트가 추가될 때 호출
+    public override void OnServerAddPlayer(NetworkConnectionToClient conn)
+    {
+        GameObject player = Instantiate(prefabReference.playerPrefab);
+        NetworkServer.AddPlayerForConnection(conn, player);
+        //objectReference.camera.SetActive(false);
+    }
+    //(서버에서 호출)클라이언트가 서버에서 연결 해제할 때 호출
+    public override void OnServerDisconnect(NetworkConnectionToClient conn)
+    {
+        base.OnServerDisconnect(conn);
+    }
+    //(클라이언트에서 호출)서버에 연결되면 클라이언트에서 호출됩니다.
     //기본적으로 클라이언트를 준비 상태로 설정하고 플레이어를 추가합니다.
     public override void OnClientConnect()
     {
@@ -43,7 +57,6 @@ public class GameNetworkManager : NetworkManager
         {
             name = playerCount.ToString(),
         };
-        playerCount++;
 
         NetworkClient.Send(characterMessage);
 
@@ -75,16 +88,5 @@ public class GameNetworkManager : NetworkManager
         // Remove the previous player object that's now been replaced
         // Delay is required to allow replacement to complete.
         Destroy(oldPlayer, 0.1f);
-    }
-
-    /*public override void OnServerAddPlayer(NetworkConnectionToClient conn)
-    {
-        GameObject player = Instantiate(prefabReference.playerPrefab);
-        NetworkServer.AddPlayerForConnection(conn, player);
-        objectReference.camera.SetActive(false);
-    }*/
-    public override void OnServerDisconnect(NetworkConnectionToClient conn)
-    {
-        base.OnServerDisconnect(conn);
     }
 }
