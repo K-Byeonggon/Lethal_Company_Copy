@@ -1,8 +1,12 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.U2D;
+using Mirror;
+using System.Linq;
+using Unity.VisualScripting;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class ResourceManager : SingleTon<ResourceManager>
 {
@@ -10,14 +14,14 @@ public class ResourceManager : SingleTon<ResourceManager>
 
     private Dictionary<Type, Dictionary<string, ScriptableObject>> _scriptableData = new Dictionary<Type, Dictionary<string, ScriptableObject>>();
 
-    private Dictionary<string, SpriteAtlas> _atlasData = new Dictionary<string, SpriteAtlas>();
-
 
     public GameObject GetPrefab(string addressableAssetKey)
     {
         if (!_prefabs.ContainsKey(addressableAssetKey))
         {
-            _prefabs.Add(addressableAssetKey, DataManager.Instance.LoadObject<GameObject>(addressableAssetKey));
+            GameObject prefab = DataManager.Instance.LoadObject<GameObject>(addressableAssetKey);
+            _prefabs.Add(addressableAssetKey, prefab);
+            GameNetworkManager.Instance?.spawnPrefabs.Add(prefab);
         }
         return _prefabs[addressableAssetKey];
     }
@@ -33,13 +37,5 @@ public class ResourceManager : SingleTon<ResourceManager>
             _scriptableData[typeof(T)].Add(addressableAssetKey, data);
         }
         return (T)_scriptableData[typeof(T)][addressableAssetKey];
-    }
-    public SpriteAtlas GetAtlasData(AtlasType atlasType)
-    {
-        if (!_atlasData.ContainsKey(atlasType.ToString()))
-        {
-            _atlasData.Add(atlasType.ToString(), DataManager.Instance.LoadObject<SpriteAtlas>(atlasType.ToString()));
-        }
-        return _atlasData[atlasType.ToString()];
     }
 }

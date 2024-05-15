@@ -16,7 +16,11 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: 6642c79599d93ef45921463eab6e44ae
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: 1dd9171551fe1894db191b695e0c6d69
+    m_Address: MoonsooTestScene/Server/Prefab/Player.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: f53dd5718acd92348a91adf0d1df758a, type: 2}
   m_SchemaSet:
