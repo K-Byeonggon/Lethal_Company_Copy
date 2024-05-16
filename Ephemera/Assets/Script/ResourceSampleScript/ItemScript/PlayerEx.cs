@@ -11,14 +11,34 @@ public class PlayerEx : MonoBehaviour
     [SerializeField] public Vector3 moveVector;
     [SerializeField] public Transform pickedItem;
     public Vector3 direction {  get; private set; }
-    private Item item;
+    //private Item item;
+    [SerializeField]
+    private Inventory inventory;
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            inventory.ChangeItemSlot(0);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            inventory.ChangeItemSlot(1);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            inventory.ChangeItemSlot(2);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            inventory.ChangeItemSlot(3);
+        }
+
+
         if (Input.GetKeyDown(KeyCode.F))
         {
             Debug.Log("detatch");
-            item?.PickDown(this);
+            inventory.RemovetoInventory();
         }
         Debug.DrawRay(transform.position, transform.forward * linesize, Color.yellow);
         RaycastHit hit;
@@ -33,10 +53,10 @@ public class PlayerEx : MonoBehaviour
             var obtainableItem = hit.transform.GetComponent<Item>();
             if (obtainableItem != null)
             {
-                if (item==null&&Input.GetKeyDown(KeyCode.E))
+                if (inventory.GetCurrentItem() == null&&Input.GetKeyDown(KeyCode.E))
                 {
-                    obtainableItem.PickUp(this);
-                    
+                    //obtainableItem.PickUp(this);
+                    inventory.AddtoInventory(obtainableItem.gameObject);
                     Debug.Log("obtainable");
                 }
                 
@@ -47,14 +67,14 @@ public class PlayerEx : MonoBehaviour
             image.gameObject.SetActive(false);
         }
     }
-    public void GetItem(Item item)
-    {
-        this.item = item; 
-    }
-    public void RemoveItem()
-    {
-        this.item = null;
-    }
+    //public void GetItem(Item item)
+    //{
+    //    this.item = item; 
+    //}
+    //public void RemoveItem()
+    //{
+    //    this.item = null;
+    //}
     public void OnMove(InputAction.CallbackContext context)
     {
         Vector2 input = context.ReadValue<Vector2>();

@@ -21,7 +21,6 @@ public class Item : MonoBehaviour,IUIVisible,IItemUsable,IItemObtainable
         Debug.Log("Pickdown");
         transform.SetParent(null);
         transform.position = owner.transform.position+owner.transform.forward;
-        owner.RemoveItem();
     }
 
     public void PickUp(PlayerEx owner)//gamemanager
@@ -30,7 +29,6 @@ public class Item : MonoBehaviour,IUIVisible,IItemUsable,IItemObtainable
         {
             transform.SetParent(owner.pickedItem);
             transform.position = owner.pickedItem.position;
-            owner.GetItem(this);
         }
     }
 
@@ -51,7 +49,6 @@ public class Item : MonoBehaviour,IUIVisible,IItemUsable,IItemObtainable
     }
     public float SellItem()
     {
-
         return itemPrice;
     }
     

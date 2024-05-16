@@ -36,7 +36,7 @@ public class JetPack_Item : Item, IItemUsable
         jumpcount++;
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
         jumpcount = 0;
     }

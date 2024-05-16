@@ -9,7 +9,7 @@ public class CrowBar_Item : Item,IItemUsable
     {
         if (this != null &&Input.GetMouseButtonDown(0))
         {
-
+            
         }
     }
 }
