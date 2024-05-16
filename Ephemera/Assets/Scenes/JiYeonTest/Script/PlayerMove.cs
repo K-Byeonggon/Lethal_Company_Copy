@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Purchasing;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -21,6 +22,9 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] private float jumpforce;
     [SerializeField] private float cameraSpeed;
     private float mouseX;
+    private float mouseY;
+
+
 
     private Animator animator;
 
@@ -32,17 +36,16 @@ public class PlayerMove : MonoBehaviour
 
     private void Update()
     {
-        animator.SetBool("IsWalking", false);
+        /*animator.SetBool("IsWalking", false);
         if (Input.anyKey)
         {
             animator.SetBool("IsWalking", true);
-        }
+        }*/
         ApplyGravity();
         ApplyRotation();
         ApplyMovement();
+        SetAnimator();
 
-        mouseX += Input.GetAxis("Mouse X") * cameraSpeed;
-        this.transform.localEulerAngles = new Vector3(0, mouseX, 0);
     }
 
     void ApplyGravity()
@@ -72,6 +75,7 @@ public class PlayerMove : MonoBehaviour
     void ApplyMovement()
     {
         character.Move(transform.TransformDirection(_direction) * speed * Time.deltaTime);
+        SetAnimator();
     }
 
     public void PlayerMovement(InputAction.CallbackContext context)
@@ -87,7 +91,7 @@ public class PlayerMove : MonoBehaviour
     public void OnRun(InputAction.CallbackContext context)
     {
 
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+        /*if (Input.GetKeyDown(KeyCode.LeftShift))
         {
             speed = 50.0f;
             animator.SetBool("IsRun", true);
@@ -96,15 +100,33 @@ public class PlayerMove : MonoBehaviour
         {
             speed = 30.0f;
             animator.SetBool("IsRun", false);
-        }
+        }*/
+        if (context.started) speed = 50f;
+        else if (context.performed) { }
+        else if (context.canceled) speed = 30f;
+
     }
 
-    public void Jump(InputAction.CallbackContext context)
+    public void OnJump(InputAction.CallbackContext context)
     {
         if (!context.started) return;
         if (!IsGround()) return;
 
         _velocity += jumpforce;
+    }
+
+    private void SetAnimator()
+    {
+        animator.SetFloat("XSpeed", _direction.x * speed);
+        animator.SetFloat("ZSpeed", _direction.z * speed);
+    }
+
+    public void OnLook(InputAction.CallbackContext context)
+    {
+        Vector2 vector2 = context.ReadValue<Vector2>();
+        mouseX += vector2.x * cameraSpeed * Time.deltaTime;
+        //mouseY += vector2.y * cameraSpeed * Time.deltaTime;
+        this.transform.localEulerAngles = new Vector3(0, mouseX, 0);
     }
 
     public void OnCrouch(InputAction.CallbackContext context)
@@ -116,7 +138,6 @@ public class PlayerMove : MonoBehaviour
     {
 
     }
-
 
     private bool IsGround() => character.isGrounded;
 }
