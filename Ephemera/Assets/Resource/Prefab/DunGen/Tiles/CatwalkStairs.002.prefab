@@ -48,7 +48,7 @@ MonoBehaviour:
   ConnectorPrefabWeights: []
   BlockerPrefabWeights:
   - GameObject: {fileID: 7525961635996198737, guid: 256f4fc6d61d2674bba981fca93e6ec0, type: 3}
-    Weight: 1
+    Weight: 0.2
   AvoidRotatingDoorPrefab: 0
   AvoidRotatingBlockerPrefab: 0
   ConnectorSceneObjects: []
@@ -113,7 +113,7 @@ MonoBehaviour:
   ConnectorPrefabWeights: []
   BlockerPrefabWeights:
   - GameObject: {fileID: 7525961635996198737, guid: 256f4fc6d61d2674bba981fca93e6ec0, type: 3}
-    Weight: 1
+    Weight: 0.2
   AvoidRotatingDoorPrefab: 0
   AvoidRotatingBlockerPrefab: 0
   ConnectorSceneObjects: []
@@ -178,7 +178,7 @@ MonoBehaviour:
   ConnectorPrefabWeights: []
   BlockerPrefabWeights:
   - GameObject: {fileID: 7525961635996198737, guid: 256f4fc6d61d2674bba981fca93e6ec0, type: 3}
-    Weight: 1
+    Weight: 0.2
   AvoidRotatingDoorPrefab: 0
   AvoidRotatingBlockerPrefab: 0
   ConnectorSceneObjects: []
@@ -335,7 +335,7 @@ MonoBehaviour:
   ConnectorPrefabWeights: []
   BlockerPrefabWeights:
   - GameObject: {fileID: 7525961635996198737, guid: 256f4fc6d61d2674bba981fca93e6ec0, type: 3}
-    Weight: 1
+    Weight: 0.2
   AvoidRotatingDoorPrefab: 0
   AvoidRotatingBlockerPrefab: 0
   ConnectorSceneObjects: []
