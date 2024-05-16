@@ -216,5 +216,10 @@ namespace Mirror
             // clear the hashset because we destroyed them all
             owned.Clear();
         }
+
+        public void Send<T>(T message, object defaultReliable)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
