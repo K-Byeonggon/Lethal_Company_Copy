@@ -110,14 +110,13 @@ public class PlayerMove : MonoBehaviour
     public void OnCrouch(InputAction.CallbackContext context)
     {
         Vector2 moveVector = context.ReadValue<Vector2>();
-
-
     }
 
     public void EnbleGameplayControls()
     {
 
     }
+
 
     private bool IsGround() => character.isGrounded;
 }
