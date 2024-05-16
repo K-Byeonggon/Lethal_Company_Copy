@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: Lethal Archetype
   m_EditorClassIdentifier: 
   TileSets:
-  - {fileID: 11400000, guid: bebebfcfd898fef4388685ec467c9f4a, type: 2}
   - {fileID: 11400000, guid: c18eb0e45b0732f4394554581d5ae757, type: 2}
   BranchCapTileSets: []
   BranchCapType: 1

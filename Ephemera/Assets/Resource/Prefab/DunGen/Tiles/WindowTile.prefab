@@ -317,8 +317,7 @@ MonoBehaviour:
   OverrideConnectionChance: 0
   ConnectionChance: 0
   Tags:
-    Tags:
-    - id: 0
+    Tags: []
   AllDoorways: []
   UsedDoorways: []
   UnusedDoorways: []

@@ -329,7 +329,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   allowImmediateRepeats: 1
   AllowRotation: 1
-  RepeatMode: 0
+  RepeatMode: 1
   OverrideAutomaticTileBounds: 0
   TileBoundsOverride:
     m_Center: {x: 0, y: 0, z: 0}
@@ -340,7 +340,7 @@ MonoBehaviour:
   ConnectionChance: 0
   Tags:
     Tags:
-    - id: 0
+    - id: 1
   AllDoorways: []
   UsedDoorways: []
   UnusedDoorways: []
