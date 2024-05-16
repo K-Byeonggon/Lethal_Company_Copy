@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-8698306718216038226
+--- !u!114 &-6394253550537815219
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -25,7 +25,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad1ebb4e3aa3b474d849bc53fbe48191, type: 3}
   m_Name: DunGen Settings
   m_EditorClassIdentifier: 
-  defaultSocket: {fileID: -8698306718216038226}
+  defaultSocket: {fileID: -6394253550537815219}
   tagManager:
-    keys: 
-    values: []
+    keys: 000000000100000002000000
+    values:
+    - Corridor
+    - Stairs
+    - Large

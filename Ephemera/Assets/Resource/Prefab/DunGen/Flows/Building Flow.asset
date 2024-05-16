@@ -1,0 +1,90 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e228b45736a8cf4ea000616e628a4dd, type: 3}
+  m_Name: Building Flow
+  m_EditorClassIdentifier: 
+  globalPropGroupID_obsolete: 
+  globalPropRanges_obsolete: []
+  Length:
+    Min: 10
+    Max: 10
+  BranchMode: 0
+  BranchCount:
+    Min: 1
+    Max: 5
+  GlobalProps: []
+  KeyManager: {fileID: 0}
+  DoorwayConnectionChance: 0
+  RestrictConnectionToSameSection: 0
+  TileInjectionRules:
+  - TileSet: {fileID: 11400000, guid: bebebfcfd898fef4388685ec467c9f4a, type: 2}
+    NormalizedPathDepth:
+      Min: 0
+      Max: 0
+    NormalizedBranchDepth:
+      Min: 0
+      Max: 1
+    CanAppearOnMainPath: 1
+    CanAppearOnBranchPath: 0
+    IsRequired: 1
+    IsLocked: 0
+    LockID: 0
+  - TileSet: {fileID: 11400000, guid: eefac7cf5f3661645b89aaa74d6c4f9e, type: 2}
+    NormalizedPathDepth:
+      Min: 0.056410257
+      Max: 0.9128205
+    NormalizedBranchDepth:
+      Min: 0
+      Max: 1
+    CanAppearOnMainPath: 1
+    CanAppearOnBranchPath: 1
+    IsRequired: 1
+    IsLocked: 0
+    LockID: 0
+  TileTagConnectionMode: 1
+  TileConnectionTags:
+  - TagA:
+      id: 0
+    TagB:
+      id: 0
+  BranchTagPruneMode: 0
+  BranchPruneTags:
+  - id: 1
+  - id: 0
+  Nodes:
+  - Graph: {fileID: 11400000}
+    TileSets:
+    - {fileID: 11400000, guid: c18eb0e45b0732f4394554581d5ae757, type: 2}
+    NodeType: 1
+    Position: 0
+    Label: Start
+    Keys: []
+    Locks: []
+    LockPlacement: 0
+  - Graph: {fileID: 11400000}
+    TileSets:
+    - {fileID: 11400000, guid: c18eb0e45b0732f4394554581d5ae757, type: 2}
+    NodeType: 2
+    Position: 1
+    Label: Goal
+    Keys: []
+    Locks: []
+    LockPlacement: 0
+  Lines:
+  - Graph: {fileID: 11400000}
+    DungeonArchetypes:
+    - {fileID: 11400000, guid: 6bad9451cca483446b4871ef6b935c34, type: 2}
+    Position: 0
+    Length: 1
+    Keys: []
+    Locks: []
+  currentFileVersion: 1

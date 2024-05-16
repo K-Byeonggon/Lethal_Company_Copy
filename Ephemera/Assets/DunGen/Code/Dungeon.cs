@@ -160,7 +160,8 @@ namespace DunGen
                     {
                         GameObject blocker = GameObject.Instantiate(doorway.BlockerPrefabWeights.GetRandom(generator.RandomStream)) as GameObject;
                         blocker.transform.parent = doorway.gameObject.transform;
-                        blocker.transform.localPosition = Vector3.up;
+                        //blocker.transform.localPosition = Vector3.up;
+                        blocker.transform.localPosition = new Vector3(0, blocker.transform.localScale.y / 2, 0);
                         //blocker.transform.localScale = Vector3.one;
 
                         if (!doorway.AvoidRotatingBlockerPrefab)
