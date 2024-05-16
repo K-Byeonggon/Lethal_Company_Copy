@@ -6,19 +6,13 @@ public class GameNetworkManager : NetworkManager
 {
     [SerializeField]
     GameObject playerObjectPrefab;
-    
-
-    [SerializeField]
-    public PrefabReference prefabReference;
-    [SerializeField]
-    public ObjectReference objectReference;
-
-    int playerCount = 0;
 
     public static GameNetworkManager Instance => NetworkManager.singleton as GameNetworkManager;
 
     public override void Start()
     {
+        base.Start();
+        //spawnPrefabs.Add(roomPlayerPrefab);
         spawnPrefabs.Add(playerObjectPrefab);
     }
 
@@ -34,11 +28,10 @@ public class GameNetworkManager : NetworkManager
     public override void OnClientConnect()
     {
         base.OnClientConnect();
-        
-        // you can send the message here, or wherever else you want
+
         CreateCharacterMessage characterMessage = new CreateCharacterMessage
         {
-            name = playerCount.ToString(),
+            name = numPlayers.ToString(),
         };
         
         NetworkClient.Send(characterMessage);
