@@ -1,10 +1,12 @@
+using Cinemachine;
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 
-public class PlayerMove : MonoBehaviour
+public class PlayerMove : NetworkBehaviour
 {
     private Vector2 _input;
     private CharacterController character;
@@ -21,6 +23,8 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] private float jumpforce;
     [SerializeField] private float cameraSpeed;
     private float mouseX;
+    [SerializeField]
+    private GameObject vCam;
 
     private Animator animator;
 
@@ -28,6 +32,16 @@ public class PlayerMove : MonoBehaviour
     {
         character = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
+    }
+    public override void OnStartClient()
+    {
+        if (!isLocalPlayer)
+        {
+            GetComponent<PlayerInput>().enabled = false;
+            character.enabled = false;
+            this.enabled = false;
+            vCam.SetActive(false);
+        }
     }
 
     private void Update()
@@ -40,9 +54,6 @@ public class PlayerMove : MonoBehaviour
         ApplyGravity();
         ApplyRotation();
         ApplyMovement();
-
-        mouseX += Input.GetAxis("Mouse X") * cameraSpeed;
-        this.transform.localEulerAngles = new Vector3(0, mouseX, 0);
     }
 
     void ApplyGravity()
@@ -86,20 +97,29 @@ public class PlayerMove : MonoBehaviour
 
     public void OnRun(InputAction.CallbackContext context)
     {
-
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+        if(context.started)
         {
             speed = 50.0f;
             animator.SetBool("IsRun", true);
         }
-        else if (Input.GetKeyUp(KeyCode.LeftShift))
+        else if(context.performed)
+        {
+
+        }
+        else if (context.canceled)
         {
             speed = 30.0f;
             animator.SetBool("IsRun", false);
         }
     }
+    public void OnLook(InputAction.CallbackContext context)
+    {
+        Vector2 vec = context.ReadValue<Vector2>();
+        mouseX += vec.x * cameraSpeed;
+        this.transform.localEulerAngles = new Vector3(0, mouseX, 0);
+    }
 
-    public void Jump(InputAction.CallbackContext context)
+    public void OnJump(InputAction.CallbackContext context)
     {
         if (!context.started) return;
         if (!IsGround()) return;

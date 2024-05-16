@@ -1,8 +1,7 @@
-using UnityEditor.Experimental.GraphView;
+
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using static UnityEditor.Progress;
 public class PlayerEx : MonoBehaviour
 {
     //private Item item;
