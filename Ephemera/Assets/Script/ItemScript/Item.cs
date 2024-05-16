@@ -12,8 +12,7 @@ public class Item : MonoBehaviour,IUIVisible,IItemUsable,IItemObtainable
 
     [SerializeField]
     private Image image;
-    [SerializeField]
-    private Animator animator;
+    
 
     
     public void PickDown(PlayerEx owner)
