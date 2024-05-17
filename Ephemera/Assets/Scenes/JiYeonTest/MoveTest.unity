@@ -169,22 +169,6 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 953678329}
         m_TargetAssemblyTypeName: PlayerMove, Assembly-CSharp
-        m_MethodName: PlayerMovement
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_ActionId: 21a1040b-6587-4038-9971-3a61dd20ad79
-    m_ActionName: Player/Move[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]
-  - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 953678329}
-        m_TargetAssemblyTypeName: PlayerMove, Assembly-CSharp
         m_MethodName: OnRun
         m_Mode: 0
         m_Arguments:
@@ -201,7 +185,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 953678329}
         m_TargetAssemblyTypeName: PlayerMove, Assembly-CSharp
-        m_MethodName: Jump
+        m_MethodName: OnJump
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -257,6 +241,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: da151457-6d12-4d13-a088-85c27ff10b59
     m_ActionName: Player/Crouch[/Keyboard/c]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 953678329}
+        m_TargetAssemblyTypeName: PlayerMove, Assembly-CSharp
+        m_MethodName: PlayerMovement
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 21493925-1c8e-44d4-9de1-724db9e1dc33
+    m_ActionName: Player/Move2[/Keyboard/a,/Keyboard/d,/Keyboard/w,/Keyboard/s]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -414,7 +414,7 @@ MonoBehaviour:
   speed: 30
   runspeed: 50
   jumpforce: 9.42
-  cameraSpeed: 8
+  cameraSpeed: 7.22
 --- !u!143 &953678330
 CharacterController:
   m_ObjectHideFlags: 0

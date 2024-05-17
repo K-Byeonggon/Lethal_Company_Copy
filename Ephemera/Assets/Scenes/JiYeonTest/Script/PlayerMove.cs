@@ -45,7 +45,7 @@ public class PlayerMove : MonoBehaviour
         ApplyRotation();
         ApplyMovement();
         SetAnimator();
-
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     void ApplyGravity()
@@ -75,7 +75,6 @@ public class PlayerMove : MonoBehaviour
     void ApplyMovement()
     {
         character.Move(transform.TransformDirection(_direction) * speed * Time.deltaTime);
-        SetAnimator();
     }
 
     public void PlayerMovement(InputAction.CallbackContext context)
@@ -83,27 +82,27 @@ public class PlayerMove : MonoBehaviour
         //_input = context.ReadValue<Vector2>();
         //_direction = new Vector3(_input.x , 0.0f, _input.y);
         //_direction = transform.forward * context.ReadValue<Vector2>();
-        Vector2 moveVector = context.ReadValue<Vector2>();
-        _direction = new Vector3(moveVector.x, 0, moveVector.y);
+        //Vector3 moveVector = context.ReadValue<Vector3>();
+        //_direction = new Vector3(moveVector.x, 0, moveVector.y);
+
+        _direction = context.ReadValue<Vector3>();
 
     }
 
     public void OnRun(InputAction.CallbackContext context)
     {
 
-        /*if (Input.GetKeyDown(KeyCode.LeftShift))
+        if (context.started)
         {
-            speed = 50.0f;
-            animator.SetBool("IsRun", true);
+            speed = runspeed;
+            //animator.SetBool("IsRun", true);
         }
-        else if (Input.GetKeyUp(KeyCode.LeftShift))
-        {
-            speed = 30.0f;
-            animator.SetBool("IsRun", false);
-        }*/
-        if (context.started) speed = 50f;
         else if (context.performed) { }
-        else if (context.canceled) speed = 30f;
+        else if (context.canceled) 
+        {
+            speed = 20.0f;
+            //animator.SetBool("IsRun", false);
+        }
 
     }
 
@@ -115,10 +114,10 @@ public class PlayerMove : MonoBehaviour
         _velocity += jumpforce;
     }
 
-    private void SetAnimator()
+    public void SetAnimator()
     {
-        animator.SetFloat("XSpeed", _direction.x * speed);
-        animator.SetFloat("ZSpeed", _direction.z * speed);
+        animator.SetFloat("Xspeed", _direction.x * speed);
+        animator.SetFloat("Zspeed", _direction.z * speed);
     }
 
     public void OnLook(InputAction.CallbackContext context)
