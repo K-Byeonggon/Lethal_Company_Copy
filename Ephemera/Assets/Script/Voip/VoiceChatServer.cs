@@ -9,7 +9,6 @@ public class VoiceChatServer : NetworkBehaviour
     {
         RpcReceiveVoiceData(data);
     }
-    public NetworkBehaviour[] NetworkBehaviours { get; private set; } = new NetworkBehaviour[] { };
     [ClientRpc]
     void RpcReceiveVoiceData(float[] data)
     {
@@ -39,9 +38,6 @@ public class VoiceChatServer : NetworkBehaviour
             }
         }
     }
-
-
-
 
     // Send 메서드 추가
     public void Send<T>(T message, int channelId = Channels.Reliable) where T : struct, NetworkMessage

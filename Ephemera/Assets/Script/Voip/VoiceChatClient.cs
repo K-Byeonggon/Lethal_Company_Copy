@@ -8,11 +8,14 @@ public class VoiceChatClient : NetworkBehaviour
 
     private float voiceTimer = 0f;
     private AudioClip microphoneInput;
-    public NetworkBehaviour[] NetworkBehaviours { get; private set; } = new NetworkBehaviour[] { };
     void Start()
     {
-        microphoneInput = Microphone.Start(Microphone.devices[0].ToString(), true, 1, AudioSettings.outputSampleRate);
-        Debug.Log(Microphone.devices[0].ToString());
+        //foreach (var device in Microphone.devices)
+        //{
+        //    Debug.Log("Name: " + device);
+        //}
+        microphoneInput = Microphone.Start(Microphone.devices[0], true, 1, AudioSettings.outputSampleRate);
+       // Debug.Log(Microphone.devices[0].ToString());
     }
 
     void Update()

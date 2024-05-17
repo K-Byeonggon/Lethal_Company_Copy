@@ -12,9 +12,10 @@ GameObject:
   - component: {fileID: 2499149110031583479}
   - component: {fileID: 2499149110032714295}
   - component: {fileID: 2499149110030422613}
-  m_Layer: 0
+  - component: {fileID: 9175663033973837424}
+  m_Layer: 6
   m_Name: Crowbar
-  m_TagString: Untagged
+  m_TagString: ObtainableItem
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -26,14 +27,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2499149110030456055}
-  m_LocalRotation: {x: -4.32978e-17, y: 0.7071067, z: 0.7071068, w: -4.3297806e-17}
-  m_LocalPosition: {x: -5.19334, y: -0.329, z: -4.3139353}
+  m_LocalRotation: {x: -0.6985652, y: 0, z: 0, w: 0.7155464}
+  m_LocalPosition: {x: -4.51, y: 0.118, z: -6.19}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -88.624, y: 0, z: 0}
 --- !u!33 &2499149110031583479
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -97,3 +98,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.038250893, y: 0.14216895, z: 0.9309014}
   m_Center: {x: 0.0000074738637, y: -0.043581024, z: -0.0148968855}
+--- !u!114 &9175663033973837424
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2499149110030456055}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03c1534ee5c1dc24a87e9a9917a408ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isBothHandGrab: 0
+  itemData: {fileID: 11400000, guid: 53736c08ababf0d4d826d0928d53f8f0, type: 2}
+  itemPrice: 0
+  image: {fileID: 0}

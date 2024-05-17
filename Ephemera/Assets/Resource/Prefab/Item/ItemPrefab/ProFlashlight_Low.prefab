@@ -275,7 +275,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8614488968919303909}
   m_LocalRotation: {x: -0.7160664, y: -0, z: -0, w: 0.69803214}
-  m_LocalPosition: {x: 0, y: 0.101, z: -0.004}
+  m_LocalPosition: {x: 0, y: 0.0599, z: -0.0025}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -293,10 +293,10 @@ Light:
   serializedVersion: 10
   m_Type: 0
   m_Shape: 0
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
   m_Range: 10
-  m_SpotAngle: 30
+  m_SpotAngle: 98.190475
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
@@ -374,6 +374,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8072255305044301912}
   - component: {fileID: 8614488968720227882}
+  - component: {fileID: 2317936971574182624}
   m_Layer: 0
   m_Name: ProFlashlight_Low
   m_TagString: Untagged
@@ -389,8 +390,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8884961886838047458}
   m_LocalRotation: {x: 0.7201958, y: -0, z: -0, w: 0.6937709}
-  m_LocalPosition: {x: -4.349, y: 0.057, z: -6.1033635}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0.2258, y: 1.1806, z: 0.331}
+  m_LocalScale: {x: 1.3761419, y: 1.3761418, z: 1.3761418}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 9047476065494080589}
@@ -414,3 +415,106 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isBothHandGrab: 0
   image: {fileID: 0}
+  flashlight: {fileID: 8614488968919303912}
+--- !u!114 &2317936971574182624
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8884961886838047458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: 44afa4577bb94cc49b31d9cc6028de64, type: 3}
+  m_NotificationBehavior: 2
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents:
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: cf8b5c73-7c74-46b8-951f-f9ce00a5d435
+    m_ActionName: Player/Move[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 2e2579a6-1a96-44c0-9dc5-b243857f93ac
+    m_ActionName: Player/Look[/Mouse/delta]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 8614488968720227882}
+        m_TargetAssemblyTypeName: HandLight_Item, Assembly-CSharp
+        m_MethodName: OnClickFireKey
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 904e9dcd-4658-46bf-b8b2-2090c9e86c92
+    m_ActionName: Player/Fire[/Mouse/leftButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 726a8183-7038-4935-8ce5-c8a4071ded48
+    m_ActionName: UI/Navigate[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 89da2905-7206-4ded-bf19-6d6fb21b0f5f
+    m_ActionName: UI/Submit[/Keyboard/enter]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 9d901eac-68e1-4b77-bde0-90d439910700
+    m_ActionName: UI/Cancel[/Keyboard/escape]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: ddb2596a-de29-42d4-8ac2-aab7e2477542
+    m_ActionName: UI/Point[/Mouse/position]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 3b927b5c-9c47-462f-a309-611db55bad45
+    m_ActionName: UI/Click[/Mouse/leftButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 919ec8a9-8ea9-4868-9cea-6400cefd4d51
+    m_ActionName: UI/ScrollWheel[/Mouse/scroll]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 4e85b147-aafa-468a-9c8b-c2f35e513ee7
+    m_ActionName: UI/MiddleClick[/Mouse/middleButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 05b49e13-722f-46a5-a027-e3f75f422eb7
+    m_ActionName: UI/RightClick[/Mouse/rightButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 5fa3c34c-c0aa-413a-b896-088c4cde629d
+    m_ActionName: UI/TrackedDevicePosition
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 11efa43c-8eb1-471d-8bf0-7acf1406e6b4
+    m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: cb580c45-cec0-4164-bedb-13e8c5923fb8
+    m_ActionName: Player/Jump[/Keyboard/space]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: c2db305d-4017-4678-9013-a779ce610e28
+    m_ActionName: Player/New action
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: Player
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}

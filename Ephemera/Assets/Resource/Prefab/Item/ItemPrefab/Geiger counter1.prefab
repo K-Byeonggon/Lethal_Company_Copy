@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8915664251105903410}
   - component: {fileID: 8915664251104805362}
   - component: {fileID: 6837377210101982538}
+  - component: {fileID: -9129633900825205095}
   m_Layer: 0
   m_Name: Geiger counter1
   m_TagString: Untagged
@@ -98,3 +99,17 @@ CapsuleCollider:
   m_Height: 0.13254914
   m_Direction: 1
   m_Center: {x: 0.04729584, y: 0.0000000020509898, z: 0.0344099}
+--- !u!114 &-9129633900825205095
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8915664251107073842}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03c1534ee5c1dc24a87e9a9917a408ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isBothHandGrab: 0
+  image: {fileID: 0}

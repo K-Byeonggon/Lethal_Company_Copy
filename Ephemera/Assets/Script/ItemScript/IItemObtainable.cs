@@ -7,5 +7,5 @@ public interface IItemObtainable
     public void ShowPickupUI();
     public void PickUp(PlayerEx owner);
     public void PickDown(PlayerEx owner);
-    public float SellItem();
+    public int SellItem();
 }

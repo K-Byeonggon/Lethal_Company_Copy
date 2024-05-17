@@ -33,8 +33,6 @@ public class PlayerEx : MonoBehaviour
         {
             inventory.ChangeItemSlot(3);
         }
-
-
         if (Input.GetKeyDown(KeyCode.F))
         {
             Debug.Log("detatch");
@@ -59,7 +57,6 @@ public class PlayerEx : MonoBehaviour
                     inventory.AddtoInventory(obtainableItem.gameObject);
                     Debug.Log("obtainable");
                 }
-                
             }
         }
         else
