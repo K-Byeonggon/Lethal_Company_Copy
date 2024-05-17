@@ -14,8 +14,8 @@ public class SequenceNode : CompositeNode
             switch (child.Evaluate())
             {
                 case State.RUNNING:
-                    anyChildRunning = true;
-                    continue;
+                    state = State.RUNNING;
+                    return state;
                 case State.SUCCESS:
                     continue;
                 case State.FAILURE:

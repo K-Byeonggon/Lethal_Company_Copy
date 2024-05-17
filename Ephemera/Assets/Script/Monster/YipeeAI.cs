@@ -18,6 +18,7 @@ public class YipeeAI : MonoBehaviour
     public Vector3 itemPos;
     public GameObject detectedItem;
     public bool itemFind = false;
+    public bool itemHave = false;
 
 
     void Start()
@@ -146,11 +147,16 @@ public class YipeeAI : MonoBehaviour
         {
             if (Vector3.Distance(transform.position, navMeshAgent.destination) <= 0.5f)
             {
+                Debug.Log("거리가 이제 충분함.");
                 return Node.State.SUCCESS;
             }
             else
             {
                 Debug.Log("아니 RUNNING되고 있는거야?");
+
+                //도중에 아이템이 내가 아닌 누군가에게 주워지면 FAILURE.
+                if(detectedItem.transform.parent != null && detectedItem.transform.parent != transform) return Node.State.FAILURE;
+
                 return Node.State.RUNNING;
             }
         }
@@ -163,16 +169,23 @@ public class YipeeAI : MonoBehaviour
     {
         Debug.Log("GetScrap");
 
-        if (itemFind)
+        if (!itemHave)
         {
-            //페품 들기(플레이어가 들어버려서 실패할 수 있음)
+            //페품 들기
+
+            //도중에 아이템이 내가 아닌 누군가에게 주워지면 FAILURE.
+            if (detectedItem.transform.parent != null && detectedItem.transform.parent != transform) return Node.State.FAILURE;
+
+            Debug.Log("들어올림");
             detectedItem.transform.position = transform.GetChild(1).position;
             detectedItem.transform.SetParent(transform.GetChild(1));
-           
+            itemHave = true;
+
             navMeshAgent.SetDestination(nest.position);
             setDesti = true;
             return Node.State.SUCCESS;
         }
+        else if (itemHave) return Node.State.SUCCESS;
         else return Node.State.FAILURE;
 
     }
@@ -184,11 +197,11 @@ public class YipeeAI : MonoBehaviour
         if (Vector3.Distance(transform.position, navMeshAgent.destination) <= 0.5f)
         {
             //폐품 내려놓기
+            Debug.Log("내려놓음");
             detectedItem.transform.parent = null;
-
-
             setDesti = false;
             itemFind = false;
+            itemHave = false;
             return Node.State.SUCCESS;
         }
         else { return Node.State.RUNNING; }

@@ -3,7 +3,7 @@ using UnityEngine;
 public class ItemDetection : MonoBehaviour
 {
     YipeeAI yipee;
-    float nestIgnoreRadius = 0.5f;
+    float nestIgnoreRadius = 1f;
     private void Start()
     {
         yipee = transform.parent.GetComponent<YipeeAI>();
