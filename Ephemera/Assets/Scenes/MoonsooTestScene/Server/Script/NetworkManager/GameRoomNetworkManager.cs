@@ -1,4 +1,5 @@
 using Mirror;
+using Mirror.Examples.NetworkRoom;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +11,8 @@ public class GameRoomNetworkManager : NetworkRoomManager
     [SerializeField]
     NetworkRoomPlayer roomPlayerObjectPrefab;
 
+    public static GameRoomNetworkManager Instance => NetworkRoomManager.singleton as GameRoomNetworkManager;
+     
     public override void Start()
     {
         base.Start();
@@ -23,40 +26,35 @@ public class GameRoomNetworkManager : NetworkRoomManager
     public override void OnStartServer()
     {
         base.OnStartServer();
-        NetworkServer.RegisterHandler<CreateCharacterMessage>(OnCreateCharacter);
-        NetworkServer.RegisterHandler<CreateRoomCharacterMessage>(OnCreateRoomCharacter);
+
+        //NetworkServer.RegisterHandler<CreateCharacterMessage>(OnCreateCharacter);
+        //NetworkServer.RegisterHandler<CreateRoomCharacterMessage>(OnCreateRoomCharacter);
 
         //GameObject prefab = ResourceManager.Instance.GetPrefab("MoonsooTestScene/Server/Prefab/Player.prefab");
     }
-    public override void OnRoomStartClient() 
+
+    //새로운 클라이언트가 서버에 연결되었을 때에 호출되는 함수
+    public override void OnRoomServerConnect(NetworkConnectionToClient conn)//GameObject OnRoomServerCreateRoomPlayer(NetworkConnectionToClient conn)
     {
-        Debug.Log("OnRoomStartClient");
+        Debug.Log("OnRoomServerCreateRoomPlayer");
+        GameObject gameobject = Instantiate(roomPlayerObjectPrefab.gameObject);
+        //gameobject의 컴포넌트를 가져와 message로 초기화
 
-        CreateRoomCharacterMessage characterRoomMessage = new CreateRoomCharacterMessage
-        {
-            name = numPlayers.ToString(),
-        };
-
-        NetworkClient.Send(characterRoomMessage);
-    }
-    public override void OnRoomClientEnter()
-    {
-        base.OnRoomClientEnter();
-    }
-    public override void OnClientConnect()
-    {
-        Debug.Log("OnClientConnect");
-        base.OnClientConnect();
-
-        CreateCharacterMessage characterMessage = new CreateCharacterMessage
-        {
-            name = numPlayers.ToString(),
-        };
-
-        NetworkClient.Send(characterMessage);
+        Debug.Log(gameobject.name);
+        NetworkServer.AddPlayerForConnection(conn, gameobject);
     }
 
-    //게임플레이어 생성 함수
+    //GamePlayer를 생성할 때 호출하는 함수
+    public override GameObject OnRoomServerCreateGamePlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
+    {
+        GameObject gameobject = Instantiate(gamePlayerObjectPrefab);
+        //gameobject의 컴포넌트를 가져와 message로 초기화
+
+        NetworkServer.AddPlayerForConnection(conn, gameobject);
+        return gameobject;
+    }
+
+    /*//게임플레이어 생성 함수
     void OnCreateCharacter(NetworkConnectionToClient conn, CreateCharacterMessage message)
     {
         GameObject gameobject = Instantiate(gamePlayerObjectPrefab);
@@ -71,5 +69,5 @@ public class GameRoomNetworkManager : NetworkRoomManager
         //gameobject의 컴포넌트를 가져와 message로 초기화
 
         NetworkServer.AddPlayerForConnection(conn, gameobject);
-    }
+    }*/
 }
