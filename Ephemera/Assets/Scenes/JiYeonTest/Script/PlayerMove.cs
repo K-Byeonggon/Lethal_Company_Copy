@@ -45,6 +45,7 @@ public class PlayerMove : MonoBehaviour
         ApplyRotation();
         ApplyMovement();
         SetAnimator();
+        Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
     }
 
