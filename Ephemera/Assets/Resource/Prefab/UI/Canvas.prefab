@@ -821,8 +821,9 @@ GameObject:
   - component: {fileID: 1163175353}
   - component: {fileID: 1163175355}
   - component: {fileID: 1163175354}
+  - component: {fileID: 815503938}
   m_Layer: 5
-  m_Name: Setting
+  m_Name: SettingIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -886,6 +887,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &815503938
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1163175352}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 599e6806380fbe34bbdfff00c94e06c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  uiElement: {fileID: 1163175354}
+  blinkInterval: 0.1
 --- !u!1 &1303732196
 GameObject:
   m_ObjectHideFlags: 0
@@ -1465,8 +1480,9 @@ GameObject:
   - component: {fileID: 1714416024}
   - component: {fileID: 1714416026}
   - component: {fileID: 1714416025}
+  - component: {fileID: 1659305547}
   m_Layer: 5
-  m_Name: Mission
+  m_Name: MissionIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1530,6 +1546,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1659305547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1714416023}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 599e6806380fbe34bbdfff00c94e06c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  uiElement: {fileID: 1714416025}
+  blinkInterval: 0.5
 --- !u!1 &1802262072
 GameObject:
   m_ObjectHideFlags: 0
@@ -2125,6 +2155,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 222493824806310683}
+  - component: {fileID: 4209812129845207182}
+  - component: {fileID: 9120986440088147754}
   m_Layer: 5
   m_Name: SetupUI
   m_TagString: Untagged
@@ -2154,6 +2186,34 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &4209812129845207182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 537282521337705488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07563c3690df3b94a94de02ef89d4651, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &9120986440088147754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 537282521337705488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3393c5dbe3161c438b6b1868b665af3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startTime: 0.5
+  typingTime: 0.1
+  textUI: {fileID: 8136640982443536410}
+  loadingUI: {fileID: 8136640983575141732}
 --- !u!1 &4937472246196063028
 GameObject:
   m_ObjectHideFlags: 0
@@ -2355,6 +2415,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4524308315656639676}
+  - component: {fileID: 3187074378485804880}
   m_Layer: 5
   m_Name: GameUI
   m_TagString: Untagged
@@ -2391,6 +2452,29 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &3187074378485804880
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6383057245694999037}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20a05becce4897e49ad9f61d4d98d8df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerHpBar: {fileID: 265700866}
+  playerStaminaBar: {fileID: 1704233072665835013}
+  settingIcon: {fileID: 815503938}
+  missionIcon: {fileID: 1659305547}
+  items:
+  - {fileID: 740828472}
+  - {fileID: 1578949839}
+  - {fileID: 1303732198}
+  - {fileID: 718962925}
+  weapon: {fileID: 3850945666013791574}
+  weaponName: {fileID: 3967841660828547112}
 --- !u!1 &6421887744700024751
 GameObject:
   m_ObjectHideFlags: 0
@@ -2400,6 +2484,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4141777783408582830}
+  - component: {fileID: 3665799351564998227}
   m_Layer: 5
   m_Name: SettingUI
   m_TagString: Untagged
@@ -2427,6 +2512,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &3665799351564998227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6421887744700024751}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac1a48aa418c8d343bc49515bcc93bda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6442678076330380599
 GameObject:
   m_ObjectHideFlags: 0
@@ -2529,7 +2626,7 @@ GameObject:
   - component: {fileID: 6019764824992155583}
   - component: {fileID: 3967841660828547112}
   m_Layer: 5
-  m_Name: Text (TMP) (1)
+  m_Name: WeaponName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3010,7 +3107,6 @@ GameObject:
   - component: {fileID: 8136640983981786261}
   - component: {fileID: 8136640983981786260}
   - component: {fileID: 8136640983981786263}
-  - component: {fileID: 459441825}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -3105,22 +3201,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &459441825
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8136640983981786262}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f3393c5dbe3161c438b6b1868b665af3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  startTime: 0.5
-  typingTime: 0.1
-  textUI: {fileID: 8136640982443536410}
-  loadingUI: {fileID: 8136640983575141732}
 --- !u!1 &8228984064038616951
 GameObject:
   m_ObjectHideFlags: 0
@@ -3243,6 +3323,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8172482390454713966}
+  - component: {fileID: 9059401035627747958}
   m_Layer: 5
   m_Name: MissionUI
   m_TagString: Untagged
@@ -3270,3 +3351,15 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &9059401035627747958
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8780181035405074033}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b029ef58f0fed5949b7de5e1dee3f653, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
