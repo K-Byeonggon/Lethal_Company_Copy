@@ -5,11 +5,12 @@ using UnityEngine.UI;
 public class PlayerEx : MonoBehaviour
 {
     //private Item item;
-    public float linesize = 1.0f;
+    public float linesize = 10.0f;
     public Image image;
     [SerializeField] public Vector3 moveVector;
     [SerializeField] public Transform pickedItem;
     public Vector3 direction {  get; private set; }
+    [SerializeField] public Camera camera;
     //private Item item;
     [SerializeField]
     private Inventory inventory;
@@ -37,9 +38,10 @@ public class PlayerEx : MonoBehaviour
             Debug.Log("detatch");
             inventory.RemovetoInventory();
         }
-        Debug.DrawRay(transform.position, transform.forward * linesize, Color.yellow);
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.forward, out hit, linesize))
+        Ray ray = camera.ScreenPointToRay(new Vector2(camera.pixelWidth / 2, camera.pixelHeight / 2));
+        Debug.DrawRay(ray.origin, ray.direction * linesize, Color.yellow);
+        if (Physics.Raycast(ray.origin,ray.direction, out hit, linesize))
         {
             Debug.Log(hit.collider.gameObject.name);
             IUIVisible iUIVisible = hit.transform.GetComponent<IUIVisible>();
