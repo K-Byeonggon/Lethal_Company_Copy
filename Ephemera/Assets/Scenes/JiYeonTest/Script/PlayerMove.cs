@@ -26,12 +26,14 @@ public class PlayerMove : MonoBehaviour
 
 
 
-    private Animator animator;
+    Animator animator;
+    Rigidbody rb;
 
     private void Awake()
     {
         character = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody>();
     }
 
     private void Update()

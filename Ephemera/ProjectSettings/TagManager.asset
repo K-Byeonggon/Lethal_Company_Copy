@@ -6,6 +6,8 @@ TagManager:
   tags:
   - ObtainableItem
   - Plane
+  - Shop
+  - Char
   layers:
   - Default
   - TransparentFX
