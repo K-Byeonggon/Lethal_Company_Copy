@@ -1,6 +1,16 @@
 using System;
 using UnityEngine;
 
+
+public enum Planet
+{
+    Mars,
+    Mercury,
+    Moon,
+    Pluto,
+    Venus,
+}
+
 public enum ObjectType
 {
     Player,

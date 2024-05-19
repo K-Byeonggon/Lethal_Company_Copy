@@ -29,6 +29,18 @@ MonoBehaviour:
     m_Address: InputSystem
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: ca55e05d580355e459eabfc9f9e515a7
+    m_Address: RoomPlayer
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: c221c754079d33244bf6772d48cc6fb9
+    m_Address: LobbyScavenger
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 6fb483a1a1cf41e4884a3a031ea217ce
+    m_Address: Scavenger
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: f53dd5718acd92348a91adf0d1df758a, type: 2}
   m_SchemaSet:

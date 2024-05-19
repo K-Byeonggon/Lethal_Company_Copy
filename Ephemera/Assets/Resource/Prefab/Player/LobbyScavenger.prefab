@@ -350,6 +350,7 @@ GameObject:
   - component: {fileID: 336940152518530286}
   - component: {fileID: 899751727268736732}
   - component: {fileID: 5138456565235692699}
+  - component: {fileID: 3456502816947017799}
   m_Layer: 6
   m_Name: LobbyScavenger
   m_TagString: Untagged
@@ -465,6 +466,18 @@ MonoBehaviour:
   syncInterval: 0
   clientAuthority: 1
   animator: {fileID: 6308544995032092318}
+--- !u!114 &3456502816947017799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 731703305842544222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfe627a9894fda641b8dcfb4bb3d1cff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &876245230567326595
 GameObject:
   m_ObjectHideFlags: 0

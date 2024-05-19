@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1468,7 +1468,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &983197769
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2020,64 +2020,3 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1661087401}
   m_CullTransparentMesh: 1
---- !u!1001 &6522310865552760040
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 102554658719470820, guid: c221c754079d33244bf6772d48cc6fb9, type: 3}
-      propertyPath: m_RootOrder
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 102554658719470820, guid: c221c754079d33244bf6772d48cc6fb9, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -205.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 102554658719470820, guid: c221c754079d33244bf6772d48cc6fb9, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 102554658719470820, guid: c221c754079d33244bf6772d48cc6fb9, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 30.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 102554658719470820, guid: c221c754079d33244bf6772d48cc6fb9, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.42261827
-      objectReference: {fileID: 0}
-    - target: {fileID: 102554658719470820, guid: c221c754079d33244bf6772d48cc6fb9, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 102554658719470820, guid: c221c754079d33244bf6772d48cc6fb9, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0.9063079
-      objectReference: {fileID: 0}
-    - target: {fileID: 102554658719470820, guid: c221c754079d33244bf6772d48cc6fb9, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 102554658719470820, guid: c221c754079d33244bf6772d48cc6fb9, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 102554658719470820, guid: c221c754079d33244bf6772d48cc6fb9, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 130
-      objectReference: {fileID: 0}
-    - target: {fileID: 102554658719470820, guid: c221c754079d33244bf6772d48cc6fb9, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 336940152518530286, guid: c221c754079d33244bf6772d48cc6fb9, type: 3}
-      propertyPath: sceneId
-      value: 3243703194
-      objectReference: {fileID: 0}
-    - target: {fileID: 731703305842544222, guid: c221c754079d33244bf6772d48cc6fb9, type: 3}
-      propertyPath: m_Name
-      value: LobbyScavenger
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: c221c754079d33244bf6772d48cc6fb9, type: 3}

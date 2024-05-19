@@ -5,8 +5,11 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
+
 public class GameManager : SingleTon<GameManager>
 {
+
+
 
     /*public bool IsGamePaused
     {
@@ -110,6 +113,4 @@ public class GameManager : SingleTon<GameManager>
     {
         return;
     }
-
-
 }

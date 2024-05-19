@@ -1,3 +1,4 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Purchasing;
@@ -5,7 +6,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 
-public class PlayerMove : MonoBehaviour
+public class PlayerMove : NetworkBehaviour
 {
     private Vector2 _input;
     private CharacterController character;
@@ -24,6 +25,8 @@ public class PlayerMove : MonoBehaviour
     private float mouseX;
     private float mouseY;
 
+    [SerializeField] GameObject vCam;
+
 
 
     private Animator animator;
@@ -32,6 +35,18 @@ public class PlayerMove : MonoBehaviour
     {
         character = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
+    }
+
+    public override void OnStartClient()
+    {
+        if (!isLocalPlayer)
+        {
+            Debug.Log("isNotLocalPlayer");
+            GetComponent<PlayerInput>().enabled = false;
+            character.enabled = false;
+            this.enabled = false;
+            vCam.SetActive(false);
+        }
     }
 
     private void Update()
@@ -87,7 +102,6 @@ public class PlayerMove : MonoBehaviour
         //_direction = new Vector3(moveVector.x, 0, moveVector.y);
 
         _direction = context.ReadValue<Vector3>();
-
     }
 
     public void OnRun(InputAction.CallbackContext context)

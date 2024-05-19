@@ -16,13 +16,65 @@ public class GameRoomNetworkManager : NetworkRoomManager
     public override void Start()
     {
         base.Start();
-        spawnPrefabs.Add(roomPlayerObjectPrefab.gameObject);
-        spawnPrefabs.Add(gamePlayerObjectPrefab);
+        //spawnPrefabs.Add(roomPlayerObjectPrefab.gameObject);
+        //spawnPrefabs.Add(gamePlayerObjectPrefab);
         playerPrefab = gamePlayerObjectPrefab;
         roomPlayerPrefab = roomPlayerObjectPrefab;
     }
 
-    //(서버에서 호출)호스트가 시작될 때를 포함하여 서버가 시작될 때 호출됩니다.
+    
+
+    //새로운 클라이언트가 서버에 연결되었을 때에 서버에서 호출되는 함수
+    public override void OnRoomServerConnect(NetworkConnectionToClient conn)//GameObject OnRoomServerCreateRoomPlayer(NetworkConnectionToClient conn)
+    {
+        Debug.Log("OnRoomServerCreateRoomPlayer");
+        GameObject gameobject = Instantiate(ResourceManager.Instance.GetPrefab("RoomPlayer")); //Instantiate(roomPlayerObjectPrefab.gameObject);
+        //gameobject의 컴포넌트를 가져와 message로 초기화
+
+        Debug.Log(gameobject.name);
+        NetworkServer.AddPlayerForConnection(conn, gameobject);
+
+
+        GameObject roomCharacter = Instantiate(ResourceManager.Instance.GetPrefab("LobbyScavenger"));
+        NetworkServer.Spawn(roomCharacter, conn);
+    }
+    //클라이언트가 접속했을 때 클라이언트에서 호출되는 함수
+    public override void OnRoomClientConnect() 
+    {
+        Debug.Log("OnRoomClientConnect");
+        ResourceManager.Instance.GetPrefab("RoomPlayer");
+    }
+
+    //GamePlayer를 생성할 때 호출하는 함수
+    public override GameObject OnRoomServerCreateGamePlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
+    {
+        GameObject gameobject = Instantiate(ResourceManager.Instance.GetPrefab("Scavenger")); //Instantiate(gamePlayerObjectPrefab);
+        //gameobject의 컴포넌트를 가져와 message로 초기화
+
+        NetworkServer.AddPlayerForConnection(conn, gameobject);
+        return gameobject;
+    }
+
+
+    #region 게임 필드
+    //돈, 플레이어 상태, 목표 금액
+    #endregion
+
+    #region 게임 로직 함수
+
+    #endregion
+
+
+    /*//room플레이어 생성 함수
+    void OnCreateRoomCharacter(NetworkConnectionToClient conn, CreateRoomCharacterMessage message)
+    {
+        GameObject gameobject = Instantiate(roomPlayerPrefab.gameObject);
+        //gameobject의 컴포넌트를 가져와 message로 초기화
+
+        NetworkServer.AddPlayerForConnection(conn, gameobject);
+    }*/
+
+    /*//(서버에서 호출)호스트가 시작될 때를 포함하여 서버가 시작될 때 호출됩니다.
     public override void OnStartServer()
     {
         base.OnStartServer();
@@ -32,29 +84,7 @@ public class GameRoomNetworkManager : NetworkRoomManager
 
         //GameObject prefab = ResourceManager.Instance.GetPrefab("MoonsooTestScene/Server/Prefab/Player.prefab");
     }
-
-    //새로운 클라이언트가 서버에 연결되었을 때에 호출되는 함수
-    public override void OnRoomServerConnect(NetworkConnectionToClient conn)//GameObject OnRoomServerCreateRoomPlayer(NetworkConnectionToClient conn)
-    {
-        Debug.Log("OnRoomServerCreateRoomPlayer");
-        GameObject gameobject = Instantiate(roomPlayerObjectPrefab.gameObject);
-        //gameobject의 컴포넌트를 가져와 message로 초기화
-
-        Debug.Log(gameobject.name);
-        NetworkServer.AddPlayerForConnection(conn, gameobject);
-    }
-
-    //GamePlayer를 생성할 때 호출하는 함수
-    public override GameObject OnRoomServerCreateGamePlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
-    {
-        GameObject gameobject = Instantiate(gamePlayerObjectPrefab);
-        //gameobject의 컴포넌트를 가져와 message로 초기화
-
-        NetworkServer.AddPlayerForConnection(conn, gameobject);
-        return gameobject;
-    }
-
-    /*//게임플레이어 생성 함수
+    //게임플레이어 생성 함수
     void OnCreateCharacter(NetworkConnectionToClient conn, CreateCharacterMessage message)
     {
         GameObject gameobject = Instantiate(gamePlayerObjectPrefab);

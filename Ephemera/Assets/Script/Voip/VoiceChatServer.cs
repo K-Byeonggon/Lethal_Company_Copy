@@ -34,7 +34,7 @@ public class VoiceChatServer : NetworkBehaviour
                 VoiceDataMessage message = new VoiceDataMessage();
                 message.data = data;
                 // 메시지를 보냄 (기본적으로 Reliable 채널 사용)
-                conn.Send<VoiceDataMessage>(message, 0);
+                //conn.Send<VoiceDataMessage>(message, 0);
             }
         }
     }
