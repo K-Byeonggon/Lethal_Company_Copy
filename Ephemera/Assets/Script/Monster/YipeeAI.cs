@@ -6,11 +6,12 @@ public class YipeeAI : MonoBehaviour
 {
     private Node topNode;
     public Transform player;
+    public Transform bewareOf;
     public float detectionRange = 10f;
     public float stoppingDistance = 2f;
     public UnityEngine.AI.NavMeshAgent navMeshAgent;
 
-    [SerializeField] float attackDistance = 1f;
+    [SerializeField] float attackDistance = 0.5f;
     public Transform nest;
     [SerializeField] Transform Item;
     public bool setDesti = false;
@@ -19,21 +20,35 @@ public class YipeeAI : MonoBehaviour
     public GameObject detectedItem;
     public bool itemFind = false;
     public bool itemHave = false;
+    public bool isAttacked = false;
 
+    private DamageMessage damageMessage;
+    private YipeeHealth yipeeHealth;
+    [SerializeField] float attackCooltime = 2f;
+    private float lastAttackTime;
 
     void Start()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
         ConstructBehaviorTree();
+
+        yipeeHealth = GetComponent<YipeeHealth>();
+        damageMessage = new DamageMessage();
+        damageMessage.damage = 30;
+        damageMessage.damager = gameObject;
     }
 
     void Update()
     {
         topNode.Evaluate();
+        Debug.Log(itemHave);
     }
 
     private void ConstructBehaviorTree()
     {
+        //죽음 시퀀스의 children Node
+        ActionNode dead = new ActionNode(Dead);
+
         //공격 시퀀스의 children Node들
         ActionNode attackWill = new ActionNode(AttackWill);
         ActionNode moveToPlayer = new ActionNode(MoveToPlayer);
@@ -49,18 +64,37 @@ public class YipeeAI : MonoBehaviour
         ActionNode getScrap = new ActionNode(GetScrap);
         ActionNode moveToNest = new ActionNode(MoveToNest);
 
+        //위협 시퀀스의 children Node
+        ActionNode threathen = new ActionNode(Threaten);
+
+        //셀렉터 노드에 들어갈 시퀀스 노드들
         SequenceNode attackSequence = new SequenceNode(new List<Node> { attackWill, moveToPlayer, attackPlayer });
         SequenceNode wanderSequence = new SequenceNode(new List<Node> { setDest, moveToDest });
         SequenceNode detectSequence = new SequenceNode(new List<Node> { setDestToScrap, moveToScrap, getScrap, moveToNest });
-        topNode = new SelectorNode(new List<Node> { attackSequence, wanderSequence, detectSequence });
+        topNode = new SelectorNode(new List<Node> { dead, attackSequence, threathen, wanderSequence, detectSequence, });
     }
+    //죽음 시퀀스 노드
+    private Node.State Dead()
+    {
+        if (yipeeHealth.IsDead)
+        {
+            detectedItem.transform.parent = null;
+            navMeshAgent.SetDestination(transform.position);
+            return Node.State.SUCCESS;
+        }
+        else return Node.State.FAILURE;
+    }
+
 
     //공격의지 활성화(공격 시퀀스)
     private Node.State AttackWill()
     {
-        //1. 플레이어에게 공격 받았는지 bool변수 확인
-        bool isAttacked = false;    //이걸 나중에 다른 bool변수로 바꿔주기.
-        if (isAttacked) { /*플레이어 Transform 갱신*/ return Node.State.SUCCESS; }
+        //1. 플레이어에게 공격 받았는지 bool변수 확인(YipeeHealth에서)
+        if (isAttacked) 
+        { 
+            //YipeeHealth에서 플레이어 갱신. 
+            return Node.State.SUCCESS; 
+        }
         //2. 플레이어에가 근처에 오래 있었는지 확인
         else if (false) { /*플레이어 Transform 갱신*/ return Node.State.SUCCESS; }
         //3. 플레이어가 둥지의 폐품 훔쳐간것을 봄.
@@ -74,6 +108,7 @@ public class YipeeAI : MonoBehaviour
         float distance = Vector3.Distance(transform.position, player.position);
         if (distance > attackDistance)
         {
+            detectedItem.transform.parent = null;
             navMeshAgent.SetDestination(player.position);
             return Node.State.RUNNING;
         }
@@ -89,11 +124,36 @@ public class YipeeAI : MonoBehaviour
         if (Vector3.Distance(transform.position, player.position) <= attackDistance)
         {
             // 공격 로직 수행
-            return Node.State.SUCCESS;
+            if (Time.time - lastAttackTime >= attackCooltime)
+            {
+                LivingEntity playerHealth = player.GetComponent<LivingEntity>();
+                playerHealth.ApplyDamage(damageMessage);
+                lastAttackTime = Time.time;
+                if (playerHealth.dead) isAttacked = false;
+
+                return Node.State.FAILURE;
+            }
         }
-        return Node.State.FAILURE;
+        return Node.State.SUCCESS;
     }
 
+    //위협 시퀀스 노드
+    private Node.State Threaten()
+    {
+        if (bewareOf == null || itemHave) return Node.State.FAILURE;
+        if (Vector3.Distance(bewareOf.position, nest.position) < 2f)
+        {
+            if(Vector3.Distance(transform.position, bewareOf.position) < 2f)
+            {
+                navMeshAgent.SetDestination(transform.position);
+                transform.LookAt(bewareOf.position);
+                Debug.Log("위협하는 동작");
+                return Node.State.SUCCESS;
+            }
+            else return Node.State.RUNNING;
+        }
+        else return Node.State.RUNNING;
+    }
 
     //랜덤 목적지 설정(한번만 실행)(돌아다니기 시퀀스)
     private Node.State SetDest()
@@ -145,6 +205,9 @@ public class YipeeAI : MonoBehaviour
         Debug.Log("MoveToScrap");
         if (itemFind)
         {
+            //도중에 아이템이 내가 아닌 누군가에게 주워지면 FAILURE.
+            if (detectedItem.transform.parent != null && detectedItem.transform.parent != transform.GetChild(1)) return Node.State.FAILURE;
+
             if (Vector3.Distance(transform.position, navMeshAgent.destination) <= 0.5f)
             {
                 Debug.Log("거리가 이제 충분함.");
@@ -152,11 +215,6 @@ public class YipeeAI : MonoBehaviour
             }
             else
             {
-                Debug.Log("아니 RUNNING되고 있는거야?");
-
-                //도중에 아이템이 내가 아닌 누군가에게 주워지면 FAILURE.
-                if(detectedItem.transform.parent != null && detectedItem.transform.parent != transform) return Node.State.FAILURE;
-
                 return Node.State.RUNNING;
             }
         }
@@ -202,8 +260,10 @@ public class YipeeAI : MonoBehaviour
             setDesti = false;
             itemFind = false;
             itemHave = false;
-            return Node.State.SUCCESS;
+            return Node.State.FAILURE;
         }
         else { return Node.State.RUNNING; }
     }
+    //탐색 시퀀스 더 세분화해야 내려놓을 차례아닌데 내려 놓는거 안할듯
+
 }

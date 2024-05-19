@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 397372983698840386}
-  - component: {fileID: 397372983698840390}
+  - component: {fileID: 6155471976321383721}
   m_Layer: 0
   m_Name: ItemDetactColiider
   m_TagString: Untagged
@@ -32,8 +32,8 @@ Transform:
   m_Father: {fileID: 754719969716813105}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &397372983698840390
-BoxCollider:
+--- !u!135 &6155471976321383721
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -43,7 +43,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 5, y: 1, z: 5}
+  m_Radius: 2.5
   m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!1 &397372984190919556
 GameObject:
@@ -87,6 +87,7 @@ GameObject:
   - component: {fileID: 146782478283050089}
   - component: {fileID: 397372983825918055}
   - component: {fileID: 397372983825918054}
+  - component: {fileID: 28529020706389273}
   - component: {fileID: 1144964276231338771}
   m_Layer: 0
   m_Name: hoard_bug
@@ -148,6 +149,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
+  bewareOf: {fileID: 0}
   detectionRange: 10
   stoppingDistance: 2
   navMeshAgent: {fileID: 0}
@@ -160,6 +162,21 @@ MonoBehaviour:
   detectedItem: {fileID: 0}
   itemFind: 0
   itemHave: 0
+  isAttacked: 0
+  attackCooltime: 2
+--- !u!114 &28529020706389273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 667281849422206675}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba96368184ab27c4aa8c643a4f2cddb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
 --- !u!95 &1144964276231338771
 Animator:
   serializedVersion: 5
@@ -417,7 +434,7 @@ GameObject:
   - component: {fileID: 1408457546533708015}
   - component: {fileID: 397372983887096708}
   - component: {fileID: 397372983887096711}
-  - component: {fileID: 397372983887096762}
+  - component: {fileID: 1327907964982988613}
   m_Layer: 0
   m_Name: default
   m_TagString: Untagged
@@ -521,7 +538,7 @@ CapsuleCollider:
   m_Height: 0.7
   m_Direction: 1
   m_Center: {x: 0, y: 0.35, z: 0}
---- !u!114 &397372983887096762
+--- !u!114 &1327907964982988613
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
