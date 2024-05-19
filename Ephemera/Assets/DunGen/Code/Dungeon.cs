@@ -225,8 +225,8 @@ namespace DunGen
             if (doorPrefab != null)
             {
                 GameObject door = Instantiate(doorPrefab, chosenDoor.transform);
-                door.transform.localPosition = Vector3.zero;
-
+                //door.transform.localPosition = Vector3.zero;
+                door.transform.localPosition = Vector3.up;
                 if (!chosenDoor.AvoidRotatingDoorPrefab)
                     door.transform.localRotation = Quaternion.identity;
 

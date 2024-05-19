@@ -128,6 +128,11 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 3210344009595622708, guid: 00c15fb09356ffb42aed1eaced2af1bc, type: 3}
   m_PrefabInstance: {fileID: 2327242871252979567}
   m_PrefabAsset: {fileID: 0}
+--- !u!20 &96738770 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 2327242871728093516, guid: 00c15fb09356ffb42aed1eaced2af1bc, type: 3}
+  m_PrefabInstance: {fileID: 2327242871252979567}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &260483500
 GameObject:
   m_ObjectHideFlags: 0
@@ -1183,6 +1188,7 @@ MonoBehaviour:
   image: {fileID: 1052389247}
   moveVector: {x: 0, y: 0, z: 0}
   pickedItem: {fileID: 949411530}
+  camera: {fileID: 0}
   inventory: {fileID: 0}
 --- !u!136 &1440992542
 CapsuleCollider:
@@ -2416,6 +2422,10 @@ PrefabInstance:
       propertyPath: image
       value: 
       objectReference: {fileID: 1052389247}
+    - target: {fileID: 2327242872165730046, guid: 00c15fb09356ffb42aed1eaced2af1bc, type: 3}
+      propertyPath: camera
+      value: 
+      objectReference: {fileID: 96738770}
     - target: {fileID: 2327242872165730046, guid: 00c15fb09356ffb42aed1eaced2af1bc, type: 3}
       propertyPath: linesize
       value: 9.83
