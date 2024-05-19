@@ -6,8 +6,16 @@ using UnityEngine.UI;
 
 public class Shop : MonoBehaviour
 {
-    void OnCollisionEnter(Collision collision)
+    void OnCollisionStay(Collision collision)
     {
-        Debug.Log(collision.gameObject.name);
+        if (collision.gameObject.name == "Player")
+        {
+            Debug.Log(collision.gameObject.name);
+            UI.instance.Interaction.gameObject.SetActive(true);
+        }
+    }
+    void OnCollisionExit(Collision collision)
+    {
+        UI.instance.Interaction.gameObject.SetActive(false);
     }
 }
