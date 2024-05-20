@@ -63,6 +63,7 @@ public class YipeeAI : MonoBehaviour
         ActionNode moveToScrap = new ActionNode(MoveToScrap);
         ActionNode getScrap = new ActionNode(GetScrap);
         ActionNode moveToNest = new ActionNode(MoveToNest);
+        ActionNode setScrap = new ActionNode(SetScrap);
 
         //위협 시퀀스의 children Node
         ActionNode threathen = new ActionNode(Threaten);
@@ -70,9 +71,10 @@ public class YipeeAI : MonoBehaviour
         //셀렉터 노드에 들어갈 시퀀스 노드들
         SequenceNode attackSequence = new SequenceNode(new List<Node> { attackWill, moveToPlayer, attackPlayer });
         SequenceNode wanderSequence = new SequenceNode(new List<Node> { setDest, moveToDest });
-        SequenceNode detectSequence = new SequenceNode(new List<Node> { setDestToScrap, moveToScrap, getScrap, moveToNest });
+        SequenceNode detectSequence = new SequenceNode(new List<Node> { setDestToScrap, moveToScrap, getScrap, moveToNest, setScrap });
         topNode = new SelectorNode(new List<Node> { dead, attackSequence, threathen, wanderSequence, detectSequence, });
     }
+
     //죽음 시퀀스 노드
     private Node.State Dead()
     {
@@ -84,7 +86,6 @@ public class YipeeAI : MonoBehaviour
         }
         else return Node.State.FAILURE;
     }
-
 
     //공격의지 활성화(공격 시퀀스)
     private Node.State AttackWill()
@@ -210,11 +211,11 @@ public class YipeeAI : MonoBehaviour
 
             if (Vector3.Distance(transform.position, navMeshAgent.destination) <= 0.5f)
             {
-                Debug.Log("거리가 이제 충분함.");
                 return Node.State.SUCCESS;
             }
             else
             {
+                Debug.Log("RUNNING이 의미가 있나?");
                 return Node.State.RUNNING;
             }
         }
@@ -239,6 +240,7 @@ public class YipeeAI : MonoBehaviour
             detectedItem.transform.SetParent(transform.GetChild(1));
             itemHave = true;
 
+            //둥지로 목적지 설정.
             navMeshAgent.SetDestination(nest.position);
             setDesti = true;
             return Node.State.SUCCESS;
@@ -254,7 +256,16 @@ public class YipeeAI : MonoBehaviour
         Debug.Log("MoveToNest");
         if (Vector3.Distance(transform.position, navMeshAgent.destination) <= 0.5f)
         {
-            //폐품 내려놓기
+            return Node.State.SUCCESS;
+        }
+        else { return Node.State.RUNNING; }
+    }
+
+    //페품 내려놓기(탐색 시퀀스)
+    private Node.State SetScrap()
+    {
+        if(itemHave)
+        {
             Debug.Log("내려놓음");
             detectedItem.transform.parent = null;
             setDesti = false;
@@ -262,8 +273,6 @@ public class YipeeAI : MonoBehaviour
             itemHave = false;
             return Node.State.FAILURE;
         }
-        else { return Node.State.RUNNING; }
+        else return Node.State.SUCCESS;
     }
-    //탐색 시퀀스 더 세분화해야 내려놓을 차례아닌데 내려 놓는거 안할듯
-
 }
