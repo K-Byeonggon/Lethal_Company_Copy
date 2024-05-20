@@ -9,6 +9,7 @@ public class Mine_Item : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        Debug.Log(collision.gameObject.name);
         if (collision.gameObject.CompareTag("Player"))
         {
             Debug.Log(collision.gameObject.name);

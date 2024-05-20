@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
 public class Inventory : MonoBehaviour
@@ -9,19 +8,23 @@ public class Inventory : MonoBehaviour
     public List<Slotdata> slots = new List<Slotdata>();
     public int maxSlot = 4;
     public int currentItemSlot = 0;
+
     private void Awake()
     {
         player = GetComponent<PlayerEx>();
+        if (player == null)
+        {
+            Debug.LogError("PlayerEx component not found on this GameObject.");
+        }
+
         for (int i = 0; i < maxSlot; i++)
         {
             slots.Add(new Slotdata());
         }
     }
+
     public virtual void AddtoInventory(GameObject item)
     {
-        //현재 슬롯에 아이템이 있는지?
-        //아이템을 얻는다
-        //아이템 슬롯에 추가한다
         if (slots[currentItemSlot].isEmpty)
         {
             slots[currentItemSlot].isEmpty = false;
@@ -29,25 +32,52 @@ public class Inventory : MonoBehaviour
             item.GetComponent<Item>().PickUp(player);
         }
     }
-    //현재 들고있는 물건을 버리는 함수
+
     public void RemovetoInventory()
     {
-        if (slots[currentItemSlot].isEmpty == false)
+        if (!slots[currentItemSlot].isEmpty)
         {
             slots[currentItemSlot].slotObj.GetComponent<Item>().PickDown(player);
             slots[currentItemSlot].isEmpty = true;
             slots[currentItemSlot].slotObj = null;
         }
     }
+
     public virtual void ChangeItemSlot(int index)
     {
-        if (index < 0 || index > 3)
+        if (index < 0 || index >= maxSlot)
             return;
+
+        var currentItem = GetCurrentItem()?.GetComponent<Item>();
+        if (currentItem != null && currentItem.isBothHandGrab)
+        {
+            Debug.Log("Cannot change item slot. Current item requires both hands.");
+            return;
+        }
+
         GetCurrentItem()?.SetActive(false);
         currentItemSlot = index;
         GetCurrentItem()?.SetActive(true);
+
+        Debug.Log("Changed to item slot: " + currentItemSlot);
     }
 
-    public virtual GameObject GetCurrentItem() => slots[currentItemSlot].slotObj;
-    
+    public bool IsUsable(GameObject usableItem)
+    {
+        foreach (var slot in slots)
+        {
+            if (slot.slotObj != null && slot.slotObj.CompareTag("UsableItem"))
+            {
+                Debug.Log("Usable item found: " + slot.slotObj.name);
+                return true;
+            }
+        }
+        Debug.Log("No usable item found.");
+        return false;
+    }
+
+    public virtual GameObject GetCurrentItem()
+    {
+        return slots[currentItemSlot].slotObj;
+    }
 }

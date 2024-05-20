@@ -29,6 +29,7 @@ public class Item : MonoBehaviour,IUIVisible,IItemUsable,IItemObtainable
         Debug.Log("Pickdown");
         transform.SetParent(null);
         collider.enabled = true;
+        rb.isKinematic = false;
         rb.useGravity = true;
         transform.position = owner.pickedItem.transform.position + owner.pickedItem.transform.forward;
         rb.AddForce(owner.pickedItem.transform.forward * 5.0f, ForceMode.Impulse); 
@@ -40,6 +41,7 @@ public class Item : MonoBehaviour,IUIVisible,IItemUsable,IItemObtainable
         {
             transform.SetParent(owner.pickedItem);
             collider.enabled = false;
+            rb.isKinematic = true;
             rb.useGravity = false;
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;

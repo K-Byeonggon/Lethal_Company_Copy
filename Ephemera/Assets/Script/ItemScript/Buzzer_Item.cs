@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class Buzzer_Item : Item, IItemUsable
 {
-    public AudioClip audioClip; 
+    public AudioClip audioClip;
     private AudioSource audioSource;
+    private Inventory playerInventory;
 
     private void Start()
     {
@@ -15,6 +16,24 @@ public class Buzzer_Item : Item, IItemUsable
             audioSource = gameObject.AddComponent<AudioSource>();
         }
         audioSource.clip = audioClip;
+
+        // Assuming the player has a tag "Player"
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            playerInventory = player.GetComponent<Inventory>();
+            if (playerInventory == null)
+            {
+                Debug.LogError("Inventory component not found on the Player object.");
+            }
+        }
+        else
+        {
+            Debug.LogError("Player object with tag 'Player' not found.");
+        }
+
+        // Ensure the item has the "UsableItem" tag
+        gameObject.tag = "UsableItem";
     }
 
     private void FixedUpdate()
@@ -27,14 +46,17 @@ public class Buzzer_Item : Item, IItemUsable
 
     public override void UseItem()
     {
-        if (audioClip != null)
+        if (audioClip != null && playerInventory != null && playerInventory.IsUsable(gameObject))
         {
-           
             if (!audioSource.isPlaying)
             {
                 audioSource.Play();
                 Debug.Log("˜—˜—!");
             }
+        }
+        else
+        {
+            Debug.Log("Item is not usable or inventory is null.");
         }
     }
 }

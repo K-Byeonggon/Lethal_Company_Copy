@@ -6,6 +6,9 @@ TagManager:
   tags:
   - ObtainableItem
   - Plane
+  - Mine
+  - DiedPlayer
+  - UsableItem
   layers:
   - Default
   - TransparentFX
