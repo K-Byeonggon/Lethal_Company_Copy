@@ -24,8 +24,6 @@ public class PlayerMove : MonoBehaviour
     private float mouseX;
     private float mouseY;
 
-
-
     Animator animator;
     Rigidbody rb;
 
@@ -48,7 +46,7 @@ public class PlayerMove : MonoBehaviour
         ApplyMovement();
         SetAnimator();
         Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.lockState = CursorLockMode.Locked;
     }
 
     void ApplyGravity()
@@ -106,7 +104,6 @@ public class PlayerMove : MonoBehaviour
             speed = 20.0f;
             //animator.SetBool("IsRun", false);
         }
-
     }
 
     public void OnJump(InputAction.CallbackContext context)
@@ -140,6 +137,8 @@ public class PlayerMove : MonoBehaviour
     {
 
     }
+
+
 
     private bool IsGround() => character.isGrounded;
 }

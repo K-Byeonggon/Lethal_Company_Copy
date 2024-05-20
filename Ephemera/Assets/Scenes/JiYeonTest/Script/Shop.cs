@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class Shop : MonoBehaviour
 {
-    void OnCollisionStay(Collision collision)
+    void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.name == "Player")
         {
