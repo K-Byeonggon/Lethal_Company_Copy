@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class YipeeAI : MonoBehaviour
+public class YipeeAI : MonsterAI
 {
     private Node topNode;
     public Transform player;

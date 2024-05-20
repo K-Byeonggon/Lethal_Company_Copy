@@ -2,25 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FieldOfView : MonoBehaviour
+public class FieldOfView1 : MonoBehaviour
 {
     public float viewRadius = 10f;
     [Range(0, 360)]
     public float viewAngle = 90f;
     public LayerMask targetMask;
     public LayerMask obstacleMask;
-    public MeshFilter viewMeshFilter;
+    public LineRenderer lineRenderer;
     public int edgeResolveIterations = 4;
     public float edgeDstThreshold = 0.5f;
 
-    private Mesh viewMesh;
-
     protected virtual void Start()
     {
-        viewMesh = new Mesh();
-        viewMesh.name = "View Mesh";
-        viewMeshFilter.mesh = viewMesh;
-
+        lineRenderer = GetComponent<LineRenderer>();
+        lineRenderer.positionCount = 0; // 초기 포지션 카운트를 0으로 설정
         StartCoroutine("FindTargetsWithDelay", .2f);
     }
 
@@ -33,16 +29,14 @@ public class FieldOfView : MonoBehaviour
         }
     }
 
-    protected virtual void LateUpdate()
+    private void LateUpdate()
     {
-        //시야각을 보여주는 함수. 씬에서만 보인다.
         DrawFieldOfView();
     }
 
-    //이부분이 각 개체마다 달라야 한다.
     public virtual void FindVisibleTargets()
     {
-        //감지 범위와 무엇을 감지할지 적기.
+        // 기본 타겟 감지 로직 (필요시 구현)
     }
 
     void DrawFieldOfView()
@@ -58,30 +52,18 @@ public class FieldOfView : MonoBehaviour
             viewPoints.Add(newViewCast.point);
         }
 
-        int vertexCount = viewPoints.Count + 1;
-        Vector3[] vertices = new Vector3[vertexCount];
-        int[] triangles = new int[(vertexCount - 2) * 3];
+        lineRenderer.positionCount = viewPoints.Count + 1;
 
-        vertices[0] = Vector3.zero;
+        // 첫 번째 점을 오브젝트의 위치로 설정
+        lineRenderer.SetPosition(0, transform.position);
 
-        for (int i = 0; i < vertexCount - 1; i++)
+        for (int i = 0; i < viewPoints.Count; i++)
         {
-            vertices[i + 1] = transform.InverseTransformPoint(viewPoints[i]);
-
-            if (i < vertexCount - 2)
-            {
-                triangles[i * 3] = 0;
-                triangles[i * 3 + 1] = i + 1;
-                triangles[i * 3 + 2] = i + 2;
-            }
+            lineRenderer.SetPosition(i + 1, viewPoints[i]);
         }
 
-        viewMesh.Clear();
-        
-        viewMesh.vertices = vertices;
-        viewMesh.triangles = triangles;
-        viewMesh.RecalculateNormals();
-        
+        // 마지막 점을 다시 오브젝트의 위치로 설정하여 시야를 닫음
+        lineRenderer.SetPosition(viewPoints.Count, transform.position);
     }
 
     private ViewCastInfo ViewCast(float globalAngle)
