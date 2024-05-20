@@ -56,15 +56,6 @@ public class GameRoomNetworkManager : NetworkRoomManager
     }
 
 
-    #region 게임 필드
-    //돈, 플레이어 상태, 목표 금액
-    #endregion
-
-    #region 게임 로직 함수
-
-    #endregion
-
-
     /*//room플레이어 생성 함수
     void OnCreateRoomCharacter(NetworkConnectionToClient conn, CreateRoomCharacterMessage message)
     {

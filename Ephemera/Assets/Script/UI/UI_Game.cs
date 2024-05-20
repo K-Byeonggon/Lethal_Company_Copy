@@ -16,6 +16,8 @@ public class UI_Game : MonoBehaviour
     [SerializeField]
     private UI_Blink missionIcon;
     [SerializeField]
+    private List<GameObject> OtherPlayers;
+    [SerializeField]
     private List<Image> items;
     [SerializeField]
     private Image weapon;
@@ -24,8 +26,13 @@ public class UI_Game : MonoBehaviour
 
     private List<Slider> otherHpBars;
 
+    private bool isActive = false;
+
     private void Update()
     {
+        if (isActive == false)
+            return;
+
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             ItemSelection(0);
