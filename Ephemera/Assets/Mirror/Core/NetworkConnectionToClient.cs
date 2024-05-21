@@ -217,9 +217,6 @@ namespace Mirror
             owned.Clear();
         }
 
-        public void Send<T>(T message, object defaultReliable)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }

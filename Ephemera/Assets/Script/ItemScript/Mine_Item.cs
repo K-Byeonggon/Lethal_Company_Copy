@@ -5,16 +5,18 @@ using UnityEngine;
 public class Mine_Item : MonoBehaviour
 {
     [SerializeField]
-    private GameObject explosionPrefab; 
+    private GameObject explosionPrefab;
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        Debug.Log(other.gameObject.name);
+        if (other.gameObject.CompareTag("Player"))
         {
-            Debug.Log(collision.gameObject.name);
+            Debug.Log(other.gameObject.name);
             ActiveMine();
         }
     }
+    
     public void ActiveMine()
     {
         Debug.Log("Æã");

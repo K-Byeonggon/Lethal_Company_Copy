@@ -15,4 +15,5 @@ MonoBehaviour:
   itemName: circular_saw
   itemMinPrice: 40
   itemMaxPrice: 80
-  isBothHand: 0
+  isBothHand: 1
+  image: {fileID: 0}

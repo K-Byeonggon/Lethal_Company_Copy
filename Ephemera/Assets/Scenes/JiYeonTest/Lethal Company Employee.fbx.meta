@@ -16,8 +16,7 @@ ModelImporter:
     optimizeGameObjects: 0
     removeConstantScaleCurves: 1
     motionNodeName: 
-    rigImportErrors: "Avatar creation failed:\n\tTransform 'Head_spine_004_end (1)'
-      for human bone 'Head' not found\n"
+    rigImportErrors: 
     rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
@@ -380,7 +379,7 @@ ModelImporter:
       parentName: Lethal Company Employee(Clone)
       position: {x: 0.031215122, y: 0.06868469, z: 0.7235149}
       rotation: {x: -0.7071067, y: -0.000007066864, z: 0.000006660907, w: 0.7071068}
-      scale: {x: 100, y: 100, z: 100}
+      scale: {x: 25, y: 25, z: 25}
     - name: spine_001
       parentName: Armature
       position: {x: -0.000000052782287, y: 0.0073335236, z: 0.09089918}
@@ -464,7 +463,7 @@ ModelImporter:
     - name: finger4_L
       parentName: hand_L
       position: {x: 0.0016114713, y: 0.010642446, z: -0.00017885148}
-      rotation: {x: 0.011694007, y: -0.7080373, z: 0.023422996, w: 0.70568955}
+      rotation: {x: 0.011694008, y: -0.7080373, z: 0.023422997, w: 0.70568955}
       scale: {x: 0.9999998, y: 0.9999999, z: 0.9999999}
     - name: finger4_L_001
       parentName: finger4_L

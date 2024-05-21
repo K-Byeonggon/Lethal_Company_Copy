@@ -8,6 +8,7 @@ public class ItemData : ScriptableObject
     public int itemMinPrice;
     public int itemMaxPrice;
     public bool isBothHand;
+    public Sprite image;
     public int GetRandomPrice()
     {
         return Random.Range(itemMinPrice, itemMaxPrice);

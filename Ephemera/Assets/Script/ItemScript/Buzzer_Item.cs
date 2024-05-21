@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class Buzzer_Item : Item, IItemUsable
 {
-    public AudioClip audioClip; 
+    public AudioClip audioClip;
     private AudioSource audioSource;
+    private Inventory playerInventory;
 
     private void Start()
     {
@@ -17,24 +18,12 @@ public class Buzzer_Item : Item, IItemUsable
         audioSource.clip = audioClip;
     }
 
-    private void FixedUpdate()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            UseItem();
-        }
-    }
-
     public override void UseItem()
     {
-        if (audioClip != null)
+        if (!audioSource.isPlaying)
         {
-           
-            if (!audioSource.isPlaying)
-            {
-                audioSource.Play();
-                Debug.Log("˜—˜—!");
-            }
+            audioSource.Play();
+            Debug.Log("˜—˜—!");
         }
     }
 }

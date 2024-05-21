@@ -4,11 +4,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using Unity.VisualScripting;
+using static UnityEditor.Progress;
 public class Item : MonoBehaviour,IUIVisible,IItemUsable,IItemObtainable
 {
-    [SerializeField] public bool isBothHandGrab;
     [SerializeField] public ItemData itemData;
-    [SerializeField]public int itemPrice;
+    [SerializeField] public int itemPrice;
+    public bool IsBothHandGrab { get { return itemData.isBothHand; } }
     
 
     [SerializeField]
@@ -24,27 +25,30 @@ public class Item : MonoBehaviour,IUIVisible,IItemUsable,IItemObtainable
         itemPrice = itemData.GetRandomPrice();
     }
 
-    public void PickDown(PlayerEx owner)
+    public void PickDown(Inventory owner)
     {
         Debug.Log("Pickdown");
         transform.SetParent(null);
         collider.enabled = true;
+        rb.isKinematic = false;
         rb.useGravity = true;
         transform.position = owner.pickedItem.transform.position + owner.pickedItem.transform.forward;
         rb.AddForce(owner.pickedItem.transform.forward * 5.0f, ForceMode.Impulse); 
     }
 
-    public void PickUp(PlayerEx owner)//gamemanager
+    public void PickUp(Inventory owner)//gamemanager
     {
         if (owner != null)
         {
             transform.SetParent(owner.pickedItem);
             collider.enabled = false;
+            rb.isKinematic = true;
             rb.useGravity = false;
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
             transform.position = owner.pickedItem.position;
-            
+            transform.rotation = owner.pickedItem.transform.rotation;
+
         }
     }
 
@@ -67,14 +71,5 @@ public class Item : MonoBehaviour,IUIVisible,IItemUsable,IItemObtainable
     {
         return itemPrice;
     }
-    /*private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.transform.CompareTag("Plane"))
-        {
-            rb.useGravity = false;
-            collider.enabled = false;
-            rb.velocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-        }
-    }*/
+    
 }

@@ -15,4 +15,5 @@ MonoBehaviour:
   itemName: asynchronous_motor
   itemMinPrice: 40
   itemMaxPrice: 100
-  isBothHand: 0
+  isBothHand: 1
+  image: {fileID: 0}
