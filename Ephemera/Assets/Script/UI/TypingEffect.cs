@@ -163,6 +163,11 @@ public class TypingEffect : MonoBehaviour
             count++;
             yield return new WaitForSeconds(typingTime);
         }
+        yield return new WaitForSeconds(1f);
+
+        textUI.text = "";
         loadingUI.text = "";
+
+        this.gameObject.SetActive(false);
     }
 }

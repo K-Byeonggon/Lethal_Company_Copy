@@ -12,8 +12,8 @@ public class UIController : MonoBehaviour
     UI_Setting ui_Setting;
     [SerializeField]
     UI_Mission ui_Mission;
-    //[SerializeField]
-    //UI_Setup ui_Setup;
+    [SerializeField]
+    UI_Alarm ui_Alarm;
 
 
     private void Start()

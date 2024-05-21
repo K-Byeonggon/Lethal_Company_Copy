@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,7 +17,7 @@ public class UI_Game : MonoBehaviour
     [SerializeField]
     private UI_Blink missionIcon;
     [SerializeField]
-    private List<GameObject> OtherPlayers;
+    private List<OtherPlayerStatus> OtherPlayers;
     [SerializeField]
     private List<Image> items;
     [SerializeField]
@@ -24,9 +25,21 @@ public class UI_Game : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI weaponName;
 
+    [SerializeField]
+    private List<UISpriteSetup> uISpriteSetups;
+
     private List<Slider> otherHpBars;
 
     private bool isActive = false;
+
+    private void Start()
+    {
+        foreach (var uISpriteSetup in uISpriteSetups)
+        {
+            uISpriteSetup.OnSetup();
+        }
+    }
+
 
     private void Update()
     {
@@ -50,25 +63,24 @@ public class UI_Game : MonoBehaviour
             ItemSelection(3);
         }
     }
-
     public void Init()
     {
 
     }
-
     //클라이언트 추가, UI hpbar 추가
     public void AddClient()
     {
 
     }
-
     //UI 상호작용 깜박임
     public void UIInteraction()
     {
 
     }
+    public void SetUp()
+    {
 
-
+    }
     public void ItemSelection(int index)
     {
         foreach (var item in items)
@@ -87,4 +99,5 @@ public class UI_Game : MonoBehaviour
     {
         items[index].sprite = image;
     }
+
 }
