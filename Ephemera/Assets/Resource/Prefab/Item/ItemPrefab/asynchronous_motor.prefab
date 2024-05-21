@@ -112,7 +112,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03c1534ee5c1dc24a87e9a9917a408ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isBothHandGrab: 0
+  itemData: {fileID: 11400000, guid: 3f877804332f1b340ac0e5a930b5cc71, type: 2}
+  itemPrice: 0
   image: {fileID: 0}
 --- !u!54 &4801213595807758608
 Rigidbody:

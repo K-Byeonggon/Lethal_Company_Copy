@@ -15,4 +15,5 @@ MonoBehaviour:
   itemName: MetalContainer
   itemMinPrice: 100
   itemMaxPrice: 170
-  isBothHand: 0
+  isBothHand: 1
+  image: {fileID: 0}

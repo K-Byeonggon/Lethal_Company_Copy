@@ -7,7 +7,6 @@ public class PlayerEx : MonoBehaviour
     public float linesize = 10.0f;
     public Image image;
     [SerializeField] public Vector3 moveVector;
-    [SerializeField] public Transform pickedItem;
     public Vector3 direction { get; private set; }
     [SerializeField] public Camera camera;
     [SerializeField]
@@ -18,26 +17,21 @@ public class PlayerEx : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        var currentItem = inventory.GetCurrentItem()?.GetComponent<Item>();
-
-        if (currentItem != null && !currentItem.isBothHandGrab)
+        if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                inventory.ChangeItemSlot(0);
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                inventory.ChangeItemSlot(1);
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha3))
-            {
-                inventory.ChangeItemSlot(2);
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha4))
-            {
-                inventory.ChangeItemSlot(3);
-            }
+            inventory.ChangeItemSlot(0);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            inventory.ChangeItemSlot(1);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            inventory.ChangeItemSlot(2);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            inventory.ChangeItemSlot(3);
         }
 
         if (Input.GetKeyDown(KeyCode.F))
@@ -52,13 +46,16 @@ public class PlayerEx : MonoBehaviour
 
         if (Physics.Raycast(ray.origin, ray.direction, out hit, linesize))
         {
-            Debug.Log(hit.collider.gameObject.name);
+            //Debug.Log(hit.collider.gameObject.name);
             IUIVisible iUIVisible = hit.transform.GetComponent<IUIVisible>();
             if (iUIVisible != null)
             {
                 iUIVisible.UIvisible();
             }
-
+            else
+            {
+                image.gameObject.SetActive(false);
+            }
             var obtainableItem = hit.transform.GetComponent<Item>();
             if (obtainableItem != null)
             {
@@ -75,10 +72,7 @@ public class PlayerEx : MonoBehaviour
         }
     }
 
-    void ImageActive()
-    {
-        image.gameObject.SetActive(true);
-    }
+    
 
     private void OnCollisionEnter(Collision collision)
     {
