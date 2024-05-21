@@ -35,7 +35,7 @@ public class FieldOfView : MonoBehaviour
 
     protected virtual void LateUpdate()
     {
-        //시야각을 보여주는 함수. 씬에서만 보인다.
+        //시야각을 보여주는 함수. 마지막에 게임을 빌드할때는 주석처리해야한다.
         DrawFieldOfView();
     }
 

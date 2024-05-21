@@ -10,16 +10,17 @@ public class CoilheadAI : MonsterAI
     private DamageMessage damageMessage;
     public bool sawPlayer = false;
     public Transform target;
-    [SerializeField] float attackDistance = 0.2f;
+    [SerializeField] float attackDistance = 1f;
     private float lastAttackTime;
     [SerializeField] float attackCooltime = 0.2f;
     [SerializeField] float wanderRadius = 10f;
     public bool setDesti = false;
 
-    // Start is called before the first frame update
+
     void Start()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
+
         ConstructBehaviorTree();
 
         damageMessage = new DamageMessage();
@@ -82,6 +83,9 @@ public class CoilheadAI : MonsterAI
     //[공격 시퀀스] 플레이어를 향해 이동
     private Node.State MoveToPlayer()
     {
+        Debug.Log("MoveToPlayer");
+        Debug.Log(transform.name + transform.position + ", " + target.name + target.position);
+        Debug.Log(Vector3.Distance(transform.position, target.position));
         if(Vector3.Distance(transform.position, target.position) <= attackDistance)
         {
             Debug.Log("다가갔다.");

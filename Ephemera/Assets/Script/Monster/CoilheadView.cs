@@ -15,11 +15,6 @@ public class CoilheadView : FieldOfView
         coilhead = transform.parent.GetComponent<CoilheadAI>();
     }
 
-    protected override void LateUpdate()
-    {
-        base.LateUpdate();
-    }
-
     public override void FindVisibleTargets()
     {
         List<GameObject> currentlyVisibleTargets = new List<GameObject>();

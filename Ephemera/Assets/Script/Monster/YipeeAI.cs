@@ -96,7 +96,7 @@ public class YipeeAI : MonsterAI
             //YipeeHealth에서 플레이어 갱신. 
             return Node.State.SUCCESS; 
         }
-        //2. 플레이어에가 근처에 오래 있었는지 확인
+        //2. 플레이어가 자신을 7초 이상 쳐다봤는지 확인
         else if (false) { /*플레이어 Transform 갱신*/ return Node.State.SUCCESS; }
         //3. 플레이어가 둥지의 폐품 훔쳐간것을 봄.
         else if(false) { /*플레이어 Transform 갱신*/ return Node.State.SUCCESS; }
