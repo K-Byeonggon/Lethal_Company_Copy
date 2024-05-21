@@ -6,7 +6,7 @@ using UnityEngine;
 public class ItmeData : ScriptableObject
 {
     [Header("ITEM DATA")]
-    public int itemType;
+    public int itemid;
     public string itemName;
     public int amount;
 
