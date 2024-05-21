@@ -101,6 +101,8 @@ public class PlayerMove : NetworkBehaviour
         //_direction = new Vector3(moveVector.x, 0, moveVector.y);
 
         _direction = context.ReadValue<Vector3>();
+
+        Debug.Log($"Move state: {context.phase}");
     }
 
     public void OnRun(InputAction.CallbackContext context)

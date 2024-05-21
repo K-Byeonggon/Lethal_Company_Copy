@@ -1,7 +1,17 @@
 using System;
 using UnityEngine;
 
-
+public enum InputType
+{
+    OnMove,
+    OnRun,
+    OnJump,
+    OnChangItem,
+    OnLook,
+    OnAttack,
+    OnInteraction,
+    OnCrouch,
+}
 public enum GameStateType
 {
     ResetState,
