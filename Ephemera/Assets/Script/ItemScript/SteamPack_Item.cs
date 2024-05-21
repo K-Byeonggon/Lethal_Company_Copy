@@ -5,13 +5,10 @@ using UnityEngine;
 
 public class SteamPack_Item : Item, IItemUsable
 {
-    
+    //player참조
     public override void UseItem()
     {
-        if (this == null && Input.GetMouseButtonDown(0))
-        {
-        this.gameObject.SetActive(false);
-        }
+        //player의 이동속도 증가
     }
 }
     
