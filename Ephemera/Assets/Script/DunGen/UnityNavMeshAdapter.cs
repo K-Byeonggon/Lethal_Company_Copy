@@ -28,16 +28,18 @@ namespace DunGen.Adapters
             // NavMeshSurface ����
             navMeshSurface.transform.position = dungeon.Bounds.center;
             navMeshSurface.transform.localScale = dungeon.Bounds.size;
-
+#if UNITY_EDITOR
             // NavMesh ���� ����
             StartCoroutine(GenerateNavMesh());
+#endif
+
         }
 
+#if UNITY_EDITOR
         private IEnumerator GenerateNavMesh()
         {
             // �׺���̼� �޽� ����
             navMeshSurface.BuildNavMesh();
-
             // ���尡 �Ϸ�� ������ ��ٸ�
             while (UnityEditor.AI.NavMeshBuilder.isRunning)
             {
@@ -46,5 +48,6 @@ namespace DunGen.Adapters
 
             Debug.Log("NavMesh generation completed");
         }
+#endif
     }
 }

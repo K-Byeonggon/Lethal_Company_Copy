@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using Unity.VisualScripting;
-using static UnityEditor.Progress;
 public class Item : MonoBehaviour,IUIVisible,IItemUsable,IItemObtainable
 {
     [SerializeField] public ItemData itemData;

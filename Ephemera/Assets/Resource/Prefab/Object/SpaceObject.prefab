@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 897917810570219384}
   - component: {fileID: 897917810570219387}
+  - component: {fileID: 799635731}
   m_Layer: 0
   m_Name: SpaceObject
   m_TagString: Untagged
@@ -49,12 +50,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf1326692f3a7354eb1534888d494dea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   ship: {fileID: 0}
   Mars: {fileID: 896954490490357988}
   Mercury: {fileID: 896378883566290717}
   Moon: {fileID: 897072180055224994}
   Pluto: {fileID: 896438465310256679}
   Venus: {fileID: 897290591792045737}
+--- !u!114 &799635731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 897917810570219386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  _assetId: 4115825488
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1001 &897917809480343393
 PrefabInstance:
   m_ObjectHideFlags: 0

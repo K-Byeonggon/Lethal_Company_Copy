@@ -757,7 +757,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7119361011292113364
 Transform:
   m_ObjectHideFlags: 0
@@ -1991,7 +1991,7 @@ CharacterController:
   m_GameObject: {fileID: 8428327494659538996}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Height: 17.04
   m_Radius: 2.48

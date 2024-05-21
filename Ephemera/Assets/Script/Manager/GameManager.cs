@@ -61,6 +61,9 @@ public class GameManager : NetworkBehaviour
     //나의 플레이어 캐릭터
     //PlayerStatue myPlayerStatue;
 
+    [SerializeField]
+    SpaceSystem spaceSystem;
+
     #endregion
 
     #region Action
@@ -150,6 +153,13 @@ public class GameManager : NetworkBehaviour
         CurrentMoneyChanged(totalPrice);
         DisplayTotalRevenue();
     }
+
+    [Command]
+    public void OnStartHyperDrive(int index)
+    {
+        spaceSystem.StartWarpDrive(index);
+    }
+
     /// <summary>
     /// 게임 상태 변경
     /// </summary>
