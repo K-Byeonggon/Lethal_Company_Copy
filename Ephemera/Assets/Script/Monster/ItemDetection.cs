@@ -3,7 +3,7 @@ using UnityEngine;
 public class ItemDetection : MonoBehaviour
 {
     YipeeAI yipee;
-    float nestIgnoreRadius = 0.5f;
+    float nestIgnoreRadius = 1f;
     private void Start()
     {
         yipee = transform.parent.GetComponent<YipeeAI>();
@@ -12,12 +12,8 @@ public class ItemDetection : MonoBehaviour
     
     private void OnTriggerStay(Collider other)
     {
-        Debug.Log("¹º°¡ ´êÀ½");
-       
-
         if (other.gameObject.tag == "ObtainableItem")
         {
-            Debug.Log("¾ÆÀÌÅÛ ´ê¾Ò¾û");
             float distanceToNest = Vector3.Distance(other.transform.position, yipee.nest.position);
             //µÕÁö ±ÙÃ³¿¡ ÀÖ´Â ¾ÆÀÌÅÛÀº Å½ÁöÇÏÁö ¾ÊÀ½.
             if (distanceToNest > nestIgnoreRadius)
@@ -28,6 +24,19 @@ public class ItemDetection : MonoBehaviour
                     yipee.detectedItem = other.gameObject;
                 }
             }
+        }
+
+        if(other.gameObject.tag == "Player")
+        {
+            yipee.bewareOf = other.gameObject.transform;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if(other.gameObject.tag == "Player")
+        {
+            yipee.bewareOf = null;
         }
     }
 }
