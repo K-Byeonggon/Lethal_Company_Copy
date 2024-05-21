@@ -29,7 +29,19 @@ public class PlayerMove : NetworkBehaviour
 
 
 
+    GameObject nearobject;
+
+
     private Animator animator;
+
+    void Interaction()
+    {
+        if (nearobject.tag == "shop")
+        {
+            Shop shop = nearobject.GetComponent<Shop>();
+            shop.Enter(this);
+        }
+    }
 
     private void Awake()
     {
@@ -60,8 +72,8 @@ public class PlayerMove : NetworkBehaviour
         ApplyRotation();
         ApplyMovement();
         SetAnimator();
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.visible = false;
+        //Cursor.lockState = CursorLockMode.Locked;
     }
 
     void ApplyGravity()
@@ -145,12 +157,21 @@ public class PlayerMove : NetworkBehaviour
 
     public void OnCrouch(InputAction.CallbackContext context)
     {
-        Vector2 moveVector = context.ReadValue<Vector2>();
+        
     }
 
     public void EnbleGameplayControls()
     {
 
+    }
+
+    public void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "Shop")
+        {
+            nearobject = other.gameObject;
+        }
+        
     }
 
     private bool IsGround() => character.isGrounded;

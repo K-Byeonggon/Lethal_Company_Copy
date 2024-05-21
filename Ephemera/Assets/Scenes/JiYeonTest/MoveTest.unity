@@ -640,7 +640,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1.31, y: 1, z: 1.6}
+  m_Size: {x: 1.07, y: 1, z: 1.19}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &681194995
 MeshRenderer:
@@ -793,12 +793,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db1c77fd80394844bbfd20e9f1e9060d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   gravityMultiplier: 5.03
   smoothTime: 0.05
   speed: 30
   runspeed: 50
   jumpforce: 9.42
   cameraSpeed: 10
+  vCam: {fileID: 0}
 --- !u!4 &953678332 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: b5c1dc59a07a7d24487243f101b57c6c, type: 3}
@@ -1576,7 +1580,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1576765685}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3010541d710d7de4b9cfbd4b450e4679, type: 3}
   m_Name: 

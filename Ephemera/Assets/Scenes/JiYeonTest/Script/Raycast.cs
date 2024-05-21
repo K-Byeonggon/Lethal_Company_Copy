@@ -18,7 +18,8 @@ public class Raycast : MonoBehaviour
 
         RaycastHit hit;
         if (Physics.Raycast(transform.position, transform.forward, out hit, length, layerRed))
-            Debug.Log(gameObject.name);
+            UI.instance.Interaction.gameObject.SetActive(true);
+        Debug.Log(gameObject.name);
     }
 
 
