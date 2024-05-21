@@ -1,5 +1,9 @@
 fileFormatVersion: 2
-guid: a2d03c08ca3ea3a44a7ad172fadc05d6
+<<<<<<<< HEAD:Ephemera/Assets/Heliograph/Packet.meta
+guid: 995820f4c5140d2429af4a08d5f06487
+========
+guid: f8aa7269ca42d344dae65145bd7e8524
+>>>>>>>> Server_UI_Planet:Ephemera/Assets/Resource/Planet.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

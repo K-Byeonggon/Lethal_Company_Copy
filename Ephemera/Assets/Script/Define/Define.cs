@@ -1,6 +1,26 @@
 using System;
 using UnityEngine;
 
+
+public enum GameStateType
+{
+    ResetState,
+    SelectPlanetState,
+    MapLoadState,
+    EntryPlanetState,
+    GameProgressState,
+    ReturnState,
+    GameOverState
+}
+public enum Planet
+{
+    Mars,
+    Mercury,
+    Moon,
+    Pluto,
+    Venus,
+}
+
 public enum ObjectType
 {
     Player,
