@@ -39,20 +39,24 @@ public class SpaceSystem : NetworkBehaviour
 
     Quaternion TargetQuaternion;
 
-
     private void FixedUpdate()
     {
         Debug.Log(isDrive);
-        if (isSetDirection)
+        /*if (isSetDirection)
         {
             SlerpShipRotation();
-        }
+        }*/
         if(isDrive)
         {
             SlerpPlanetDistance();
         }
     }
 
+    public override void OnStartClient()
+    {
+        GameManager.Instance.SpaceSystem = this;
+        //NetworkServer.RegisterHandler<PlanetActivateMessage>(PlanetSetActivate);
+    }
 
     [Server]
     public void StartWarpDrive(int planet)
@@ -69,7 +73,7 @@ public class SpaceSystem : NetworkBehaviour
         isSetDirection = true;
     }
 
-    //함선 회전 구형보간
+    /*//함선 회전 구형보간
     [Server]
     public void SlerpShipRotation()
     {
@@ -80,10 +84,10 @@ public class SpaceSystem : NetworkBehaviour
             Debug.Log("Rotation_End");
             targetPlanet.transform.position = Vector3.zero;
             isDrive = false;
-            PlanetDeactivate();
+            //PlanetDeactivate();
             currentPlanet = targetPlanet;
         }
-    }
+    }*/
 
     //행성 활성화
     [Server]
@@ -114,7 +118,8 @@ public class SpaceSystem : NetworkBehaviour
 
         targetPlanet.transform.position = new Vector3(0, 0, 5000);
 
-        PlanetActivate(targetPlanet);// targetPlanet.SetActive(true);
+        PlanetActivate(PlanetToEnum(targetPlanet));// targetPlanet);// targetPlanet.SetActive(true);
+        //NetworkClient.Send(new PlanetActivateMessage { planet = planet, isActive = true });
     }
     //행성 거리 구형보간
     [Server]
@@ -130,22 +135,84 @@ public class SpaceSystem : NetworkBehaviour
             Debug.Log("Warp_End");
             targetPlanet.transform.position = Vector3.zero;
             isDrive = false;
-            PlanetDeactivate();
-            currentPlanet = targetPlanet;
+            PlanetDeactivate(PlanetToEnum(targetPlanet));//targetPlanet);
+            //NetworkClient.Send(new PlanetActivateMessage { planet = PlanetToEnum(targetPlanet), isActive = false });
+            //currentPlanet = targetPlanet;
         }
     }
     //행성 활성화
     [ClientRpc]
-    public void PlanetActivate(GameObject targetPlanet)
+    public void PlanetActivate(Planet targetPlanet)
     {
         Debug.Log("PlanetActivate");
-        targetPlanet.SetActive(true);
+        EnumToPlanet(targetPlanet).SetActive(true);
+        //targetPlanet.SetActive(true);
     }
     //행성 비활성화
     [ClientRpc]
-    public void PlanetDeactivate()
+    public void PlanetDeactivate(Planet targetPlanet)
     {
         currentPlanet?.SetActive(false);
+        currentPlanet = EnumToPlanet(targetPlanet);
+        //currentPlanet = targetPlanet;
+    }
+
+    /*void PlanetSetActivate(NetworkConnectionToClient conn, PlanetActivateMessage message)
+    {
+        //message.planet
+        EnumToPlanet(message.planet).SetActive(message.isActive);
+    }*/
+    /*void PlanetDeactivate(NetworkConnectionToClient conn, PlanetActivateMessage message)
+    {
+        message.targetPlanet.SetActive(message.isActive);
+    }*/
+
+
+    private GameObject EnumToPlanet(Planet planet)
+    {
+        GameObject go = null;
+        switch (planet)
+        {
+            case Planet.Mars:
+                go = Mars;
+                break;
+            case Planet.Mercury:
+                go = Mercury;
+                break;
+            case Planet.Moon:
+                go = Moon;
+                break;
+            case Planet.Pluto:
+                go = Pluto;
+                break;
+            case Planet.Venus:
+                go = Venus;
+                break;
+        }
+        return go;
+    }
+    private Planet PlanetToEnum(GameObject planet)
+    {
+        Planet en = Planet.Moon;
+        switch (planet.name)
+        {
+            case "Mars":
+                en = Planet.Mars;
+                break;
+            case "Mercury":
+                en = Planet.Mercury;
+                break;
+            case "Moon":
+                en = Planet.Moon;
+                break;
+            case "Pluto":
+                en = Planet.Pluto;
+                break;
+            case "Venus":
+                en = Planet.Venus;
+                break;
+        }
+        return en;
     }
 }
 

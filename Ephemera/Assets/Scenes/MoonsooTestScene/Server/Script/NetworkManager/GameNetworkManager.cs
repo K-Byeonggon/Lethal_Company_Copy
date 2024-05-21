@@ -1,6 +1,5 @@
 using Mirror;
 using UnityEngine;
-using static Mirror.Examples.CharacterSelection.NetworkManagerCharacterSelection;
 
 public class GameNetworkManager : NetworkManager
 {

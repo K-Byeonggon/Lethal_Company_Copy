@@ -61,8 +61,9 @@ public class GameManager : NetworkBehaviour
     //나의 플레이어 캐릭터
     //PlayerStatue myPlayerStatue;
 
-    [SerializeField]
-    SpaceSystem spaceSystem;
+    //[SerializeField]
+    private SpaceSystem spaceSystem;
+    public SpaceSystem SpaceSystem { set {  spaceSystem = value; } }
 
     #endregion
 
@@ -154,7 +155,7 @@ public class GameManager : NetworkBehaviour
         DisplayTotalRevenue();
     }
 
-    [Command]
+    [Server]
     public void OnStartHyperDrive(int index)
     {
         spaceSystem.StartWarpDrive(index);

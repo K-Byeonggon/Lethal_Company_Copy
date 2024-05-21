@@ -10,6 +10,8 @@ public class GameRoomNetworkManager : NetworkRoomManager
     GameObject gamePlayerObjectPrefab;
     [SerializeField]
     NetworkRoomPlayer roomPlayerObjectPrefab;
+    [SerializeField]
+    GameObject spaceSystem;
 
     public static GameRoomNetworkManager Instance => NetworkRoomManager.singleton as GameRoomNetworkManager;
      
@@ -53,6 +55,14 @@ public class GameRoomNetworkManager : NetworkRoomManager
 
         NetworkServer.AddPlayerForConnection(conn, gameobject);
         return gameobject;
+    }
+
+    public override void OnRoomServerSceneChanged(string sceneName)
+    {
+        GameObject instance = Instantiate(spaceSystem);
+        Debug.Log(sceneName);
+        if(sceneName == "Assets/Scenes/GamePlay.unity")
+            NetworkServer.Spawn(instance);
     }
 
 
