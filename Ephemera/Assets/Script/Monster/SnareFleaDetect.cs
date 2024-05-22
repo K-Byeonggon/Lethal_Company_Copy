@@ -20,4 +20,12 @@ public class SnareFleaDetect : MonoBehaviour
         }
         
     }
+    /*
+    private void OnTriggerExit(Collider other)
+    {
+        if(other.tag == "Player")
+        {
+            snare.sawPlayer = false;
+        }
+    }*/
 }

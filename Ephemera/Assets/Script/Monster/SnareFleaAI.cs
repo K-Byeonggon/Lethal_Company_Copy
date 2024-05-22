@@ -68,10 +68,11 @@ public class SnareFleaAI : MonsterAI
         //도망 시퀀스
         ActionNode runFromPlayer = new ActionNode(RunFromPlayer);
         ActionNode toCeiling = new ActionNode(ToCeiling);
+        ActionNode hangOn = new ActionNode(HangOn);
 
         SequenceNode attackSequence = new SequenceNode(new List<Node> { bind, attackPlayer });
         SequenceNode groundAttackSequence = new SequenceNode(new List<Node> { moveToPlayer, bindFromGround, attackPlayer });
-        SequenceNode runSequence = new SequenceNode(new List<Node> { runFromPlayer, toCeiling });
+        SequenceNode runSequence = new SequenceNode(new List<Node> { runFromPlayer, toCeiling, hangOn });
 
 
         topNode = new SelectorNode(new List<Node> { dead, detect, attackSequence, groundAttackSequence, runSequence });
@@ -82,7 +83,7 @@ public class SnareFleaAI : MonsterAI
     {
         if (snareHealth.IsDead)
         {
-            navMeshAgent.SetDestination(transform.position);
+            navMeshAgent.enabled = false;
             return Node.State.SUCCESS;
         }
         else return Node.State.FAILURE;
@@ -129,7 +130,7 @@ public class SnareFleaAI : MonsterAI
         }
     }
 
-    //[공격 시퀀스, 지상 공격 시퀀스] 달라붙어 있으면, 일정시간마다 데미지를 준다.
+    //[공격 시퀀스, 지상 공격 시퀀스] 달라붙어 있으면, 일정시간마다 데미지를 준다. 플레이어 죽으면 떨어지기.
     private Node.State AttackPlayer()
     {
         //공격 받으면 다음 시퀀스로(공격 -> 지상공격 -> 도망, 지상공격->도망)
@@ -142,7 +143,7 @@ public class SnareFleaAI : MonsterAI
                 Debug.Log("공격한다.");
                 LivingEntity playerHealth = player.GetComponent<LivingEntity>();
 
-                //플레이어 죽었으면 배회 시퀀스로
+                //플레이어 죽었으면 다음 시퀀스로
                 if (playerHealth.IsDead) { rigidbody.useGravity = true; return Node.State.FAILURE; }
 
                 //아니면 데미지 적용.
@@ -159,12 +160,13 @@ public class SnareFleaAI : MonsterAI
     //[지상 공격 시퀀스] 플레이어를 향해 다가옴
     private Node.State MoveToPlayer()
     {
+
+
+        //공격당하면/플레이어 죽었으면 다음 시퀀스인 도망 시퀀스로
+        if (isAttacked || player.GetComponent<LivingEntity>().IsDead) { return Node.State.FAILURE; }
+
         //내비메쉬 켜준다.
         navMeshAgent.enabled = true;
-
-        //공격당하면 다음 시퀀스인 도망 시퀀스로
-        if (isAttacked) { return Node.State.FAILURE; }
-
         navMeshAgent.SetDestination(player.position);
 
 
@@ -200,9 +202,9 @@ public class SnareFleaAI : MonsterAI
         Debug.Log("도망 시퀀스");
         if (isGrounded)
         {
-            navMeshAgent.enabled = true;
             if (!isRunning)
             {
+                navMeshAgent.enabled = true;
                 Debug.Log("목적지 설정");
                 Vector3 newPos = RandomNavMeshMovement.RandomNavSphere(transform.position, runDistance, -1);
                 Debug.Log(newPos);
@@ -214,7 +216,7 @@ public class SnareFleaAI : MonsterAI
         else { return Node.State.FAILURE; }
     }
 
-    //[도망 시퀀스] 도망목적지에 도착했으면 천장에 붙음
+    //[도망 시퀀스] 도망목적지에 도착했으면 점프.
     private Node.State ToCeiling()
     {
         Debug.Log("천장에 붙는거");
@@ -226,20 +228,29 @@ public class SnareFleaAI : MonsterAI
                 jumped = true;
                 navMeshAgent.enabled = false;
                 rigidbody.useGravity = false;
-                transform.Translate(Vector3.up * jumpForce * Time.deltaTime);
-            }
-            else if (atCeiling)
-            {
-                Debug.Log("천장이에요");
-                rigidbody.useGravity = false;
-                return Node.State.SUCCESS;
-            }
-            else
-            {
-                return Node.State.RUNNING;
+                rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             }
         }
-        return Node.State.RUNNING;
+        return Node.State.SUCCESS;
+    }
+    
+    //[도망 시퀀스] 천장에 붙기. 기타 bool 초기화.
+    private Node.State HangOn()
+    {
+        Debug.Log("여기 오긴 했니?");
+        if (atCeiling)
+        {
+            Debug.Log("천장 고정");
+            isAttacked = false;
+            rigidbody.useGravity = false;
+            sawPlayer = false;
+            player = null;
+            return Node.State.SUCCESS;
+        }
+        else
+        {
+            return Node.State.RUNNING;
+        }
     }
 
 

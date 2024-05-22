@@ -17,11 +17,10 @@ public class TestDamage : MonoBehaviour
 
     private IEnumerator DamageCoroutine()
     {
-        while (true)
-        {
-            yield return new WaitForSeconds(3f);
-            Yipee.GetComponent<LivingEntity>().ApplyDamage(damageMessage);
-        }
+
+        yield return new WaitForSeconds(5f);
+        Yipee.GetComponent<LivingEntity>().ApplyDamage(damageMessage);
+        
     }
 
 }
