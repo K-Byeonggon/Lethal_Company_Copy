@@ -104,7 +104,7 @@ public class PlayerMoveEx : MonoBehaviour
         else if (context.performed) { }
         else if (context.canceled)
         {
-            speed = 20.0f;
+            speed = 2.0f;
             //animator.SetBool("IsRun", false);
         }
 

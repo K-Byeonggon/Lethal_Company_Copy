@@ -9,6 +9,9 @@ TagManager:
   - Mine
   - DiedPlayer
   - UsableItem
+  - TrackingObject
+  - Actors
+  - Monster
   layers:
   - Default
   - TransparentFX

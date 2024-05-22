@@ -13,7 +13,7 @@ public class PlayerEx : MonoBehaviour
     private Inventory inventory;
     [SerializeField]
     private int playerHp = 100;
-
+    [SerializeField] public Transform weaponHanger;
     // Update is called once per frame
     void Update()
     {
@@ -33,7 +33,10 @@ public class PlayerEx : MonoBehaviour
         {
             inventory.ChangeItemSlot(3);
         }
-
+        if(playerHp <= 0)
+        {
+            this.gameObject.SetActive(false);
+        }
         
 
         RaycastHit hit;
