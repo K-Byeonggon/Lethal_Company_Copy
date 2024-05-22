@@ -22,7 +22,9 @@ public class SnareFleaAI : MonsterAI
     public LayerMask ceilingLayer; // 천장 레이어 설정
     private Rigidbody rigidbody;
     [SerializeField] float bindDistance = 1f;
-    [SerializeField] float attackDistance = 2f;
+    [SerializeField] float attackDistance = 1.5f;
+    [SerializeField] float runDistance = 8f;
+    [SerializeField] float jumpForce = 100f;
     public bool isAttacked = false;
     public bool isRunning = false;
     public bool jumped = false;
@@ -63,7 +65,7 @@ public class SnareFleaAI : MonsterAI
         ActionNode bindFromGround = new ActionNode(BindFromGround);
         //ActionNode attackPlayer
 
-        //지상 도망 시퀀스
+        //도망 시퀀스
         ActionNode runFromPlayer = new ActionNode(RunFromPlayer);
         ActionNode toCeiling = new ActionNode(ToCeiling);
 
@@ -72,7 +74,8 @@ public class SnareFleaAI : MonsterAI
         SequenceNode runSequence = new SequenceNode(new List<Node> { runFromPlayer, toCeiling });
 
 
-        topNode = new SelectorNode(new List<Node> { dead, detect, attackSequence, groundAttackSequence });
+        topNode = new SelectorNode(new List<Node> { dead, detect, attackSequence, groundAttackSequence, runSequence });
+        
     }
 
     private Node.State Dead()
@@ -133,7 +136,7 @@ public class SnareFleaAI : MonsterAI
         if (isAttacked) { rigidbody.useGravity = true; return Node.State.FAILURE; }
 
         if (Vector3.Distance(transform.position, player.GetChild(0).position) <= bindDistance)
-        {
+        {   
             if (Time.time - lastAttackTime >= attackCooltime)
             {
                 Debug.Log("공격한다.");
@@ -158,10 +161,12 @@ public class SnareFleaAI : MonsterAI
     {
         //내비메쉬 켜준다.
         navMeshAgent.enabled = true;
+
+        //공격당하면 다음 시퀀스인 도망 시퀀스로
+        if (isAttacked) { return Node.State.FAILURE; }
+
         navMeshAgent.SetDestination(player.position);
 
-        //공격당하면 다음 시퀀스인 지상 도망 시퀀스로
-        if (isAttacked) { return Node.State.FAILURE ; }
 
         if (Vector3.Distance(transform.position, player.position) <= attackDistance)
         {
@@ -192,13 +197,16 @@ public class SnareFleaAI : MonsterAI
     //[도망 시퀀스] 플레이어로 부터 멀어짐
     private Node.State RunFromPlayer()
     {
+        Debug.Log("도망 시퀀스");
         if (isGrounded)
         {
             navMeshAgent.enabled = true;
             if (!isRunning)
             {
-                Vector3 newPos = RandomNavMeshMovement.NavAwayFromPlayer(transform.position, player.position, 2f);
-                navMeshAgent.SetDestination(transform.position);
+                Debug.Log("목적지 설정");
+                Vector3 newPos = RandomNavMeshMovement.RandomNavSphere(transform.position, runDistance, -1);
+                Debug.Log(newPos);
+                navMeshAgent.SetDestination(newPos);
                 isRunning = true;
             }
             return Node.State.SUCCESS;
@@ -206,19 +214,23 @@ public class SnareFleaAI : MonsterAI
         else { return Node.State.FAILURE; }
     }
 
-    //[지상 도망 시퀀스] 도망목적지에 도착했으면 천장에 붙음
+    //[도망 시퀀스] 도망목적지에 도착했으면 천장에 붙음
     private Node.State ToCeiling()
     {
+        Debug.Log("천장에 붙는거");
         if (Vector3.Distance(navMeshAgent.destination, transform.position) < 0.5f)
         {
             if (isGrounded && !jumped)
             {
+                Debug.Log("점프");
                 jumped = true;
                 navMeshAgent.enabled = false;
-                rigidbody.AddForce(Vector3.up * 10f, ForceMode.Impulse);
+                rigidbody.useGravity = false;
+                transform.Translate(Vector3.up * jumpForce * Time.deltaTime);
             }
             else if (atCeiling)
             {
+                Debug.Log("천장이에요");
                 rigidbody.useGravity = false;
                 return Node.State.SUCCESS;
             }
@@ -229,8 +241,6 @@ public class SnareFleaAI : MonsterAI
         }
         return Node.State.RUNNING;
     }
-
-    //[천장 시퀀스] 땅에 있고, 목표 플레이어가 없으면 천장에 붙는다.
 
 
     void CheckGround()
