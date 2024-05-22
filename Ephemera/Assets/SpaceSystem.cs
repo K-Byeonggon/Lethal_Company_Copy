@@ -157,6 +157,11 @@ public class SpaceSystem : NetworkBehaviour
         //currentPlanet = targetPlanet;
     }
 
+    public void SetActivateSpaceSystem(bool isActive)
+    {
+        this.gameObject.SetActive(isActive);
+    }
+
     /*void PlanetSetActivate(NetworkConnectionToClient conn, PlanetActivateMessage message)
     {
         //message.planet

@@ -1,8 +1,9 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ShipController : MonoBehaviour
+public class ShipController : NetworkBehaviour
 {
     bool hasDestination = false;
     Vector3 Destination = Vector3.zero;
@@ -51,5 +52,10 @@ public class ShipController : MonoBehaviour
 
         Debug.Log(Destination);
         Debug.Log(lookAt);
+    }
+
+    public void StartLanding()
+    {
+
     }
 }

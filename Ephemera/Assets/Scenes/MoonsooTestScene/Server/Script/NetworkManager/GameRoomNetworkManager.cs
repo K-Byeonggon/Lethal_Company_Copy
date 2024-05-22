@@ -13,6 +13,8 @@ public class GameRoomNetworkManager : NetworkRoomManager
     [SerializeField]
     GameObject spaceSystem;
 
+    public GameManager gameManager;
+
     public static GameRoomNetworkManager Instance => NetworkRoomManager.singleton as GameRoomNetworkManager;
      
     public override void Start()
@@ -24,7 +26,6 @@ public class GameRoomNetworkManager : NetworkRoomManager
         roomPlayerPrefab = roomPlayerObjectPrefab;
     }
 
-    
 
     //새로운 클라이언트가 서버에 연결되었을 때에 서버에서 호출되는 함수
     public override void OnRoomServerConnect(NetworkConnectionToClient conn)//GameObject OnRoomServerCreateRoomPlayer(NetworkConnectionToClient conn)
@@ -44,7 +45,7 @@ public class GameRoomNetworkManager : NetworkRoomManager
     public override void OnRoomClientConnect() 
     {
         Debug.Log("OnRoomClientConnect");
-        ResourceManager.Instance.GetPrefab("RoomPlayer");
+        //ResourceManager.Instance.GetPrefab("RoomPlayer");
     }
 
     //GamePlayer를 생성할 때 호출하는 함수
@@ -59,10 +60,24 @@ public class GameRoomNetworkManager : NetworkRoomManager
 
     public override void OnRoomServerSceneChanged(string sceneName)
     {
-        GameObject instance = Instantiate(spaceSystem);
         Debug.Log(sceneName);
         if(sceneName == "Assets/Scenes/GamePlay.unity")
-            NetworkServer.Spawn(instance);
+        {
+            Debug.Log("CreateGameManager");
+            GameObject gameManager = Instantiate(ResourceManager.Instance.GetPrefab("GameManager"));
+            NetworkServer.Spawn(gameManager);
+            //NetworkServer.AddConnection(gameManager.GetComponent<NetworkIdentity>().connectionToClient);
+
+            GameObject ship = Instantiate(ResourceManager.Instance.GetPrefab("SpaceShip"));
+            ship.transform.position = new Vector3(3000, 0, 0);
+            NetworkServer.Spawn(ship);
+
+            GameObject space = Instantiate(spaceSystem);
+            NetworkServer.Spawn(space);
+
+            GameObject terrain = Instantiate(ResourceManager.Instance.GetPrefab("Terrain"));
+            NetworkServer.Spawn(terrain);
+        }
     }
 
 

@@ -45,6 +45,22 @@ MonoBehaviour:
     m_Address: SpaceObject
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: d7473a60838e2434cb642d6005659aa7
+    m_Address: GameManager
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 15c083a84e99520468c240850ea1889a
+    m_Address: Terrain
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: d1b286cb8728dd74ca4f2cc3f0f610e4
+    m_Address: SpaceShip
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 2b6d64aeca1c46e4f98f184d922263fa
+    m_Address: DungeonGenerator
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: f53dd5718acd92348a91adf0d1df758a, type: 2}
   m_SchemaSet:

@@ -10,8 +10,6 @@ public class UI_Selecter : MonoBehaviour
 {
     [SerializeField]
     List<Image> images;
-    [SerializeField]
-    SpaceSystem spaceSystem;
 
     [SerializeField]
     TextMeshProUGUI planetInfoTitle;
@@ -38,6 +36,10 @@ public class UI_Selecter : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.J))
         {
             OnStartHyperDrive();
+        }
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            OnStartLandPlanet();
         }
     }
 
@@ -76,8 +78,10 @@ public class UI_Selecter : MonoBehaviour
 
     public void OnStartHyperDrive()
     {
-        //spaceSystem.StartWarpDrive(currentSelection);
         GameManager.Instance.OnStartHyperDrive(currentSelection);
-
+    }
+    public void OnStartLandPlanet()
+    {
+        GameManager.Instance.StartGame();
     }
 }

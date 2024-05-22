@@ -1,6 +1,14 @@
 using System;
 using UnityEngine;
 
+
+public enum VirtualCameraType
+{
+    Player,
+    SpaceShip,
+    SpaceShipMiniature,
+    OtherPlayer,
+}
 public enum InputType
 {
     OnMove,

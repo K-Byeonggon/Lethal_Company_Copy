@@ -8,7 +8,7 @@ public class InputTest : MonoBehaviour
 
     private void Start()
     {
-        InputManager.Instance.BindAction(InputType.OnMove, new InputActionHandler(OnMove, null, null));
+        //InputManager.Instance.BindAction(InputType.OnMove, new InputActionHandler(OnMove, null, null));
     }
 
     public void OnMove(InputAction.CallbackContext context)
