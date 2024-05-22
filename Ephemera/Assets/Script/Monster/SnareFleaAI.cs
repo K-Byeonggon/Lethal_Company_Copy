@@ -126,7 +126,7 @@ public class SnareFleaAI : MonsterAI
     //[지상 도망 시퀀스] 플레이어로 부터 멀어짐
     private Node.State RunFromPlayer()
     {
-        if (isAttacked)
+        if (isAttacked && isGrounded)
         {
             if (!isRunning)
             {
