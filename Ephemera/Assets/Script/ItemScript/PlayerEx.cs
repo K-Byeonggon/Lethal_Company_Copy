@@ -37,7 +37,7 @@ public class PlayerEx : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F))
         {
             Debug.Log("Detach item");
-            inventory.RemovetoInventory();
+            inventory.RemoveItem();
         }
 
         RaycastHit hit;
@@ -59,9 +59,9 @@ public class PlayerEx : MonoBehaviour
             var obtainableItem = hit.transform.GetComponent<Item>();
             if (obtainableItem != null)
             {
-                if (inventory.GetCurrentItem() == null && Input.GetKeyDown(KeyCode.E))
+                if (inventory.GetCurrentItem == null && Input.GetKeyDown(KeyCode.E))
                 {
-                    inventory.AddtoInventory(obtainableItem.gameObject);
+                    inventory.AddItem(obtainableItem.gameObject);
                     Debug.Log("Item obtained: " + obtainableItem.name);
                 }
             }

@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1659497652662506525}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 787.96, y: 3.38, z: 736.1}
+  m_LocalPosition: {x: 648.6, y: 3.38, z: 736.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -182,12 +182,18 @@ MonoBehaviour:
   - planet: 0
     Terrain: {fileID: 1659497654276814432}
     LandingZone: {fileID: 1659497652662506526}
+    frontDoor: {fileID: 0}
+    backDoor: {fileID: 0}
   - planet: 1
     Terrain: {fileID: 1659497653817240503}
     LandingZone: {fileID: 1659497653649086671}
+    frontDoor: {fileID: 0}
+    backDoor: {fileID: 0}
   - planet: 2
     Terrain: {fileID: 1659497653250599532}
     LandingZone: {fileID: 1659497654284013154}
+    frontDoor: {fileID: 0}
+    backDoor: {fileID: 0}
 --- !u!114 &-8771417834864342780
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -734,7 +740,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7443162870095412129}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 1982, y: 1536, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

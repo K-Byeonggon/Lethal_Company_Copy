@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 806493659227074821}
   - component: {fileID: 3882706884306094033}
   - component: {fileID: 5527027364873757286}
+  - component: {fileID: -3898290926681960720}
   m_Layer: 0
   m_Name: Tablet_pc
   m_TagString: ObtainableItem
@@ -111,9 +112,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03c1534ee5c1dc24a87e9a9917a408ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   itemData: {fileID: 11400000, guid: 4e6b39232536e674293782670d351aa9, type: 2}
-  itemPrice: 0
-  image: {fileID: 0}
+  itemCollider: {fileID: 806493659227074821}
+  rigid: {fileID: 5527027364873757286}
 --- !u!54 &5527027364873757286
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -130,3 +134,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &-3898290926681960720
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 125818}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  _assetId: 888064797
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0

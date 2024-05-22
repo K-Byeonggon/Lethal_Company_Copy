@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 3328048840432780258}
   - component: {fileID: 8142444656852342964}
   - component: {fileID: 5992421874126842640}
+  - component: {fileID: 7277039470803578473}
   m_Layer: 6
   m_Name: duck
   m_TagString: ObtainableItem
@@ -208,10 +209,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b9827ce8957bb84ba629aa4ab071569, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isBothHandGrab: 0
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   itemData: {fileID: 11400000, guid: 31557e218044e9148bab091a760e3d9f, type: 2}
-  itemPrice: 0
-  image: {fileID: 0}
+  itemCollider: {fileID: 1862531304556017546}
+  rigid: {fileID: 5992421874126842640}
   audioClip: {fileID: 8300000, guid: e3f0f911c804b2246af9c8889fc1ec1f, type: 3}
 --- !u!54 &5992421874126842640
 Rigidbody:
@@ -229,3 +232,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &7277039470803578473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4062460215016377822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  _assetId: 359302659
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.30692244, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -225,10 +225,9 @@ MonoBehaviour:
   _allPlayersReady: 0
   roomSlots: []
   clientIndex: 0
-  gamePlayerObjectPrefab: {fileID: 8428327494659538996, guid: 6fb483a1a1cf41e4884a3a031ea217ce, type: 3}
+  gamePlayerObjectPrefab: {fileID: 4340414033375958869, guid: 698630d33f8df6c478fafe106d2295aa, type: 3}
   roomPlayerObjectPrefab: {fileID: 2266329393536944203, guid: ca55e05d580355e459eabfc9f9e515a7, type: 3}
   spaceSystem: {fileID: 897917810570219386, guid: ac0b38f5ddc064648a0fbc0def698130, type: 3}
-  gameManager: {fileID: 0}
 --- !u!4 &293770093
 Transform:
   m_ObjectHideFlags: 0
@@ -774,11 +773,11 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.1
-  far clip plane: 5000
-  field of view: 40
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 60
   orthographic: 0
-  orthographic size: 10
+  orthographic size: 5
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -801,8 +800,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 949833341}
-  m_LocalRotation: {x: 0.23798141, y: 0.42799357, z: -0.11788092, w: 0.86388105}
-  m_LocalPosition: {x: -5.0377903, y: 4.094554, z: -5.817969}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 3.64, z: 0.004}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1586,37 +1585,5 @@ PrefabInstance:
       propertyPath: m_Name
       value: SceneInstaller
       objectReference: {fileID: 0}
-    - target: {fileID: 8231600785963979414, guid: 30133d98013c08d4fbe5ff5cd692c43d, type: 3}
-      propertyPath: prefabs.Array.size
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 8231600785963979414, guid: 30133d98013c08d4fbe5ff5cd692c43d, type: 3}
-      propertyPath: prefabs.Array.data[0]
-      value: 
-      objectReference: {fileID: 731703305842544222, guid: c221c754079d33244bf6772d48cc6fb9, type: 3}
-    - target: {fileID: 8231600785963979414, guid: 30133d98013c08d4fbe5ff5cd692c43d, type: 3}
-      propertyPath: prefabs.Array.data[1]
-      value: 
-      objectReference: {fileID: 7304102471695587241, guid: ca55e05d580355e459eabfc9f9e515a7, type: 3}
-    - target: {fileID: 8231600785963979414, guid: 30133d98013c08d4fbe5ff5cd692c43d, type: 3}
-      propertyPath: prefabs.Array.data[2]
-      value: 
-      objectReference: {fileID: 8428327494659538996, guid: 6fb483a1a1cf41e4884a3a031ea217ce, type: 3}
-    - target: {fileID: 8231600785963979414, guid: 30133d98013c08d4fbe5ff5cd692c43d, type: 3}
-      propertyPath: prefabs.Array.data[3]
-      value: 
-      objectReference: {fileID: 897917810570219386, guid: ac0b38f5ddc064648a0fbc0def698130, type: 3}
-    - target: {fileID: 8231600785963979414, guid: 30133d98013c08d4fbe5ff5cd692c43d, type: 3}
-      propertyPath: prefabs.Array.data[4]
-      value: 
-      objectReference: {fileID: 1659497653217468484, guid: 15c083a84e99520468c240850ea1889a, type: 3}
-    - target: {fileID: 8231600785963979414, guid: 30133d98013c08d4fbe5ff5cd692c43d, type: 3}
-      propertyPath: prefabs.Array.data[5]
-      value: 
-      objectReference: {fileID: 593102105884778799, guid: d1b286cb8728dd74ca4f2cc3f0f610e4, type: 3}
-    - target: {fileID: 8231600785963979414, guid: 30133d98013c08d4fbe5ff5cd692c43d, type: 3}
-      propertyPath: prefabs.Array.data[6]
-      value: 
-      objectReference: {fileID: 3351124276864989700, guid: d7473a60838e2434cb642d6005659aa7, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 30133d98013c08d4fbe5ff5cd692c43d, type: 3}

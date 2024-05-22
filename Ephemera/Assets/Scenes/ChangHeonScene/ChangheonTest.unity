@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.113529265, g: 0.114772245, b: 0.09537087, a: 1}
+  m_IndirectSpecularColor: {r: 0.11352943, g: 0.1147724, b: 0.09537101, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -246,6 +246,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -3898290926681960720, guid: 3f6d3dd6820b730459f46c869980ebfe, type: 3}
+      propertyPath: sceneId
+      value: 1993864324
+      objectReference: {fileID: 0}
     - target: {fileID: 125818, guid: 3f6d3dd6820b730459f46c869980ebfe, type: 3}
       propertyPath: m_Name
       value: Tablet_pc
@@ -439,6 +443,10 @@ PrefabInstance:
     - target: {fileID: 486122, guid: bbd4ebbddc72b2b41ad75beaf1136cbb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1792384170926941721, guid: bbd4ebbddc72b2b41ad75beaf1136cbb, type: 3}
+      propertyPath: sceneId
+      value: 1680475338
       objectReference: {fileID: 0}
     - target: {fileID: 6373388084434496468, guid: bbd4ebbddc72b2b41ad75beaf1136cbb, type: 3}
       propertyPath: image
@@ -1187,9 +1195,9 @@ MonoBehaviour:
   linesize: 16
   image: {fileID: 1052389247}
   moveVector: {x: 0, y: 0, z: 0}
-  pickedItem: {fileID: 949411530}
   camera: {fileID: 0}
   inventory: {fileID: 0}
+  playerHp: 100
 --- !u!136 &1440992542
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1427,6 +1435,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -4327618903235357412, guid: 7f20ef084dc7cdf47abacc4875e8776d, type: 3}
+      propertyPath: sceneId
+      value: 520335195
+      objectReference: {fileID: 0}
     - target: {fileID: 132824, guid: 7f20ef084dc7cdf47abacc4875e8776d, type: 3}
       propertyPath: m_Name
       value: Laptop
@@ -1703,6 +1715,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6771094859474936847, guid: 8234a8811cddae24fb59b1d4515d0129, type: 3}
+      propertyPath: sceneId
+      value: 1287232048
+      objectReference: {fileID: 0}
     - target: {fileID: 7549365356619896701, guid: 8234a8811cddae24fb59b1d4515d0129, type: 3}
       propertyPath: image
       value: 
@@ -1756,9 +1772,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4800fc430ae97ac4cbefeb7aa1e9ef0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   slots: []
-  maxSlot: 4
-  currentItemSlot: 0
+  pickTransform: {fileID: 0}
 --- !u!1 &1931370543
 GameObject:
   m_ObjectHideFlags: 0
@@ -2045,6 +2063,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1440992545}
     m_Modifications:
+    - target: {fileID: -5646332657958882817, guid: ec8f3da18f4af574bb0a50d9bb3e63a8, type: 3}
+      propertyPath: sceneId
+      value: 2046241772
+      objectReference: {fileID: 0}
     - target: {fileID: 5869536214728623655, guid: ec8f3da18f4af574bb0a50d9bb3e63a8, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -2175,6 +2197,10 @@ PrefabInstance:
       propertyPath: itemData
       value: 
       objectReference: {fileID: 11400000, guid: 3f877804332f1b340ac0e5a930b5cc71, type: 2}
+    - target: {fileID: 6846631980755227655, guid: ad6c37468d9e0b84ebb98e718792950c, type: 3}
+      propertyPath: sceneId
+      value: 1680290859
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ad6c37468d9e0b84ebb98e718792950c, type: 3}
 --- !u!1001 &2032328949845601977
@@ -2184,6 +2210,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -1200912839900451497, guid: 458ec138576690340a04dbfac93cb4b4, type: 3}
+      propertyPath: sceneId
+      value: 2669901600
+      objectReference: {fileID: 0}
     - target: {fileID: 1321200697335262232, guid: 458ec138576690340a04dbfac93cb4b4, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -2241,6 +2271,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -4237609020192287999, guid: e6df1c2de05875c4cad627bf9434535e, type: 3}
+      propertyPath: sceneId
+      value: 799067687
+      objectReference: {fileID: 0}
     - target: {fileID: 2327225667714301644, guid: e6df1c2de05875c4cad627bf9434535e, type: 3}
       propertyPath: m_Name
       value: circular_saw
@@ -2306,6 +2340,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -1869777809659543932, guid: 00c15fb09356ffb42aed1eaced2af1bc, type: 3}
+      propertyPath: sceneId
+      value: 3938338132
+      objectReference: {fileID: 0}
     - target: {fileID: 265583035251893147, guid: 00c15fb09356ffb42aed1eaced2af1bc, type: 3}
       propertyPath: m_Layer
       value: 8
@@ -2675,6 +2713,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -7794103608297322482, guid: 5956713d29ce4844aa391fc3e6277389, type: 3}
+      propertyPath: sceneId
+      value: 1095240115
+      objectReference: {fileID: 0}
     - target: {fileID: 2499149110030456055, guid: 5956713d29ce4844aa391fc3e6277389, type: 3}
       propertyPath: m_Name
       value: Crowbar
@@ -2784,6 +2826,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Mine
       objectReference: {fileID: 0}
+    - target: {fileID: 4785506871445982268, guid: fbe66732d8714ae4e93e491692195406, type: 3}
+      propertyPath: sceneId
+      value: 1043029567
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fbe66732d8714ae4e93e491692195406, type: 3}
 --- !u!1001 &5557165675873436511
@@ -2793,6 +2839,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -5682718621284824860, guid: c460d0ba1afeb07458506a3b3d540eee, type: 3}
+      propertyPath: sceneId
+      value: 2166377815
+      objectReference: {fileID: 0}
     - target: {fileID: 4819153979747550062, guid: c460d0ba1afeb07458506a3b3d540eee, type: 3}
       propertyPath: image
       value: 
@@ -2868,10 +2918,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d5451e19c30f6e4aa3bbac2d3a2507b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isBothHandGrab: 0
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   itemData: {fileID: 0}
-  itemPrice: 0
-  image: {fileID: 1619056361}
+  itemCollider: {fileID: 0}
+  rigid: {fileID: 0}
   rb: {fileID: 1853030772}
 --- !u!65 &7915342654258821986
 BoxCollider:
@@ -2946,6 +2998,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: duck
       objectReference: {fileID: 0}
+    - target: {fileID: 7277039470803578473, guid: 1fbb6846b99f7d4448cf9d1492980863, type: 3}
+      propertyPath: sceneId
+      value: 3066010114
+      objectReference: {fileID: 0}
     - target: {fileID: 8142444656852342964, guid: 1fbb6846b99f7d4448cf9d1492980863, type: 3}
       propertyPath: image
       value: 
@@ -2959,6 +3015,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1853030768}
     m_Modifications:
+    - target: {fileID: -4974313189766626956, guid: 2b32b98a57510234f912ae79f281f6a3, type: 3}
+      propertyPath: sceneId
+      value: 2008703250
+      objectReference: {fileID: 0}
     - target: {fileID: 684786998636458991, guid: 2b32b98a57510234f912ae79f281f6a3, type: 3}
       propertyPath: m_Layer
       value: 8
@@ -3047,6 +3107,10 @@ PrefabInstance:
     - target: {fileID: -6654343884866793538, guid: d3adbfdaf9774974d8a05aa6b9f515e0, type: 3}
       propertyPath: isBothHandGrab
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -3575173008422215274, guid: d3adbfdaf9774974d8a05aa6b9f515e0, type: 3}
+      propertyPath: sceneId
+      value: 2665869091
       objectReference: {fileID: 0}
     - target: {fileID: 7557961213787285541, guid: d3adbfdaf9774974d8a05aa6b9f515e0, type: 3}
       propertyPath: m_Name

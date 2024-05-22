@@ -6,11 +6,11 @@ using UnityEngine;
 public class ShipController : NetworkBehaviour
 {
     bool hasDestination = false;
-    Vector3 Destination = Vector3.zero;
+    //Vector3 Destination = Vector3.zero;
     Quaternion lookAt;
 
     bool landingPlanet = false;
-    private void FixedUpdate()
+    /*private void FixedUpdate()
     {
         if (hasDestination == true)
         {
@@ -41,9 +41,9 @@ public class ShipController : NetworkBehaviour
             Debug.Log("isLanding");
             transform.position = Vector3.Slerp(transform.position, Destination, 0.01f);
         }
-    }
+    }*/
 
-    public void SetDestination()
+    /*public void SetDestination()
     {
         Destination = Vector3.zero;
         Vector3 targetDirection = Destination - transform.position;
@@ -52,10 +52,25 @@ public class ShipController : NetworkBehaviour
 
         Debug.Log(Destination);
         Debug.Log(lookAt);
+    }*/
+
+    public void StartLanding(Vector3 destination)
+    {
+        StartCoroutine(Landing(destination));
     }
 
-    public void StartLanding()
+    IEnumerator Landing(Vector3 destination)
     {
-
+        while (true)
+        {
+            if(Vector3.Distance(transform.position, destination) < 0.1f)
+            {
+                transform.position = destination;
+                yield break;
+            }
+            //transform.rotation = Quaternion.Slerp(transform.rotation, lookAt, 0.01f);
+            transform.position = Vector3.Slerp(transform.position, destination, 0.01f);
+            yield return null;
+        }
     }
 }

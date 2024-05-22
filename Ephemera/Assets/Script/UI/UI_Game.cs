@@ -26,7 +26,7 @@ public class UI_Game : MonoBehaviour
     private TextMeshProUGUI weaponName;
 
     [SerializeField]
-    private List<UISpriteSetup> uISpriteSetups;
+    private List<UI_SpriteSetup> uISpriteSetups;
 
     private List<Slider> otherHpBars;
 

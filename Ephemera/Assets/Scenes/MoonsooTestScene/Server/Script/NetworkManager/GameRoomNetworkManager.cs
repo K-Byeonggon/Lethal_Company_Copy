@@ -12,9 +12,6 @@ public class GameRoomNetworkManager : NetworkRoomManager
     NetworkRoomPlayer roomPlayerObjectPrefab;
     [SerializeField]
     GameObject spaceSystem;
-
-    public GameManager gameManager;
-
     public static GameRoomNetworkManager Instance => NetworkRoomManager.singleton as GameRoomNetworkManager;
      
     public override void Start()
@@ -51,7 +48,7 @@ public class GameRoomNetworkManager : NetworkRoomManager
     //GamePlayer를 생성할 때 호출하는 함수
     public override GameObject OnRoomServerCreateGamePlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
     {
-        GameObject gameobject = Instantiate(ResourceManager.Instance.GetPrefab("Scavenger")); //Instantiate(gamePlayerObjectPrefab);
+        GameObject gameobject = Instantiate(ResourceManager.Instance.GetPrefab("Player")); //Instantiate(gamePlayerObjectPrefab);
         //gameobject의 컴포넌트를 가져와 message로 초기화
 
         NetworkServer.AddPlayerForConnection(conn, gameobject);

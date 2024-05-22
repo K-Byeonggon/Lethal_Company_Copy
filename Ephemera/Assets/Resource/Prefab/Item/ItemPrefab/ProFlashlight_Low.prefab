@@ -411,6 +411,7 @@ GameObject:
   - component: {fileID: 8614488968720227882}
   - component: {fileID: 923873946}
   - component: {fileID: 923873945}
+  - component: {fileID: -4974313189766626956}
   m_Layer: 6
   m_Name: ProFlashlight_Low
   m_TagString: UsableItem
@@ -446,9 +447,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a773d560bc336f4dadc99375503754a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   itemData: {fileID: 11400000, guid: 7ad927f324be7a44187d3791646a8760, type: 2}
-  itemPrice: 0
-  image: {fileID: 0}
+  itemCollider: {fileID: 923873945}
+  rigid: {fileID: 923873946}
   flashlight: {fileID: 8614488968919303912}
 --- !u!54 &923873946
 Rigidbody:
@@ -479,3 +483,20 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.2, y: 0.2, z: 0.2}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-4974313189766626956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8884961886838047458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  _assetId: 4083056080
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0

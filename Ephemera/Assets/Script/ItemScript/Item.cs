@@ -4,71 +4,55 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using Unity.VisualScripting;
-public class Item : MonoBehaviour,IUIVisible,IItemUsable,IItemObtainable
+using Mirror;
+public class Item : NetworkBehaviour, IUIVisible, IItemUsable, IItemObtainable
 {
     [SerializeField] public ItemData itemData;
-    [SerializeField] public int itemPrice;
-    public bool IsBothHandGrab { get { return itemData.isBothHand; } }
-    
+    private int itemPrice;
+    public int ItemPrice => itemPrice;
+    public Sprite itemSprite => itemData.image;
+    public bool IsBothHandGrab => itemData.isBothHand;
 
-    [SerializeField]
-    private Image image;
-
-    Collider collider;
-    Rigidbody rb;
+    [SerializeField] Collider itemCollider;
+    [SerializeField] Rigidbody rigid;
 
     private void Awake()
     {
-        collider = GetComponent<Collider>();
-        rb = GetComponent<Rigidbody>();
         itemPrice = itemData.GetRandomPrice();
     }
-
-    public void PickDown(Inventory owner)
+    public void PickUp(Transform pickTransform)
     {
-        Debug.Log("Pickdown");
-        transform.SetParent(null);
-        collider.enabled = true;
-        rb.isKinematic = false;
-        rb.useGravity = true;
-        transform.position = owner.pickedItem.transform.position + owner.pickedItem.transform.forward;
-        rb.AddForce(owner.pickedItem.transform.forward * 5.0f, ForceMode.Impulse); 
+        itemCollider.enabled = false;
+        rigid.isKinematic = true;
+        rigid.useGravity = false;
+        rigid.velocity = Vector3.zero;
+        rigid.angularVelocity = Vector3.zero;
+
+        transform.SetParent(pickTransform);
+        transform.localPosition = Vector3.zero;
+        transform.localRotation = Quaternion.identity;
     }
-
-    public void PickUp(Inventory owner)//gamemanager
+    public void PickDown(Transform pickTransform)
     {
-        if (owner != null)
-        {
-            transform.SetParent(owner.pickedItem);
-            collider.enabled = false;
-            rb.isKinematic = true;
-            rb.useGravity = false;
-            rb.velocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-            transform.position = owner.pickedItem.position;
-            transform.rotation = owner.pickedItem.transform.rotation;
-
-        }
+        transform.SetParent(null);
+        itemCollider.enabled = true;
+        rigid.isKinematic = false;
+        rigid.useGravity = true;
+        transform.position = pickTransform.position + pickTransform.forward;
+        rigid.AddForce(pickTransform.forward * 5.0f, ForceMode.Impulse);
     }
 
     public void ShowPickupUI()
     {
-        image.gameObject.SetActive(true);
+        //image.gameObject.SetActive(true);
     }
 
     public void UIvisible()
     {
         //Image image = UIManager.Instance.GetUI<Image>("UI¿Ã∏ß");
-        image.gameObject.SetActive(true);
+        //image.gameObject.SetActive(true);
     }
 
-    public virtual void UseItem()
-    {
-        
-    }
-    public int SellItem()
-    {
-        return itemPrice;
-    }
+    public virtual void UseItem() { }
     
 }

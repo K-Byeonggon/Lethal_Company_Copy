@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 2327225667714398318}
   - component: {fileID: 2327225669197126068}
   - component: {fileID: 8812946031732733713}
+  - component: {fileID: -4237609020192287999}
   m_Layer: 6
   m_Name: circular_saw
   m_TagString: ObtainableItem
@@ -112,9 +113,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03c1534ee5c1dc24a87e9a9917a408ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   itemData: {fileID: 11400000, guid: 513ccafa597c02c40b7aa17222b2a8ee, type: 2}
-  itemPrice: 0
-  image: {fileID: 0}
+  itemCollider: {fileID: 2327225667714398318}
+  rigid: {fileID: 8812946031732733713}
 --- !u!54 &8812946031732733713
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -131,3 +135,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &-4237609020192287999
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2327225667714301644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  _assetId: 1919884843
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
