@@ -22,12 +22,14 @@ public class SnareFleaAI : MonsterAI
     public LayerMask ceilingLayer; // 천장 레이어 설정
     private Rigidbody rigidbody;
     [SerializeField] float bindDistance = 1f;
+    [SerializeField] float attackDistance = 2f;
     public bool isAttacked = false;
     public bool isRunning = false;
+    public bool jumped = false;
 
     void Start()
     {
-        //navMeshAgent = transform.parent.GetComponent<NavMeshAgent>();
+        navMeshAgent = transform.GetComponent<NavMeshAgent>();
         ConstructBehaviorTree();
 
         snareHealth = GetComponent<SnareFleaHealth>();
@@ -49,19 +51,28 @@ public class SnareFleaAI : MonsterAI
         //죽음 시퀀스의 children Node
         ActionNode dead = new ActionNode(Dead);
 
+        //탐색 시퀀스
         ActionNode detect = new ActionNode(Detect);
 
         //공격 시퀀스
         ActionNode bind = new ActionNode(Bind);
         ActionNode attackPlayer = new ActionNode(AttackPlayer);
 
+        //지상 공격 시퀀스
+        ActionNode moveToPlayer = new ActionNode(MoveToPlayer);
+        ActionNode bindFromGround = new ActionNode(BindFromGround);
+        //ActionNode attackPlayer
+
         //지상 도망 시퀀스
         ActionNode runFromPlayer = new ActionNode(RunFromPlayer);
         ActionNode toCeiling = new ActionNode(ToCeiling);
 
         SequenceNode attackSequence = new SequenceNode(new List<Node> { bind, attackPlayer });
+        SequenceNode groundAttackSequence = new SequenceNode(new List<Node> { moveToPlayer, bindFromGround, attackPlayer });
         SequenceNode runSequence = new SequenceNode(new List<Node> { runFromPlayer, toCeiling });
-        topNode = new SelectorNode(new List<Node> { dead, detect, attackSequence, runSequence });
+
+
+        topNode = new SelectorNode(new List<Node> { dead, detect, attackSequence, groundAttackSequence });
     }
 
     private Node.State Dead()
@@ -74,7 +85,7 @@ public class SnareFleaAI : MonsterAI
         else return Node.State.FAILURE;
     }
 
-    //[탐색 시퀀스] 플레이어 탐지하기
+    //[탐색 시퀀스] 플레이어 탐지해서 떨어지기
     private Node.State Detect()
     {
         if (sawPlayer)
@@ -82,28 +93,46 @@ public class SnareFleaAI : MonsterAI
             rigidbody.useGravity = true;
             return Node.State.FAILURE;
         }
-        else return Node.State.SUCCESS;
+        else
+        {
+            return Node.State.SUCCESS;
+        }
     }
+
 
     //[공격 시퀀스] 플레이어가 가까우면 달라붙기. 플레이어가 가진 모든 아이템을 떨어뜨려야한다.
     private Node.State Bind()
     {
-        if(Vector3.Distance(transform.position, player.position) <= bindDistance)
+        //player.GetChild(0): 플레이어의 머리부분의 빈 오브젝트
+        if(Vector3.Distance(transform.position, player.GetChild(0).position) <= bindDistance)
         {
+            Debug.Log("달라붙음");
             transform.position = player.GetChild(0).position;
             rigidbody.useGravity = false;
             return Node.State.SUCCESS;
         }
         else
         {
-            return Node.State.FAILURE;
+            if (isGrounded)
+            {
+                Debug.Log("달라붙기 실패");
+                return Node.State.FAILURE;
+            }
+            else
+            {
+                Debug.Log("떨어지는 중");
+                return Node.State.RUNNING;
+            }
         }
     }
 
-    //[공격 시퀀스] 달라붙어 있으면, 일정시간마다 데미지를 준다.
+    //[공격 시퀀스, 지상 공격 시퀀스] 달라붙어 있으면, 일정시간마다 데미지를 준다.
     private Node.State AttackPlayer()
     {
-        if (Vector3.Distance(transform.position, player.position) <= bindDistance)
+        //공격 받으면 다음 시퀀스로(공격 -> 지상공격 -> 도망, 지상공격->도망)
+        if (isAttacked) { rigidbody.useGravity = true; return Node.State.FAILURE; }
+
+        if (Vector3.Distance(transform.position, player.GetChild(0).position) <= bindDistance)
         {
             if (Time.time - lastAttackTime >= attackCooltime)
             {
@@ -119,18 +148,56 @@ public class SnareFleaAI : MonsterAI
 
                 return Node.State.SUCCESS;
             }
+            else return Node.State.RUNNING;
         }
-        return Node.State.FAILURE;
+        else { return Node.State.FAILURE; }
     }
 
-    //[지상 도망 시퀀스] 플레이어로 부터 멀어짐
+    //[지상 공격 시퀀스] 플레이어를 향해 다가옴
+    private Node.State MoveToPlayer()
+    {
+        //내비메쉬 켜준다.
+        navMeshAgent.enabled = true;
+        navMeshAgent.SetDestination(player.position);
+
+        //공격당하면 다음 시퀀스인 지상 도망 시퀀스로
+        if (isAttacked) { return Node.State.FAILURE ; }
+
+        if (Vector3.Distance(transform.position, player.position) <= attackDistance)
+        {
+            return Node.State.SUCCESS;
+        }
+        else return Node.State.RUNNING;
+    }
+
+    //[지상 공격 시퀀스] 지상에서 플레이어에 달라붙기
+    private Node.State BindFromGround()
+    {
+        //지상 공격은 플레이어 본체와의 거리로 계산
+        if (Vector3.Distance(transform.position, player.position) <= attackDistance)
+        {
+            Debug.Log("달라붙음");
+            navMeshAgent.enabled = false;
+            transform.position = player.GetChild(0).position;
+            rigidbody.useGravity = false;
+            return Node.State.SUCCESS;
+        }
+        else
+        {
+            Debug.Log("달라붙기 실패");
+            return Node.State.FAILURE;
+        }
+    }
+
+    //[도망 시퀀스] 플레이어로 부터 멀어짐
     private Node.State RunFromPlayer()
     {
-        if (isAttacked && isGrounded)
+        if (isGrounded)
         {
+            navMeshAgent.enabled = true;
             if (!isRunning)
             {
-                Vector3 newPos = RandomNavMeshMovement.RandomAwayFromPlayer(transform.position, 2f, -1, player.position);
+                Vector3 newPos = RandomNavMeshMovement.NavAwayFromPlayer(transform.position, player.position, 2f);
                 navMeshAgent.SetDestination(transform.position);
                 isRunning = true;
             }
@@ -140,27 +207,28 @@ public class SnareFleaAI : MonsterAI
     }
 
     //[지상 도망 시퀀스] 도망목적지에 도착했으면 천장에 붙음
-    
     private Node.State ToCeiling()
     {
-        if (isGrounded)
+        if (Vector3.Distance(navMeshAgent.destination, transform.position) < 0.5f)
         {
-            rigidbody.AddForce(Vector3.up * 100f);
+            if (isGrounded && !jumped)
+            {
+                jumped = true;
+                navMeshAgent.enabled = false;
+                rigidbody.AddForce(Vector3.up * 10f, ForceMode.Impulse);
+            }
+            else if (atCeiling)
+            {
+                rigidbody.useGravity = false;
+                return Node.State.SUCCESS;
+            }
+            else
+            {
+                return Node.State.RUNNING;
+            }
         }
-        return Node.State.SUCCESS;
+        return Node.State.RUNNING;
     }
-
-    //[지상 공격 시퀀스] 플레이어를 향해 다가옴
-    /*
-    private Node.State MoveToPlayer()
-    {
-        if(Vector2.Distance(transform.position, player.position) <= bindDistance)
-        {
-            navMeshAgent.SetDestination(player.position);
-
-        }
-    }*/
-
 
     //[천장 시퀀스] 땅에 있고, 목표 플레이어가 없으면 천장에 붙는다.
 

@@ -764,7 +764,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 701828805}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.78, z: 0}
+  m_LocalPosition: {x: 0, y: 1.018, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2709,7 +2709,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2000696951
 Transform:
   m_ObjectHideFlags: 0
@@ -2916,7 +2916,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2067513786}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.42, y: 1, z: 0.86}
+  m_LocalPosition: {x: 3.39, y: 1, z: 0.86}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2932,7 +2932,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2067513786}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a78b87f1a7215014296de3ea3de5be2e, type: 3}
   m_Name: 
@@ -3049,7 +3049,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1143670964916400219
 Transform:
   m_ObjectHideFlags: 0
@@ -3522,6 +3522,7 @@ GameObject:
   - component: {fileID: 7412061902561153892}
   - component: {fileID: 7412061902561153894}
   - component: {fileID: 7412061902561153895}
+  - component: {fileID: 7412061902561153896}
   m_Layer: 0
   m_Name: Snare Flea
   m_TagString: Untagged
@@ -3544,7 +3545,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6989282859294297493
 Transform:
   m_ObjectHideFlags: 0
@@ -3607,8 +3608,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   bindDistance: 1
+  attackDistance: 2
   isAttacked: 0
   isRunning: 0
+  jumped: 0
 --- !u!54 &7412061902561153894
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3638,6 +3641,28 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2.07, y: 1.2212975, z: 4.81}
   m_Center: {x: -0.0073844194, y: -0.09238821, z: -0.76}
+--- !u!195 &7412061902561153896
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6760188784206215754}
+  m_Enabled: 0
+  m_AgentTypeID: 0
+  m_Radius: 2.115221
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 1.0365211
+  m_BaseOffset: 0.51826054
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1 &7523208320652819423
 GameObject:
   m_ObjectHideFlags: 0

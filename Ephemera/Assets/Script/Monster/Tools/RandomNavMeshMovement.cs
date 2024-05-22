@@ -43,30 +43,21 @@ public class RandomNavMeshMovement : MonoBehaviour
         return navHit.position;
     }
 
-    public static Vector3 RandomAwayFromPlayer(Vector3 origin, float dist, int layermask, Vector3 player)
+    public static Vector3 NavAwayFromPlayer(Vector3 origin, Vector3 player, float moveDistance)
     {
-        Vector3 randomDirection;
+        // 플레이어와의 방향 벡터 계산
+        Vector3 directionFromPlayer = origin - player;
+        directionFromPlayer.Normalize();
 
-        while(true)
-        {
-            randomDirection = Random.insideUnitCircle.normalized * dist;
+        // 목표 위치 계산
+        Vector3 targetPosition = origin + directionFromPlayer * moveDistance;
 
-            randomDirection += origin;
-
-            Vector3 originToPlayer = origin - player;
-
-            if (GetAngleBetweenVectors(randomDirection, originToPlayer) > 120f)
-            {
-                break;
-            }
-        }
-
-
+        // 목표 위치가 NavMesh 위에 있는지 확인하고 이동
         NavMeshHit navHit;
-        NavMesh.SamplePosition(randomDirection, out navHit, dist, layermask);
+        NavMesh.SamplePosition(targetPosition, out navHit, moveDistance, NavMesh.AllAreas);
 
-        //Debug.Log(navHit.position);
         return navHit.position;
+
     }
 
     public static float GetAngleBetweenVectors(Vector3 v1, Vector3 v2)
