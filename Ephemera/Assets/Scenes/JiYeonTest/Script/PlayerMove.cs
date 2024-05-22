@@ -1,3 +1,4 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Purchasing;
@@ -5,7 +6,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 
-public class PlayerMove : MonoBehaviour
+public class PlayerMove : NetworkBehaviour
 {
     private Vector2 _input;
     private CharacterController character;
@@ -24,8 +25,7 @@ public class PlayerMove : MonoBehaviour
     private float mouseX;
     private float mouseY;
 
-    [SerializeField]
-    private Transform vCam;
+    [SerializeField] GameObject vCam;
 
 
 
@@ -35,6 +35,18 @@ public class PlayerMove : MonoBehaviour
     {
         character = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
+    }
+
+    public override void OnStartClient()
+    {
+        if (!isLocalPlayer)
+        {
+            Debug.Log("isNotLocalPlayer");
+            GetComponent<PlayerInput>().enabled = false;
+            character.enabled = false;
+            this.enabled = false;
+            vCam.SetActive(false);
+        }
     }
 
     private void Update()
@@ -90,7 +102,6 @@ public class PlayerMove : MonoBehaviour
         //_direction = new Vector3(moveVector.x, 0, moveVector.y);
 
         _direction = context.ReadValue<Vector3>();
-
     }
 
     public void OnRun(InputAction.CallbackContext context)
@@ -128,12 +139,8 @@ public class PlayerMove : MonoBehaviour
     {
         Vector2 vector2 = context.ReadValue<Vector2>();
         mouseX += vector2.x * cameraSpeed * Time.deltaTime;
-        mouseY -= vector2.y * cameraSpeed * Time.deltaTime;
-        mouseY = Mathf.Clamp(mouseY, -90f, 90f);
         //mouseY += vector2.y * cameraSpeed * Time.deltaTime;
         this.transform.localEulerAngles = new Vector3(0, mouseX, 0);
-        //Debug.Log(mouseY);
-        vCam.localEulerAngles = new Vector3(mouseY, 0, 0);
     }
 
     public void OnCrouch(InputAction.CallbackContext context)

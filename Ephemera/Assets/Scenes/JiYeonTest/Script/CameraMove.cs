@@ -20,8 +20,8 @@ public class CameraMove : MonoBehaviour
         mouseX += Input.GetAxis("Mouse X") * mouseSpeed;
         mouseY += Input.GetAxis("Mouse Y") * mouseSpeed;
 
-        mouseY = Mathf.Clamp(mouseY, -50f, 30f);
-        mouseX = Mathf.Clamp(mouseX, -50f, 30f);
+        mouseY = Mathf.Clamp(mouseY, -50f, 90f);
+        mouseX = Mathf.Clamp(mouseX, -50f, 90f);
 
         this.transform.localEulerAngles = new Vector3(-mouseY, mouseX, 0);
     }

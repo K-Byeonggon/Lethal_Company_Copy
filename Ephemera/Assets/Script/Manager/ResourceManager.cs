@@ -21,7 +21,7 @@ public class ResourceManager : SingleTon<ResourceManager>
         {
             GameObject prefab = DataManager.Instance.LoadObject<GameObject>(addressableAssetKey);
             _prefabs.Add(addressableAssetKey, prefab);
-            GameNetworkManager.Instance?.spawnPrefabs.Add(prefab);
+            GameRoomNetworkManager.Instance?.spawnPrefabs.Add(prefab);
         }
         return _prefabs[addressableAssetKey];
     }

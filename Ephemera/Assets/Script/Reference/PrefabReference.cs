@@ -4,5 +4,10 @@ using UnityEngine;
 
 public class PrefabReference : MonoBehaviour
 {
-    public GameObject playerPrefab;
+    public List<GameObject> prefabs;
+
+    public void LoadToResourceManager()
+    {
+        prefabs.ForEach(prefab => { ResourceManager.Instance.GetPrefab(prefab.name); });
+    }
 }

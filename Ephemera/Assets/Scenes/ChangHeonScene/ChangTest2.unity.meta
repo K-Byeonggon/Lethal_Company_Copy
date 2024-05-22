@@ -1,5 +1,10 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Ephemera/Assets/Scenes/JiYeonTest/Item/Item.meta
+guid: d3557c690696911468edea8582244b94
+folderAsset: yes
+========
 guid: e2c86e29af889494b86ef3d9052ccbbd
+>>>>>>>> ebfa43657beca669fc6c97b2ffc083522a4f08de:Ephemera/Assets/Scenes/ChangHeonScene/ChangTest2.unity.meta
 DefaultImporter:
   externalObjects: {}
   userData: 

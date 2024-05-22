@@ -379,8 +379,8 @@ Transform:
   m_GameObject: {fileID: 1842993278706499674}
   m_LocalRotation: {x: -0.7071067, y: -0.000007066864, z: 0.000006660907, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 100, y: 100, z: 100}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 25, y: 25, z: 25}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 8832874241901151014}
   - {fileID: 2877581121058876734}
@@ -766,7 +766,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3933513245019403893}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 16.04, z: -7.25}
+  m_LocalPosition: {x: 0, y: 4.52, z: -2.01}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2020,7 +2020,7 @@ MonoBehaviour:
   speed: 30
   runspeed: 50
   jumpforce: 9.3
-  cameraSpeed: 0.2
+  cameraSpeed: 2
   vCam: {fileID: 3933513245019403893}
 --- !u!114 &8826468391305910916
 MonoBehaviour:
@@ -2103,22 +2103,6 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 8662118501486096422}
         m_TargetAssemblyTypeName: PlayerMove, Assembly-CSharp
-        m_MethodName: PlayerMovement
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_ActionId: 21a1040b-6587-4038-9971-3a61dd20ad79
-    m_ActionName: Player/Move[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]
-  - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8662118501486096422}
-        m_TargetAssemblyTypeName: PlayerMove, Assembly-CSharp
         m_MethodName: OnRun
         m_Mode: 0
         m_Arguments:
@@ -2179,6 +2163,22 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: da151457-6d12-4d13-a088-85c27ff10b59
     m_ActionName: Player/Crouch[/Keyboard/c]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 8662118501486096422}
+        m_TargetAssemblyTypeName: PlayerMove, Assembly-CSharp
+        m_MethodName: PlayerMovement
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 21493925-1c8e-44d4-9de1-724db9e1dc33
+    m_ActionName: Player/Move2[/Keyboard/a,/Keyboard/d,/Keyboard/w,/Keyboard/s]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

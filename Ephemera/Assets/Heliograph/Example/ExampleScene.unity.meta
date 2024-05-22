@@ -1,6 +1,11 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Ephemera/Assets/Scenes/JiYeonTest/Item/Item/Button.prefab.meta
+guid: c4e42a3d922262c4c82893b6aa898682
+PrefabImporter:
+========
 guid: 26dbfbe20ba94f14580949035aab13de
 DefaultImporter:
+>>>>>>>> ebfa43657beca669fc6c97b2ffc083522a4f08de:Ephemera/Assets/Heliograph/Example/ExampleScene.unity.meta
   externalObjects: {}
   userData: 
   assetBundleName: 

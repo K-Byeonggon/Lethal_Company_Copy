@@ -34,11 +34,7 @@ public class PlayerEx : MonoBehaviour
             inventory.ChangeItemSlot(3);
         }
 
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            Debug.Log("Detach item");
-            inventory.RemovetoInventory();
-        }
+        
 
         RaycastHit hit;
         Ray ray = camera.ScreenPointToRay(new Vector2(camera.pixelWidth / 2, camera.pixelHeight / 2));

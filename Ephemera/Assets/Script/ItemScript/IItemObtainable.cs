@@ -4,6 +4,7 @@ using UnityEngine;
 
 public interface IItemObtainable
 {
+    public void ShowPickupUI();
     public void PickUp(Inventory owner);
     public void PickDown(Inventory owner);
     public int SellItem();
