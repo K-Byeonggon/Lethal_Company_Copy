@@ -8,6 +8,8 @@ using UnityEngine.InputSystem;
 
 public class PlayerMove : NetworkBehaviour
 {
+    public static PlayerMove instance;
+
     private Vector2 _input;
     private CharacterController character;
     private Vector3 _direction;
@@ -21,7 +23,7 @@ public class PlayerMove : NetworkBehaviour
     [SerializeField] private float speed;
     [SerializeField] private float runspeed;
     [SerializeField] private float jumpforce;
-    [SerializeField] private float cameraSpeed;
+    [SerializeField] public float cameraSpeed;
     private float mouseX;
     private float mouseY;
 
@@ -34,17 +36,18 @@ public class PlayerMove : NetworkBehaviour
 
     private Animator animator;
 
-    void Interaction()
+    /*void Interaction()
     {
         if (nearobject.tag == "shop")
         {
             Shop shop = nearobject.GetComponent<Shop>();
-            shop.Enter(this);
+            shop.Enter();
         }
-    }
+    }*/
 
     private void Awake()
     {
+        instance = this;
         character = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
     }
@@ -165,14 +168,20 @@ public class PlayerMove : NetworkBehaviour
 
     }
 
-    public void OnTriggerEnter(Collider other)
+    public void OnTriggerStay(Collider other)
     {
-        if (other.tag == "Shop")
+        if (other.gameObject.CompareTag("Shop"))
         {
-            nearobject = other.gameObject;
-        }
-        
+            Shop.instance.Enter();
+        }    
     }
+
+    public void OnTriggerExit(Collider other)
+    {
+        if(other.gameObject.CompareTag("Shop"))
+            Shop.instance.Eixt();
+    }
+
 
     private bool IsGround() => character.isGrounded;
 }

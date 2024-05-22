@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Sword
   m_EditorClassIdentifier: 
   itemid: 0
-  itemName: 
-  amount: 0
-  prefab: {fileID: 0}
+  itemName: "\uCE7C"
+  amount: 10
+  prefab: {fileID: 3418011884731919454, guid: 2a3848c834ad7544f9a86f8b5da6bbc9, type: 3}
