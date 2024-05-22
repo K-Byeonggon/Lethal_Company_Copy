@@ -8,7 +8,7 @@ public class ThumperHitWall : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        thumper = GetComponent<ThumperAI>();
+        thumper = transform.parent.GetComponent<ThumperAI>();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -19,6 +19,7 @@ public class ThumperHitWall : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
+        Debug.Log("hitWall 갱신해용");
         thumper.hitWall = false;
     }
 }

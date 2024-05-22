@@ -37,6 +37,7 @@ public class ThumperView : FieldOfView
                     thumper.sawPlayer = true;
                     thumper.destination = targetTransform.position;
                     thumper.target = targetTransform;
+                    thumper.setDesti = true;
                     currentlyVisibleTargets.Add(targetTransform.gameObject);
                 }
             }

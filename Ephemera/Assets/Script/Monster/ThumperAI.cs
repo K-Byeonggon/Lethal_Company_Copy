@@ -17,6 +17,7 @@ public class ThumperAI : MonsterAI
     public bool setDesti = false;
     public float wanderRadius = 10f;
     public bool isAttacked = false;
+    public bool wandering = false;
 
     private DamageMessage damageMessage;
     private ThumperHealth thumperHealth;
@@ -27,7 +28,7 @@ public class ThumperAI : MonsterAI
     [SerializeField] float defaultSpeed = 2.5f;
     [SerializeField] float defaultAnglerSpeed = 120f;
     [SerializeField] float defaultAccel = 8f;
-    [SerializeField] float rushSpeed = 16f;
+    [SerializeField] float rushSpeed = 24f;
     [SerializeField] float rushAnglerSpeed = 10f;
 
 
@@ -82,14 +83,14 @@ public class ThumperAI : MonsterAI
     //[공격 시퀀스] 돌진 목적지 설정.
     private Node.State AttackWill()
     {
-        //플레이어를 발견했으면 목적지를 한번 자신으로 바꾸고, 다시 대상 플레이어가 있던 위치를 목표로 지정. (현재 스피드를 갱신)
-        if (sawPlayer)
+        //플레이어를 발견했으면 혹은 공격받았으면, 그 위치를 목표로 지정.
+        if (setDesti)
         {
             //최대 속도가 증가하고, 각속도가 줄어든다.
             Debug.Log("플레이어 봤다.");
-            navMeshAgent.SetDestination(transform.position);
+            //navMeshAgent.SetDestination(transform.position);
             navMeshAgent.speed = rushSpeed;
-            navMeshAgent.angularSpeed = rushAnglerSpeed;
+            //navMeshAgent.angularSpeed = rushAnglerSpeed;
             navMeshAgent.acceleration = 8f;
             navMeshAgent.SetDestination(destination);
             return Node.State.SUCCESS;
@@ -103,21 +104,20 @@ public class ThumperAI : MonsterAI
         }
     }
 
-    //[공격 시퀀스] 목표를 향해 이동. 
+    //[공격 시퀀스] 목적지를 향해 이동. 
     private Node.State MoveToPlayer()
     {
-        Debug.Log(Vector3.Distance(transform.position, target.position));
-        Debug.Log(transform.name + transform.position + ", " + target.name + target.position);
-        if (Vector3.Distance(transform.position, target.position) <= attackDistance)
+        //Debug.Log(Vector3.Distance(transform.position, target.position));
+        //Debug.Log(transform.name + transform.position + ", " + target.name + target.position);
+        if (Vector3.Distance(transform.position, destination) <= attackDistance)
         {
             Debug.Log("다가갔다.");
             return Node.State.SUCCESS;
         }
         else if (hitWall)
         {
-            Debug.Log("벽에 박음");
-            return Node.State.FAILURE;
-            //공격 실패 후 배회 시퀀스로
+            //아무데나 부딫히면 공격노드로 넘어감. 공격 실패 여부는 공격 노드에서 결정.
+            return Node.State.SUCCESS;
         }
         else return Node.State.RUNNING;
     }
@@ -131,40 +131,42 @@ public class ThumperAI : MonsterAI
             {
                 Debug.Log("공격한다.");
                 LivingEntity playerHealth = target.GetComponent<LivingEntity>();
+                
+                //플레이어 죽었으면 배회 시퀀스로
+                if(playerHealth.IsDead) { return Node.State.FAILURE; }
+
+                //아니면 데미지 적용.
                 playerHealth.ApplyDamage(damageMessage);
                 lastAttackTime = Time.time;
 
                 return Node.State.SUCCESS;
             }
         }
-        return Node.State.SUCCESS;
+        return Node.State.FAILURE;
     }
 
     //[배회 시퀀스] 목적지 설정
     private Node.State SetDest()
     {
-        Debug.Log(setDesti);
+        Debug.Log("배회 시퀀스");
 
-        if (sawPlayer) return Node.State.FAILURE;        //플레이어 추적하는 상태면,
-        else if (setDesti) return Node.State.SUCCESS;   //이미 목적지 설정이 되어있으면,
-        else
+        if (!wandering)
         {
             Vector3 newPos = RandomNavMeshMovement.RandomNavSphere(transform.position, wanderRadius, -1);
             navMeshAgent.SetDestination(newPos);
-            setDesti = true;
-            return Node.State.SUCCESS;
+            wandering = true;
         }
+        setDesti = false;
+        return Node.State.SUCCESS;
     }
 
     //[배회 시퀀스] 목적지 이동
     private Node.State MoveToDest()
     {
-        if (sawPlayer) return Node.State.FAILURE;
-
         //목적지에 도달함.
-        else if (Vector3.Distance(transform.position, navMeshAgent.destination) <= .5f)
+        if (Vector3.Distance(transform.position, navMeshAgent.destination) <= .5f)
         {
-            setDesti = false;
+            wandering = false;
             return Node.State.SUCCESS;
         }
         else return Node.State.RUNNING;

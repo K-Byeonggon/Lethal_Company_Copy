@@ -26,8 +26,9 @@ public class ThumperHealth : LivingEntity
 
         Debug.Log("썸퍼" + damageMessage.damage + " 피해입음");
 
-        //썸퍼는 공격받으면 공격받은 방향으로 돌아본다.
-
+        //썸퍼는 공격받으면 공격받은 방향을 목적지로 설정한다.
+        thumper.destination = damageMessage.damager.transform.position;
+        thumper.setDesti = true;
 
         return true;
     }
