@@ -8,10 +8,11 @@ public class CrowBar_Item : Item, IItemUsable
     private bool isUsingItem = false;
     private bool isCharging = false;
     private float chargeTime = 2.0f;
+    Collider weaponCollider;
     private void Start()
     {
         originalRotation = transform.localRotation;
-        //Collider collider = GetComponent<Collider>();
+        weaponCollider = GetComponent<Collider>();
     }
 
     
@@ -26,6 +27,7 @@ public class CrowBar_Item : Item, IItemUsable
    
     private IEnumerator SwingAndReset()
     {
+        weaponCollider.enabled = true;
         isUsingItem = true;
         Quaternion intermediateRotation = Quaternion.Euler(45, 0, 0); 
         Quaternion targetRotation = Quaternion.Euler(75, 0, 0); 
@@ -42,9 +44,9 @@ public class CrowBar_Item : Item, IItemUsable
         yield return new WaitForSeconds(0.5f); 
 
         yield return RotateTo(intermediateRotation, backwardDuration );
+        
 
         yield return RotateTo(originalRotation, backwardDuration );
-
         isUsingItem = false;
     }
 
@@ -59,7 +61,7 @@ public class CrowBar_Item : Item, IItemUsable
             elapsed += Time.deltaTime;
             yield return null;
         }
-
+        weaponCollider.enabled = false;
         transform.localRotation = targetRotation;
     }
    
@@ -67,11 +69,10 @@ public class CrowBar_Item : Item, IItemUsable
     {
         if (collision.gameObject.CompareTag("Monster")){
             LivingEntity livingEntity = collision.gameObject.GetComponent<LivingEntity>();
-            Debug.Log("Å©·Î¿ì¹Ù¿¡ ¸ÂÀº°Å :" + collision.gameObject.name);
+            Debug.Log("Å©ï¿½Î¿ï¿½Ù¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ :" + collision.gameObject.name);
             DamageMessage damageMessage = new DamageMessage();
             damageMessage.damager = gameObject;
             damageMessage.damage = 10;
-
 
             livingEntity.ApplyDamage(damageMessage);
             //if(collision.gameObject.CompareTag("Enemy")){

@@ -4,7 +4,6 @@ using UnityEditor.Purchasing;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-
 public class PlayerMoveEx : MonoBehaviour
 {
     private Vector2 _input;
@@ -26,8 +25,6 @@ public class PlayerMoveEx : MonoBehaviour
 
     [SerializeField]
     private Transform vCam;
-
-
 
     private Animator animator;
 
