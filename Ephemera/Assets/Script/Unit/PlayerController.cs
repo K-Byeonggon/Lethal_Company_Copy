@@ -16,10 +16,11 @@ public class PlayerController : NetworkBehaviour
     private float _velocity;
     private float currentVelocity;
 
+    private float speed;
+    [SerializeField] private float runSpeed;
+    [SerializeField] private float normalSpeed;
     [SerializeField] private float gravityMultiplier = 3.0f;
     [SerializeField] private float smoothTime = 0.05f;
-    [SerializeField] private float speed;
-    [SerializeField] private float runspeed;
     [SerializeField] private float jumpforce;
     [SerializeField] private float cameraSpeed;
 
@@ -28,6 +29,28 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private Inventory inventory;
     private bool IsGround() => characterController.isGrounded;
+    #endregion
+
+    #region Initialize Function
+    public void SetActivateLocalPlayer(bool isActive)
+    {
+        if (isLocalPlayer)
+        {
+            Debug.Log("SetActivateLocalPlayer : "+ isActive);
+            characterController.enabled = isActive;
+            GetComponent<PlayerInput>().enabled = isActive;
+            GetComponent<CapsuleCollider>().enabled = isActive;
+            this.enabled = isActive;
+        }
+    }
+    public void SetActivateLocalController(bool isActive)
+    {
+        if (isLocalPlayer)
+        {
+            characterController.enabled = isActive;
+            GetComponent<PlayerInput>().enabled = isActive;
+        }
+    }
     #endregion
     #region MonoBehaviour Function
     private void Update()
@@ -41,24 +64,31 @@ public class PlayerController : NetworkBehaviour
     }
     #endregion
     #region NetworkBehaviour Function
-    public override void OnStartLocalPlayer()
+    /*public override void OnStartLocalPlayer()
     {
         characterController.enabled = true;
         GetComponent<PlayerInput>().enabled = true;
         GetComponent<Collider>().enabled = true;
         this.enabled = true;
-    }
+    }*/
     public override void OnStartClient()
     {
         if (isLocalPlayer)
+        {
+            GameManager.Instance.localPlayerController = this;
             CameraReference.Instance.RegistLocalPlayerVirtualCamera(vCam.gameObject);
+            speed = normalSpeed;
+        }
         else
             CameraReference.Instance.RegistPlayerVirtualCamera(netId, vCam.gameObject);
     }
     public override void OnStopClient()
     {
         if (isLocalPlayer)
+        {
+            GameManager.Instance.localPlayerController = null;
             CameraReference.Instance.RegistLocalPlayerVirtualCamera(vCam.gameObject);
+        }
         else
             CameraReference.Instance.RegistPlayerVirtualCamera(netId, vCam.gameObject);
     }
@@ -123,10 +153,10 @@ public class PlayerController : NetworkBehaviour
     public void OnRun(InputAction.CallbackContext context)
     {
         if (context.started)
-            speed = runspeed;
+            speed = runSpeed;
         else if (context.performed) { }
         else if (context.canceled)
-            speed = 2.0f;
+            speed = normalSpeed;
     }
     public void OnInteraction(InputAction.CallbackContext context)
     {
@@ -138,12 +168,20 @@ public class PlayerController : NetworkBehaviour
     }
     public void OnChangeItem(InputAction.CallbackContext context)
     {
-        // 어떤 키가 입력되었는지 로그로 출력
-        Debug.Log($"Key pressed: {context.control.name}");
-        if (context.control is KeyControl keyControl)
+        switch(context.control.name)
         {
-            // 어떤 키가 입력되었는지 로그로 출력
-            Debug.Log($"Key pressed: {keyControl.keyCode}");
+            case "1":
+                inventory.ChangeItemSlot(0);
+                break;
+            case "2":
+                inventory.ChangeItemSlot(1);
+                break;
+            case "3":
+                inventory.ChangeItemSlot(2);
+                break;
+            case "4":
+                inventory.ChangeItemSlot(3);
+                break;
         }
     }
     public void OnDetachItem(InputAction.CallbackContext context)
@@ -153,14 +191,14 @@ public class PlayerController : NetworkBehaviour
     #endregion
     #region Network Command Function
     [Command]
-    public void CmdTeleport(Vector3 position)
+    public void CmdTeleport(Transform transform, Vector3 position)
     {
-        OnClientTeleport(position);
+        OnClientTeleport(transform, position);
     }
     #endregion
     #region Network ClientRpc Function
     [ClientRpc]
-    public void OnClientTeleport(Vector3 position)
+    public void OnClientTeleport(Transform transform, Vector3 position)
     {
         transform.position = position;
     }

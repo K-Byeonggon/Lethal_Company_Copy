@@ -6,17 +6,17 @@ using UnityEngine;
 public class UIController : MonoBehaviour
 {
     [SerializeField]
-    UI_Selecter ui_Selecter;
+    public UI_Selecter ui_Selecter;
     [SerializeField]
-    UI_Setup ui_Setup;
+    public UI_Setup ui_Setup;
     [SerializeField]
-    UI_Game ui_Game;
+    public UI_Game ui_Game;
     [SerializeField]
-    UI_Setting ui_Setting;
+    public UI_Setting ui_Setting;
     [SerializeField]
-    UI_Mission ui_Mission;
+    public UI_Mission ui_Mission;
     [SerializeField]
-    UI_Alarm ui_Alarm;
+    public UI_Alarm ui_Alarm;
 
     private Dictionary<Type, GameObject> uiDictionary;
 

@@ -22,6 +22,9 @@ public class GameManager : NetworkBehaviour
     //판매 배율
     RuntimeDungeon rd;
     Coroutine timeCoroutine;
+
+    public PlayerController localPlayerController;
+
     private int SalePriceMagnification
     {
         get
@@ -131,6 +134,9 @@ public class GameManager : NetworkBehaviour
         OnServerDeadlineReset();
         //카메라 리셋
         OnClientGameStartInit();
+        OnServerSetActivePlayer(true);
+        //캐릭터 제어 비활성화
+        OnServerSetActiveController(false);
     }
     /// <summary>
     /// 소지 금액 변경(서버에서만 호출)
@@ -194,10 +200,9 @@ public class GameManager : NetworkBehaviour
     {
         if (TerrainController.Instance.GetTerrainCount() <= (int)selectPlanet)
             return;
-
         //우주선 옮기고
         ShipController shipController = FindObjectOfType<ShipController>();
-        shipController.transform.position = TerrainController.Instance.shipStartTransform.position;
+        shipController.GetComponent<MovePlatform>().OnServerChangePosition(TerrainController.Instance.shipStartTransform.position);
         //함선 출발
         shipController.StartLanding(TerrainController.Instance.GetLandingZone(selectPlanet).position);
         //게임 시간 활성화
@@ -218,6 +223,14 @@ public class GameManager : NetworkBehaviour
     [Server] public void OnServerActiveLocalPlayerCamera()
     {
         OnCLientActiveLocalPlayerCamera();
+    }
+    [Server] public void OnServerSetActivePlayer(bool isActive)
+    {
+        OnCLientSetActivePlayer(isActive);
+    }
+    [Server] public void OnServerSetActiveController(bool isActive)
+    {
+        OnClientSetActiveController(isActive);
     }
     #endregion
     #region Command Function 클라이언트에서 호출하고 서버에서 실행되는 함수
@@ -256,6 +269,15 @@ public class GameManager : NetworkBehaviour
     [ClientRpc] public void OnCLientActiveLocalPlayerCamera()
     {
         CameraReference.Instance.SetActiveLocalPlayerVirtualCamera();
+    }
+    [ClientRpc] public void OnCLientSetActivePlayer(bool isActive)
+    {
+        Debug.Log(localPlayerController);
+        localPlayerController?.SetActivateLocalPlayer(isActive);
+    }
+    [ClientRpc] public void OnClientSetActiveController(bool isActive)
+    {
+        localPlayerController?.SetActivateLocalController(isActive);
     }
     #endregion
     #region ClientRpc Action 서버가 원격 프로시저 호출(RPC)로 모든 클라이언트에서 실행되는 Action

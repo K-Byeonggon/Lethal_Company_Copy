@@ -12,6 +12,10 @@ public class GameRoomNetworkManager : NetworkRoomManager
     NetworkRoomPlayer roomPlayerObjectPrefab;
     [SerializeField]
     GameObject spaceSystem;
+
+    List<Transform> SpawnPoint = new List<Transform>();
+    int SpawnCount = 0;
+
     public static GameRoomNetworkManager Instance => NetworkRoomManager.singleton as GameRoomNetworkManager;
      
     public override void Start()
@@ -48,9 +52,9 @@ public class GameRoomNetworkManager : NetworkRoomManager
     //GamePlayer를 생성할 때 호출하는 함수
     public override GameObject OnRoomServerCreateGamePlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
     {
-        GameObject gameobject = Instantiate(ResourceManager.Instance.GetPrefab("Player")); //Instantiate(gamePlayerObjectPrefab);
+        GameObject gameobject = Instantiate(ResourceManager.Instance.GetPrefab("Player"), SpawnPoint[SpawnCount].position, SpawnPoint[SpawnCount].rotation);
         //gameobject의 컴포넌트를 가져와 message로 초기화
-
+        SpawnCount++;
         NetworkServer.AddPlayerForConnection(conn, gameobject);
         return gameobject;
     }
@@ -60,15 +64,20 @@ public class GameRoomNetworkManager : NetworkRoomManager
         Debug.Log(sceneName);
         if(sceneName == "Assets/Scenes/GamePlay.unity")
         {
-            Debug.Log("CreateGameManager");
             GameObject gameManager = Instantiate(ResourceManager.Instance.GetPrefab("GameManager"));
             NetworkServer.Spawn(gameManager);
-            //NetworkServer.AddConnection(gameManager.GetComponent<NetworkIdentity>().connectionToClient);
 
             GameObject ship = Instantiate(ResourceManager.Instance.GetPrefab("SpaceShip"));
             ship.transform.position = new Vector3(3000, 0, 0);
             NetworkServer.Spawn(ship);
 
+            Transform spawnPointList = ship.GetComponent<ShipController>().spawnPoint;
+            foreach(Transform spawnPoint in spawnPointList)
+            {
+                SpawnPoint.Add(spawnPoint);
+            }
+            
+            
             GameObject space = Instantiate(spaceSystem);
             NetworkServer.Spawn(space);
 

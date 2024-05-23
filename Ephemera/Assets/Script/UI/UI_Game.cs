@@ -34,13 +34,8 @@ public class UI_Game : MonoBehaviour
 
     private void Start()
     {
-        foreach (var uISpriteSetup in uISpriteSetups)
-        {
-            uISpriteSetup.OnSetup();
-        }
+        Init();
     }
-
-
     private void Update()
     {
         if (isActive == false)
@@ -65,7 +60,12 @@ public class UI_Game : MonoBehaviour
     }
     public void Init()
     {
-
+        if (uISpriteSetups == null)
+            return;
+        foreach (var uISpriteSetup in uISpriteSetups)
+        {
+            uISpriteSetup?.OnSetup();
+        }
     }
     //클라이언트 추가, UI hpbar 추가
     public void AddClient()
