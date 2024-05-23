@@ -8,7 +8,7 @@ using Mirror;
 public class Item : NetworkBehaviour, IUIVisible, IItemUsable, IItemObtainable
 {
     [SerializeField] public ItemData itemData;
-    private int itemPrice;
+    [SyncVar] private int itemPrice;
     public int ItemPrice => itemPrice;
     public Sprite itemSprite => itemData.image;
     public bool IsBothHandGrab => itemData.isBothHand;
@@ -16,7 +16,7 @@ public class Item : NetworkBehaviour, IUIVisible, IItemUsable, IItemObtainable
     [SerializeField] Collider itemCollider;
     [SerializeField] Rigidbody rigid;
 
-    private void Awake()
+    public override void OnStartServer()
     {
         itemPrice = itemData.GetRandomPrice();
     }
@@ -27,14 +27,9 @@ public class Item : NetworkBehaviour, IUIVisible, IItemUsable, IItemObtainable
         rigid.useGravity = false;
         rigid.velocity = Vector3.zero;
         rigid.angularVelocity = Vector3.zero;
-
-        transform.SetParent(pickTransform);
-        transform.localPosition = Vector3.zero;
-        transform.localRotation = Quaternion.identity;
     }
     public void PickDown(Transform pickTransform)
     {
-        transform.SetParent(null);
         itemCollider.enabled = true;
         rigid.isKinematic = false;
         rigid.useGravity = true;
@@ -54,5 +49,22 @@ public class Item : NetworkBehaviour, IUIVisible, IItemUsable, IItemObtainable
     }
 
     public virtual void UseItem() { }
-    
+
+
+    #region Command Function
+    [Command]
+    public void CmdChangePosRot(Transform parent)
+    {
+        OnClientChangePosRot(parent);
+    }
+    #endregion
+    #region ClientRpc Function
+    [ClientRpc]
+    public void OnClientChangePosRot(Transform parent)
+    {
+        transform.position = parent.position;
+        transform.rotation = parent.rotation;
+    }
+    #endregion
+
 }
