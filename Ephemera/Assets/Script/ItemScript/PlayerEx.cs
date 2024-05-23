@@ -12,8 +12,10 @@ public class PlayerEx : MonoBehaviour
     [SerializeField]
     private Inventory inventory;
     [SerializeField]
-    private int playerHp = 100;
+    public int playerHp = 100;
+    private int currentHp;
     [SerializeField] public Transform weaponHanger;
+    [SerializeField] public GameObject prefab;  
     // Update is called once per frame
     void Update()
     {
@@ -71,13 +73,25 @@ public class PlayerEx : MonoBehaviour
         }
     }
 
-    
 
     private void OnCollisionEnter(Collision collision)
     {
+        Debug.Log(collision.gameObject.name);
         if (collision.gameObject.CompareTag("Mine"))
         {
+            Debug.Log("isDie");
             playerHp = 0;
+            Vector3 playerPosition = this.transform.position;  // 현재 플레이어의 위치를 저장
+            Quaternion playerRotation = this.transform.rotation;  // 현재 플레이어의 회전을 저장
+
+            Instantiate(prefab, playerPosition, playerRotation);  // 플레이어 위치에 ragdoll 프리팹 생성
+            prefab.SetActive(true);
+            Destroy(this.gameObject);  // 현재 플레이어 오브젝트 제거
         }
     }
+    //private void OnCollisionEnter(Collision collision)
+    //{
+        
+    //}
+   
 }

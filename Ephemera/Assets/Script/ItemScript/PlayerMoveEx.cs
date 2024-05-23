@@ -144,4 +144,8 @@ public class PlayerMoveEx : MonoBehaviour
     }
 
     private bool IsGround() => character.isGrounded;
+    public bool IsWalking()
+    {
+        return _direction != Vector3.zero;
+    }
 }

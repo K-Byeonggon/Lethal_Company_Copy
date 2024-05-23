@@ -9,10 +9,12 @@ public class CrowBar_Item : Item, IItemUsable
     private bool isCharging = false;
     private float chargeTime = 2.0f;
     Collider weaponCollider;
+    private AudioSource audioSource;
     private void Start()
     {
         originalRotation = transform.localRotation;
         weaponCollider = GetComponent<Collider>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     
@@ -22,6 +24,7 @@ public class CrowBar_Item : Item, IItemUsable
         if (!isUsingItem)
         {
             StartCoroutine(SwingAndReset());
+            audioSource.Play();
         }
     }
    
@@ -67,7 +70,8 @@ public class CrowBar_Item : Item, IItemUsable
    
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Monster")){
+        if (collision.gameObject.CompareTag("Monster"))
+        {
             LivingEntity livingEntity = collision.gameObject.GetComponent<LivingEntity>();
             Debug.Log("ũ�ο�ٿ� ������ :" + collision.gameObject.name);
             DamageMessage damageMessage = new DamageMessage();

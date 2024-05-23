@@ -23,6 +23,7 @@ public class RagdollController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         if(this.enabled==true)
         {
             Thigh_L.transform.SetParent(Spine.transform, true);
