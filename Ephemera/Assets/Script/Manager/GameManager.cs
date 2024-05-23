@@ -212,6 +212,13 @@ public class GameManager : NetworkBehaviour
     {
         return Environment.TickCount;
     }
+    /// <summary>
+    /// 모든 플레이어 카메라 셋팅
+    /// </summary>
+    [Server] public void OnServerActiveLocalPlayerCamera()
+    {
+        OnCLientActiveLocalPlayerCamera();
+    }
     #endregion
     #region Command Function 클라이언트에서 호출하고 서버에서 실행되는 함수
     //플레이어 상태 변화
@@ -245,6 +252,10 @@ public class GameManager : NetworkBehaviour
     [ClientRpc] public void OnClientStartHyperDrive()
     {
         VolumeController.Instance.StartWarpGlitch();
+    }
+    [ClientRpc] public void OnCLientActiveLocalPlayerCamera()
+    {
+        CameraReference.Instance.SetActiveLocalPlayerVirtualCamera();
     }
     #endregion
     #region ClientRpc Action 서버가 원격 프로시저 호출(RPC)로 모든 클라이언트에서 실행되는 Action

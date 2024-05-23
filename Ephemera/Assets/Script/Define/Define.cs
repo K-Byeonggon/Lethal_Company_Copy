@@ -6,7 +6,6 @@ public enum VirtualCameraType
 {
     SpaceShip,
     SpaceShipMiniature,
-    OtherPlayer,
 }
 public enum InputType
 {

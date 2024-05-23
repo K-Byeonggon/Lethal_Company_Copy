@@ -9,7 +9,7 @@ public class PlayerController : NetworkBehaviour
 {
     #region Field
     private Vector2 _input;
-    private Vector2 _direction;
+    private Vector3 _direction;
     private float mouseX;
     private float mouseY;
     private float gravity = -9.81f;
@@ -48,6 +48,20 @@ public class PlayerController : NetworkBehaviour
         GetComponent<Collider>().enabled = true;
         this.enabled = true;
     }
+    public override void OnStartClient()
+    {
+        if (isLocalPlayer)
+            CameraReference.Instance.RegistLocalPlayerVirtualCamera(vCam.gameObject);
+        else
+            CameraReference.Instance.RegistPlayerVirtualCamera(netId, vCam.gameObject);
+    }
+    public override void OnStopClient()
+    {
+        if (isLocalPlayer)
+            CameraReference.Instance.RegistLocalPlayerVirtualCamera(vCam.gameObject);
+        else
+            CameraReference.Instance.RegistPlayerVirtualCamera(netId, vCam.gameObject);
+    }
     #endregion
     #region Update Function
     void ApplyGravity()
@@ -68,7 +82,7 @@ public class PlayerController : NetworkBehaviour
         //sda
         if (_input.sqrMagnitude == 0)
             return;
-        var targetAngle = Mathf.Atan2(_direction.x, _direction.y) * Mathf.Rad2Deg;
+        var targetAngle = Mathf.Atan2(_direction.x, _direction.z) * Mathf.Rad2Deg;
         var angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref currentVelocity, smoothTime);
         transform.rotation = Quaternion.Euler(0.0f, angle, 0.0f);
     }
@@ -79,13 +93,13 @@ public class PlayerController : NetworkBehaviour
     public void SetAnimator()
     {
         animator.SetFloat("Xspeed", _direction.x * speed);
-        animator.SetFloat("Zspeed", _direction.y * speed);
+        animator.SetFloat("Zspeed", _direction.z * speed);
     }
     #endregion
     #region InputAction Function
     public void OnMove(InputAction.CallbackContext context)
     {
-        _direction = context.ReadValue<Vector2>();
+        _direction = context.ReadValue<Vector3>();
     }
     public void OnLook(InputAction.CallbackContext context)
     {

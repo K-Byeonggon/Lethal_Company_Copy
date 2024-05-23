@@ -1227,10 +1227,10 @@ MonoBehaviour:
   syncInterval: 0
   gravityMultiplier: 5
   smoothTime: 0.05
-  speed: 30
-  runspeed: 50
-  jumpforce: 9.3
-  cameraSpeed: 2
+  speed: 10
+  runspeed: 20
+  jumpforce: 5
+  cameraSpeed: 4
   vCam: {fileID: 3028210862385831605}
   characterController: {fileID: 3530072518083962692}
   animator: {fileID: 7032304748702406549}
@@ -1263,13 +1263,13 @@ CharacterController:
   m_IsTrigger: 0
   m_Enabled: 0
   serializedVersion: 2
-  m_Height: 17.04
-  m_Radius: 2.48
+  m_Height: 1.6
+  m_Radius: 0.3
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.02
   m_MinMoveDistance: 0
-  m_Center: {x: 0, y: 8.7, z: 0}
+  m_Center: {x: 0, y: 0.8, z: 0}
 --- !u!136 &-6171655900677763079
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1280,10 +1280,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 0
-  m_Radius: 0.5
-  m_Height: 1
+  m_Radius: 0.3
+  m_Height: 1.6
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 0.8, z: 0}
 --- !u!114 &1811296559847264449
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1900,7 +1900,7 @@ Transform:
   m_GameObject: {fileID: 5861699063163017019}
   m_LocalRotation: {x: -0.7071067, y: -0.000007066864, z: 0.000006660907, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 25, y: 25, z: 25}
+  m_LocalScale: {x: 10, y: 10, z: 10}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 3629897939161109575}
@@ -2526,7 +2526,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3028210862385831605}
   - component: {fileID: 7106948758999558040}
-  - component: {fileID: 1233465589933310823}
   m_Layer: 0
   m_Name: CM vcam1
   m_TagString: Untagged
@@ -2588,19 +2587,6 @@ MonoBehaviour:
         m_Calls: []
   m_LegacyBlendHint: 0
   m_ComponentOwner: {fileID: 5908113043708511654}
---- !u!114 &1233465589933310823
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9105704321957585172}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5e66db385385bb540a10881d6ddc6fbe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  type: 0
 --- !u!1 &9178397465360616532
 GameObject:
   m_ObjectHideFlags: 0

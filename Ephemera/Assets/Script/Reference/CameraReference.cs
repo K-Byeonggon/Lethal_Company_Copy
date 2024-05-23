@@ -3,18 +3,27 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 
 public class CameraReference : SingleTon<CameraReference>
 {
     GameObject loaclPlayerCamera;
     Dictionary<uint, GameObject> playerVirtualCameraDic = new Dictionary<uint, GameObject>();
-    Dictionary<VirtualCameraType, GameObject> virtualCameraDic = new Dictionary<VirtualCameraType, GameObject>();
+    Dictionary<VirtualCameraType, GameObject> objectVirtualCameraDic = new Dictionary<VirtualCameraType, GameObject>();
 
 
-    public void RegistLocalPlayerCamera(GameObject cameraObject)
+    #region LocalPlayer
+    public void RegistLocalPlayerVirtualCamera(GameObject cameraObject)
     {
         loaclPlayerCamera = cameraObject;
     }
+    //vCam해제
+    public void DeregistLocalPlayerVirtualCamera()
+    {
+        loaclPlayerCamera = null;
+    }
+    #endregion
+    #region Other Player
     //vCam등록
     public void RegistPlayerVirtualCamera(uint netId, GameObject cameraObject)
     {
@@ -28,59 +37,72 @@ public class CameraReference : SingleTon<CameraReference>
             playerVirtualCameraDic.Remove(netId);
         }
     }
+    #endregion
+
+    #region Object VCam
     //vCam등록
     public void RegistVirtualCamera(VirtualCameraType type, GameObject cameraObject)
     {
-        virtualCameraDic.TryAdd(type, cameraObject);
+        objectVirtualCameraDic.TryAdd(type, cameraObject);
     }
     //vCam해제
     public void DeregistVirtualCamera(VirtualCameraType type)
     {
-        if(virtualCameraDic.ContainsKey(type))
+        if(objectVirtualCameraDic.ContainsKey(type))
         {
-            virtualCameraDic.Remove(type);
+            objectVirtualCameraDic.Remove(type);
         }
     }
+    #endregion
 
-
-    //playerVCam활성
+    #region Active Vcam
+    // loacl Player Camera를 활성하고 나머지 비활성
+    public void SetActiveLocalPlayerVirtualCamera()
+    {
+        loaclPlayerCamera.SetActive(true);
+        foreach (var item in playerVirtualCameraDic)
+        {
+            item.Value.SetActive(false);
+        }
+        foreach (var item in objectVirtualCameraDic)
+        {
+            item.Value.SetActive(false);
+        }
+    }
+    // other player VCam활성
     public void SetActivePlayerVirtualCamera(uint netId)
     {
-        if (playerVirtualCameraDic.TryGetValue(netId, out GameObject value))
-        {
-            foreach (var playerVirtualCamera in playerVirtualCameraDic.Values)
-            {
-                if (playerVirtualCamera == value)
-                    playerVirtualCamera.SetActive(true);
-                else
-                    playerVirtualCamera.SetActive(false);
-            }
+        if (playerVirtualCameraDic.ContainsKey(netId) == false)
+            return;
 
-            foreach (var virtualCamera in virtualCameraDic.Values)
-            {
-                virtualCamera.SetActive(false);
-            }
+        foreach (var playerVirtualCamera in playerVirtualCameraDic)
+        {
+            if (playerVirtualCamera.Key == netId)
+                playerVirtualCamera.Value.SetActive(true);
+            else
+                playerVirtualCamera.Value.SetActive(false);
         }
+        foreach (var virtualCamera in objectVirtualCameraDic.Values)
+        {
+            virtualCamera.SetActive(false);
+        }
+        loaclPlayerCamera.SetActive(false);
     }
     //vCam활성
     public void SetActiveVirtualCamera(VirtualCameraType type)
     {
-        if (virtualCameraDic.TryGetValue(type, out GameObject value))
+        if (objectVirtualCameraDic.ContainsKey(type) == false)
+            return;
+
+        GameObject camera = objectVirtualCameraDic[type];
+        foreach (var virtualCamera in objectVirtualCameraDic.Values)
         {
-            foreach (var virtualCamera in virtualCameraDic.Values)
-            {
-                if (virtualCamera == value)
-                    virtualCamera.SetActive(true);
-                else
-                    virtualCamera.SetActive(false);
-            }
-        }
-        else
-        {
-            foreach (var virtualCamera in virtualCameraDic.Values)
-            {
+            if (virtualCamera == camera)
+                virtualCamera.SetActive(true);
+            else
                 virtualCamera.SetActive(false);
-            }
         }
+        loaclPlayerCamera.SetActive(false);
     }
+    #endregion
 }
