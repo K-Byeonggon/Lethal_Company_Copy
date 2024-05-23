@@ -24,8 +24,8 @@ MonoBehaviour:
   GlobalProps:
   - ID: 0
     Count:
-      Min: 1
-      Max: 1
+      Min: 5
+      Max: 5
   KeyManager: {fileID: 0}
   DoorwayConnectionChance: 0
   RestrictConnectionToSameSection: 0
