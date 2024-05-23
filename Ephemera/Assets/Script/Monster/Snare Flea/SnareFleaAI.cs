@@ -15,8 +15,8 @@ public class SnareFleaAI : MonsterAI
     public Transform player;
 
     public bool sawPlayer = false;
-    [SerializeField] bool atCeiling = false;
-    [SerializeField] bool isGrounded;
+    public bool atCeiling = false;
+    public bool isGrounded;
     public float checkDistance = 1.0f; // 땅을 체크할 최대 거리
     public LayerMask groundLayer; // 땅 레이어 설정
     public LayerMask ceilingLayer; // 천장 레이어 설정
@@ -28,6 +28,8 @@ public class SnareFleaAI : MonsterAI
     public bool isAttacked = false;
     public bool isRunning = false;
     public bool jumped = false;
+    float jumpedTime = 0;
+
 
     void Start()
     {
@@ -44,7 +46,7 @@ public class SnareFleaAI : MonsterAI
     void Update()
     {
         CheckGround();
-        CheckCeiling();
+        //CheckCeiling();
         topNode.Evaluate();
     }
 
@@ -160,15 +162,12 @@ public class SnareFleaAI : MonsterAI
     //[지상 공격 시퀀스] 플레이어를 향해 다가옴
     private Node.State MoveToPlayer()
     {
-
-
         //공격당하면/플레이어 죽었으면 다음 시퀀스인 도망 시퀀스로
         if (isAttacked || player.GetComponent<LivingEntity>().IsDead) { return Node.State.FAILURE; }
 
         //내비메쉬 켜준다.
         navMeshAgent.enabled = true;
         navMeshAgent.SetDestination(player.position);
-
 
         if (Vector3.Distance(transform.position, player.position) <= attackDistance)
         {
@@ -200,28 +199,27 @@ public class SnareFleaAI : MonsterAI
     private Node.State RunFromPlayer()
     {
         Debug.Log("도망 시퀀스");
-        if (isGrounded)
-        {
+
+
             if (!isRunning)
             {
                 navMeshAgent.enabled = true;
-                Debug.Log("목적지 설정");
                 Vector3 newPos = RandomNavMeshMovement.RandomNavSphere(transform.position, runDistance, -1);
-                Debug.Log(newPos);
+                Debug.Log("목적지 설정: " + newPos);
                 navMeshAgent.SetDestination(newPos);
                 isRunning = true;
             }
             return Node.State.SUCCESS;
-        }
-        else { return Node.State.FAILURE; }
+        
+        //else { return Node.State.FAILURE; }
     }
 
     //[도망 시퀀스] 도망목적지에 도착했으면 점프.
     private Node.State ToCeiling()
     {
-        Debug.Log("천장에 붙는거");
         if (Vector3.Distance(navMeshAgent.destination, transform.position) < 0.5f)
         {
+            Debug.Log("목적지 도착");
             if (isGrounded && !jumped)
             {
                 Debug.Log("점프");
@@ -229,7 +227,12 @@ public class SnareFleaAI : MonsterAI
                 navMeshAgent.enabled = false;
                 rigidbody.useGravity = false;
                 rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+                jumpedTime = Time.time;
             }
+        }
+        else
+        {
+            return Node.State.RUNNING;
         }
         return Node.State.SUCCESS;
     }
@@ -237,7 +240,9 @@ public class SnareFleaAI : MonsterAI
     //[도망 시퀀스] 천장에 붙기. 기타 bool 초기화.
     private Node.State HangOn()
     {
-        Debug.Log("여기 오긴 했니?");
+        Debug.Log("천장 붙기!!" + atCeiling);
+        //Debug.Log(transform.position.y);
+        Debug.Log("시간: " + Time.time + " 점프: " + jumpedTime);
         if (atCeiling)
         {
             Debug.Log("천장 고정");
@@ -245,14 +250,27 @@ public class SnareFleaAI : MonsterAI
             rigidbody.useGravity = false;
             sawPlayer = false;
             player = null;
+            isRunning = false;
+            jumped = false;
             return Node.State.SUCCESS;
         }
         else
         {
+            Debug.Log("천장 고정이 안되~");
             return Node.State.RUNNING;
         }
     }
 
+
+    public void SetDefault()
+    {
+        isAttacked = false;
+        rigidbody.useGravity = false;
+        sawPlayer = false;
+        player = null;
+        isRunning = false;
+        jumped = false;
+    }
 
     void CheckGround()
     {
@@ -281,6 +299,19 @@ public class SnareFleaAI : MonsterAI
         {
             atCeiling = false;
             Debug.Log("Not at Ceiling");
+        }
+    }
+
+    bool CheckCeiling2()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.up, out hit, checkDistance, ceilingLayer))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
