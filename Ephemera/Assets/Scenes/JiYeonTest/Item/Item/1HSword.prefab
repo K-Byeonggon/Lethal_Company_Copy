@@ -12,6 +12,9 @@ GameObject:
   - component: {fileID: 3418011884735017054}
   - component: {fileID: 3418011884733919902}
   - component: {fileID: 1657569366446833656}
+  - component: {fileID: 2879860883806549316}
+  - component: {fileID: 2797591157510030065}
+  - component: {fileID: -7960167489281822792}
   m_Layer: 0
   m_Name: 1HSword
   m_TagString: Untagged
@@ -28,7 +31,7 @@ Transform:
   m_GameObject: {fileID: 3418011884731919454}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 4.07, y: 4.07, z: 4.07}
+  m_LocalScale: {x: 1.34, y: 1.34, z: 1.34}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -96,4 +99,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a613342d7235a124d99b942961e73ea2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  item: {fileID: 11400000, guid: ec4c8a0266d318841b1bf8c594e9eede, type: 2}
+  item: {fileID: 0}
+--- !u!54 &2879860883806549316
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3418011884731919454}
+  serializedVersion: 2
+  m_Mass: 4.89
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!136 &2797591157510030065
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3418011884731919454}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.14558978
+  m_Height: 1.3027447
+  m_Direction: 1
+  m_Center: {x: -0.00022505224, y: 0.44038746, z: -0.000000022351747}
+--- !u!114 &-7960167489281822792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3418011884731919454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03c1534ee5c1dc24a87e9a9917a408ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemData: {fileID: 11400000, guid: ec4c8a0266d318841b1bf8c594e9eede, type: 2}
+  itemPrice: 0
+  image: {fileID: 0}

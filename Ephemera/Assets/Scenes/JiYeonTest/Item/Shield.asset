@@ -9,10 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 747ef5a810e65854d889f9ac91406226, type: 3}
+  m_Script: {fileID: 11500000, guid: da29ff613f7f5ef45b8aa06909c007bf, type: 3}
   m_Name: Shield
   m_EditorClassIdentifier: 
-  itemid: 2
   itemName: "\uBC29\uD328"
-  amount: 10
-  prefab: {fileID: 607766039381465459, guid: 3463205f0b3d9ff42b4f0cb537afa5f6, type: 3}
+  itemMinPrice: 10
+  itemMaxPrice: 20
+  isBothHand: 0
+  image: {fileID: 0}

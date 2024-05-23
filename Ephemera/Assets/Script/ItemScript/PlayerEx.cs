@@ -13,6 +13,7 @@ public class PlayerEx : MonoBehaviour
     private Inventory inventory;
     [SerializeField]
     private int playerHp = 100;
+    public int coin = 200;
 
     // Update is called once per frame
     void Update()

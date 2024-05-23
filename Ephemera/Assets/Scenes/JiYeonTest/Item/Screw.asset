@@ -9,10 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 747ef5a810e65854d889f9ac91406226, type: 3}
-  m_Name: Radios
+  m_Script: {fileID: 11500000, guid: da29ff613f7f5ef45b8aa06909c007bf, type: 3}
+  m_Name: Screw
   m_EditorClassIdentifier: 
-  itemid: 1
-  itemName: "\uBB34\uC804\uAE30"
-  amount: 10
-  prefab: {fileID: 7503442566447377291, guid: 6ef08d1b7e166c74991a0ce10797f92e, type: 3}
+  itemName: "\uB098\uC0AC"
+  itemMinPrice: 10
+  itemMaxPrice: 20
+  isBothHand: 0
+  image: {fileID: 0}

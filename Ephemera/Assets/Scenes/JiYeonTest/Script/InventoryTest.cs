@@ -6,20 +6,20 @@ using UnityEngine;
 public class InventoryTest : MonoBehaviour
 {
     public static InventoryTest instance;
-    public List<JItmeData> data = new List<JItmeData>(); 
+    public List<ItemData> data = new List<ItemData>(); 
 
     public void Awake()
     {
         instance = this;
     }
 
-    public void Add(JItmeData itme)
+    public void Add(ItemData item)
     {
-        data.Add(itme);
+
     }
 
-    public void Remove(JItmeData itme)
+    public void Remove(ItemData itme)
     {
-        data.Remove(itme);
+
     }
 }

@@ -154,7 +154,7 @@ public class PlayerMove : NetworkBehaviour
     {
         Vector2 vector2 = context.ReadValue<Vector2>();
         mouseX += vector2.x * cameraSpeed * Time.deltaTime;
-        //mouseY += vector2.y * cameraSpeed * Time.deltaTime;
+        mouseY += vector2.y * cameraSpeed;// * Time.deltaTime;
         this.transform.localEulerAngles = new Vector3(0, mouseX, 0);
     }
 

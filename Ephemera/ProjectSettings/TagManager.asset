@@ -9,6 +9,9 @@ TagManager:
   - Mine
   - DiedPlayer
   - UsableItem
+  - Shop
+  - Char
+  - SellItem
   layers:
   - Default
   - TransparentFX

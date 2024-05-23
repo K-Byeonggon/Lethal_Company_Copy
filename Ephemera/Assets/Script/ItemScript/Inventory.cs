@@ -6,9 +6,10 @@ public class Inventory : MonoBehaviour
 {
     private PlayerEx player;
     public List<Slotdata> slots = new List<Slotdata>();
-    public int maxSlot = 4;
+    public int maxSlot = 4; 
     public int currentItemSlot = 0;
     [SerializeField] public Transform pickedItem;
+
 
     private void Awake()
     {

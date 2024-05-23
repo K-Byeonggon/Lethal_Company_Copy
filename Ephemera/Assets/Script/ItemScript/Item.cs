@@ -7,13 +7,13 @@ using Unity.VisualScripting;
 using static UnityEditor.Progress;
 public class Item : MonoBehaviour,IUIVisible,IItemUsable,IItemObtainable
 {
-    [SerializeField] public ItemData itemData;
+    [SerializeField] private ItemData itemData;
     [SerializeField] public int itemPrice;
     public bool IsBothHandGrab { get { return itemData.isBothHand; } }
     
 
     [SerializeField]
-    private Image image;
+    public Image image;
 
     Collider collider;
     Rigidbody rb;

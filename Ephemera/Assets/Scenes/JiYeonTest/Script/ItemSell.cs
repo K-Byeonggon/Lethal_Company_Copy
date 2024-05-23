@@ -1,14 +1,31 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class ItemSell : MonoBehaviour
 {
-    public JItmeData Item;
+    Rigidbody rigd;
+    CapsuleCollider coll;
 
-    public void Sell()
+    Item Item;
+
+    void Awake()
     {
-        InventoryTest.instance.Add(Item);
+        rigd = GetComponent<Rigidbody>();
+        coll = GetComponent<CapsuleCollider>();
+        Item = coll.GetComponent<Item>();
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (!collision.gameObject.CompareTag("SellItem"))
+        {
+            return;
+        }
+
+        //충돌한 오브젝트 정보 읽기
+
+        //트리거 실행시 해당 오브젝트의 price를 플레이어의 지갑에 넣기
+
     }
 }
