@@ -1,16 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerStat : LivingEntity
 {
     [SerializeField]
     public GameObject ragdoll;
+    public float stamina;
+    public float maxstamina;
+    private float Runtime;
     private void OnEnable()
     {
         maxHealth = 100f;
         health = maxHealth;
         dead = false;
+        maxstamina = 5f;
+        stamina = 5f;
+        Runtime = 1f;
     }
 
     public override bool ApplyDamage(DamageMessage damageMessage)
@@ -27,19 +34,26 @@ public class PlayerStat : LivingEntity
         base.Die();
         Debug.Log("플레이어 죽음");
     }
-    //private void OnCollisionEnter(Collision collision)
-    //{
-    //    Debug.Log(collision.gameObject.name);
-    //    if (collision.gameObject.CompareTag("Mine"))
-    //    {
-    //        Debug.Log("isDie");
-    //        health = 0;
-    //        Vector3 playerPosition = this.transform.position;  // 현재 플레이어의 위치를 저장
-    //        Quaternion playerRotation = this.transform.rotation;  // 현재 플레이어의 회전을 저장
+    public void UpdateStamina()
+    {
+        if (this != null)
+        {
+            stamina -= Runtime*Time.deltaTime;
+            Debug.Log("스태미나가 줄어드는가? " + stamina);
+        }
+    }
+    public void RefillStamina()
+    {
+        if (this != null)
+        {
+            stamina += Runtime*Time.deltaTime;
+            if (stamina >= maxstamina)
+            {
+                Debug.Log("스태미나가 돌아오는가?" + stamina);
+                stamina = maxstamina;
+                
+            }
+        }
+    }
 
-    //        Instantiate(ragdoll, playerPosition, playerRotation);  // 플레이어 위치에 ragdoll 프리팹 생성
-    //        //ragdoll.SetActive(true);
-    //        Destroy(this.gameObject);  // 현재 플레이어 오브젝트 제거
-    //    }
-    //}
 }

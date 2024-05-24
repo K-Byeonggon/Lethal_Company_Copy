@@ -6,16 +6,11 @@ public class PlayerEx : MonoBehaviour
 {
     public float linesize = 10.0f;
     public Image image;
-    [SerializeField] public Vector3 moveVector;
-    public Vector3 direction { get; private set; }
     [SerializeField] public Camera camera;
     [SerializeField]
     private Inventory inventory;
-    [SerializeField]
-    public int playerHp = 100;
-    private int currentHp;
     [SerializeField] public Transform weaponHanger;
-    [SerializeField] public GameObject prefab;  
+    [SerializeField] public GameObject prefab;
     // Update is called once per frame
     void Update()
     {
@@ -35,10 +30,7 @@ public class PlayerEx : MonoBehaviour
         {
             inventory.ChangeItemSlot(3);
         }
-        if(playerHp <= 0)
-        {
-            this.gameObject.SetActive(false);
-        }
+        
         
 
         RaycastHit hit;
@@ -80,7 +72,6 @@ public class PlayerEx : MonoBehaviour
         if (collision.gameObject.CompareTag("Mine"))
         {
             Debug.Log("isDie");
-            playerHp = 0;
             Vector3 playerPosition = this.transform.position;  // 현재 플레이어의 위치를 저장
             Quaternion playerRotation = this.transform.rotation;  // 현재 플레이어의 회전을 저장
 
@@ -91,7 +82,7 @@ public class PlayerEx : MonoBehaviour
     }
     //private void OnCollisionEnter(Collision collision)
     //{
-        
+
     //}
-   
+
 }

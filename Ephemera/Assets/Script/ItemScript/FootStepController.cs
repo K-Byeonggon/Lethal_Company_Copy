@@ -49,7 +49,6 @@ public class FootStepController : MonoBehaviour
                 Debug.Log("Metal");
                 footstepSource.clip = metalFootstep;
                 break;
-                // 필요한 경우 다른 케이스를 추가합니다
         }
 
         footstepSource.Play();
