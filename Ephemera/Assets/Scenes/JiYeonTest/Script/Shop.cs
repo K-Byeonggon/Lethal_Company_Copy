@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using static UnityEngine.Rendering.DebugUI;
+using Mirror;
 
-public class Shop : MonoBehaviour
+public class Shop : NetworkBehaviour
 {
     public static Shop instance;
     public RectTransform uigroup;
@@ -25,33 +27,36 @@ public class Shop : MonoBehaviour
     public void Enter()//PlayerMove player)
     {
         uigroup.gameObject.SetActive(true);
-        PlayerMove.instance.cameraSpeed = 0;
-        //CameraMove.instance.mouseSpeed = 0;
+        GameManager.Instance.localPlayerController.SetCameraSpeed(0);
     }
 
     public void Eixt()
     {
         uigroup.gameObject.SetActive(false);
-        PlayerMove.instance.cameraSpeed = 3;
+        GameManager.Instance.localPlayerController.SetCameraSpeed(3);
         //CameraMove.instance.mouseSpeed = 3;
     }
 
+    [Command]
     public void Buy(int index)
     {
         Vector3 rnaitempos = Vector3.right * Random.Range(-0, 0) + Vector3.forward * Random.Range(-0, 0);
         GameObject gameObject = Instantiate(itemobj[index], itemPos[index].position + rnaitempos, itemPos[index].rotation);
         Item buyItem = gameObject.GetComponent<Item>();
-        Player.coin -= buyItem.itemPrice;
 
-        if (Player.coin < buyItem.itemPrice)
-        {
+        int currentMonny = GameManager.Instance.CurrentMoney;
+
+        if (currentMonny < buyItem.ItemPrice)
             return;
-        }
+
+        GameManager.Instance.OnServerCurrentMoneyChanged(currentMonny - buyItem.ItemPrice);
 
         if (buyItem == null)
             return;
 
-        buyItem.image = image;
+        //buyItem.itemData = image;
+
+        
 
         //소지금 부족시 구매 불가 조건 추가
 

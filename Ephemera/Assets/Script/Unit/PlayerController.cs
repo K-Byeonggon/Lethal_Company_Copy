@@ -50,6 +50,10 @@ public class PlayerController : NetworkBehaviour
             GetComponent<PlayerInput>().enabled = isActive;
         }
     }
+    public void SetCameraSpeed(float value)
+    {
+        cameraSpeed = value;
+    }
     #endregion
     #region MonoBehaviour Function
     private void Update()

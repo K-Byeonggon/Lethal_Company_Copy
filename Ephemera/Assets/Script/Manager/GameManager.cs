@@ -58,6 +58,10 @@ public class GameManager : NetworkBehaviour
     //선택 행성
     [SyncVar] private Planet selectPlanet;
     #endregion
+    #region Property
+    public int CurrentMoney => currentMoney;
+    #endregion
+
     #region Function
     public GameTime GetCurrentTime()
     {

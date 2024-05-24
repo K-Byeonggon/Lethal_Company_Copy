@@ -52,9 +52,9 @@ public class PlayerEx : MonoBehaviour
             var obtainableItem = hit.transform.GetComponent<Item>();
             if (obtainableItem != null)
             {
-                if (inventory.GetCurrentItem() == null && Input.GetKeyDown(KeyCode.E))
+                if (inventory.GetCurrentItemComponent == null && Input.GetKeyDown(KeyCode.E))
                 {
-                    inventory.AddtoInventory(obtainableItem.gameObject);
+                    inventory.AddItem(obtainableItem.gameObject);
                     Debug.Log("Item obtained: " + obtainableItem.name);
                 }
             }

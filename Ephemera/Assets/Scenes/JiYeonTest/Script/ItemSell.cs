@@ -9,8 +9,6 @@ public class ItemSell : MonoBehaviour
 
     List<Item> collidedItems = new List<Item>();
     List<GameObject> collidedObjects = new List<GameObject>();
-    public PlayerEx player;
-
 
     void Awake()
     {
@@ -33,7 +31,7 @@ public class ItemSell : MonoBehaviour
             collidedItems.Add(collidedItem);
             collidedObjects.Add(collision.gameObject);
 
-            Debug.Log("Collided with item: " + collidedItem.name + ", price: " + collidedItem.itemPrice);
+            Debug.Log("Collided with item: " + collidedItem.name + ", price: " + collidedItem.ItemPrice);
         }
     }
 
@@ -46,12 +44,14 @@ public class ItemSell : MonoBehaviour
             // 모든 충돌한 아이템의 price 합산
             foreach (var item in collidedItems)
             {
-                totalPrice += item.itemPrice;
+                totalPrice += item.ItemPrice;
             }
 
             // Player의 coin 데이터에 총 price를 더하기
-            player.coin += totalPrice;
-            Debug.Log("Added " + totalPrice + " coins to player. Total coins: " + player.coin);
+            int currentMoney = GameManager.Instance.CurrentMoney;
+            GameManager.Instance.OnServerCurrentMoneyChanged(currentMoney + totalPrice);
+
+            Debug.Log("Added " + totalPrice + " coins to player. Total coins: " + GameManager.Instance.CurrentMoney);
 
             // 모든 충돌한 오브젝트 제거
             foreach (var obj in collidedObjects)
