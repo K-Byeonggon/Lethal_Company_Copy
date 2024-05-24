@@ -27,16 +27,20 @@ public class MovePlatform : NetworkBehaviour
     }
     private void OnTriggerExit(Collider other)
     {
+        //Debug.LogError(other.GetComponent<PlayerController>().netId);
         OnServerUndependPlatform(other.transform);
     }
     #endregion
     #region Server Function
     [Server] public void OnServerDependPlatform(Transform transform)
     {
-        loadedObjects.Add(transform);
         if(transform.TryGetComponent<CharacterController>(out CharacterController cc))
         {
             playerObjects.Add(transform);
+        }
+        else
+        {
+            loadedObjects.Add(transform);
         }
     }
     [Server] public void OnServerUndependPlatform(Transform transform)
@@ -48,32 +52,45 @@ public class MovePlatform : NetworkBehaviour
     }
     [Server] public void OnServerChangePosition(Vector3 vec)
     {
-        OnClientChangePosition(vec);
-    }
-    [Server] public void OnServerChangeRotation(Quaternion quaternion)
-    {
-        OnClientChangeRotation(quaternion);
-    }
-    #endregion
-    #region ClientRpc Function
-    [ClientRpc] public void OnClientChangePosition(Vector3 vec)
-    {
         Vector3 moveVector = vec - previousPosition;
         transform.position = vec;
-        loadedObjects.ForEach(transform => { transform.position += moveVector; });
+        loadedObjects.ForEach(transform => { OnClientChangePosition(transform, transform.position += moveVector); });
+        playerObjects.ForEach(transform => { OnClientChangePosition(transform, transform.position += moveVector); });
         previousPosition = vec;
+
+        //OnClientChangePosition(vec);
     }
-    [ClientRpc] public void OnClientChangeRotation(Quaternion quaternion)
+    [Server] public void OnServerChangeRotation(Quaternion quaternion)
     {
         Quaternion currentRotation = quaternion;
         Quaternion rotationDelta = currentRotation * Quaternion.Inverse(previousRotation);
 
-        foreach(Transform loaded in loadedObjects)
+        foreach (Transform loaded in loadedObjects)
         {
-            loaded.position = RotatePointAroundPivot(loaded.position, transform.position, rotationDelta);
-            loaded.rotation = rotationDelta * loaded.rotation;
+            //loaded.position = RotatePointAroundPivot(loaded.position, transform.position, rotationDelta);
+            //loaded.rotation = rotationDelta * loaded.rotation;
+            OnClientChangeRotation(loaded, RotatePointAroundPivot(loaded.position, transform.position, rotationDelta), rotationDelta * loaded.rotation);
+        }
+        foreach (Transform player in playerObjects)
+        {
+            //player.position = ;
+            //player.rotation = ;
+            OnClientChangeRotation(player, RotatePointAroundPivot(player.position, transform.position, rotationDelta), rotationDelta * player.rotation);
         }
         previousRotation = currentRotation;
+
+        //OnClientChangeRotation(quaternion);
+    }
+    #endregion
+    #region ClientRpc Function
+    [ClientRpc] public void OnClientChangePosition(Transform transform, Vector3 position)
+    {
+        //Debug.LogWarning(transform.GetComponent<PlayerController>().netId);
+        transform.position = position;
+    }
+    [ClientRpc] public void OnClientChangeRotation(Transform transform, Vector3 position, Quaternion quaternion)
+    {
+        transform.rotation = quaternion;
     }
     #endregion
 

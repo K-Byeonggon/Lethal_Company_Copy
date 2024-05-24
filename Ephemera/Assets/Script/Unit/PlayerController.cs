@@ -39,7 +39,7 @@ public class PlayerController : NetworkBehaviour
             Debug.Log("SetActivateLocalPlayer : "+ isActive);
             characterController.enabled = isActive;
             GetComponent<PlayerInput>().enabled = isActive;
-            GetComponent<CapsuleCollider>().enabled = isActive;
+            //GetComponent<CapsuleCollider>().enabled = isActive;
             this.enabled = isActive;
         }
     }

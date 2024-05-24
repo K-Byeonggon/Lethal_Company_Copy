@@ -13,9 +13,15 @@ public class Inventory : NetworkBehaviour
 
     [SerializeField] Transform pickTransform;
 
+
+
     private void Update()
     {
-        if(slots[currentItemSlot].isEmpty != true)
+        if (!isLocalPlayer)
+            return;
+        Debug.Log($"conn : {netId}");
+        Debug.Log($"currentItemSlot : {currentItemSlot}");
+        if (slots[currentItemSlot].isEmpty != true)
         {
             GetCurrentItemComponent.CmdChangePosRot(pickTransform);
         }
