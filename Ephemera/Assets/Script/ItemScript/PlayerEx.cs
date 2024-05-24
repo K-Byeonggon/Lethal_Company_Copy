@@ -73,8 +73,6 @@ public class PlayerEx : MonoBehaviour
         }
     }
 
-    
-
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Mine"))

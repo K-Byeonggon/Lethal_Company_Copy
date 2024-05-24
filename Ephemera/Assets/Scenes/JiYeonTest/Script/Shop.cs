@@ -41,10 +41,9 @@ public class Shop : MonoBehaviour
         Vector3 rnaitempos = Vector3.right * Random.Range(-0, 0) + Vector3.forward * Random.Range(-0, 0);
         GameObject gameObject = Instantiate(itemobj[index], itemPos[index].position + rnaitempos, itemPos[index].rotation);
         Item buyItem = gameObject.GetComponent<Item>();
-
         Player.coin -= buyItem.itemPrice;
 
-        if (Player.coin > buyItem.itemPrice)
+        if (Player.coin < buyItem.itemPrice)
         {
             return;
         }
