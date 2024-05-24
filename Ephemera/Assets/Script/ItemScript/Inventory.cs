@@ -24,12 +24,17 @@ public class Inventory : MonoBehaviour
             slots.Add(new Slotdata());
         }
     }
-    private void FixedUpdate()
+    private void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
             Debug.Log("GetMouseButtonDown");
             UseItem();
+        }
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            Debug.Log("Detach item");
+            RemovetoInventory(this.gameObject);
         }
     }
     public virtual void AddtoInventory(GameObject item)
@@ -43,13 +48,14 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    public void RemovetoInventory()
+    public void RemovetoInventory(GameObject item)
     {
         if (!slots[currentItemSlot].isEmpty)
         {
             slots[currentItemSlot].slotObj.GetComponent<Item>().PickDown(this);
             slots[currentItemSlot].isEmpty = true;
             slots[currentItemSlot].slotObj = null;
+            slots[currentItemSlot].slotObjComponent = null;
         }
     }
 
@@ -77,19 +83,6 @@ public class Inventory : MonoBehaviour
         GetCurrentItemComponent()?.UseItem();
     }
 
-    /*public bool IsUsable(GameObject usableItem)
-    {
-        foreach (var slot in slots)
-        {
-            if (slot.slotObj != null && slot.slotObj.CompareTag("UsableItem"))
-            {
-                Debug.Log("Usable item found: " + slot.slotObj.name);
-                return true;
-            }
-        }
-        Debug.Log("No usable item found.");
-        return false;
-    }*/
 
     public virtual GameObject GetCurrentItem()
     {
