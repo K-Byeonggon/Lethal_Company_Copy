@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class SporeLizardAI : MonoBehaviour
+public class BackupAI : MonoBehaviour
 {
     private Node topNode;
     public UnityEngine.AI.NavMeshAgent navMeshAgent;
@@ -25,39 +25,23 @@ public class SporeLizardAI : MonoBehaviour
     [SerializeField] float defaultSpeed = 3.5f;
     [SerializeField] float defaultAccel = 8f;
     [SerializeField] float defaultAngle = 120f;
+    [SerializeField] float sporeDuration = 4f;
     Vector3 wanderDest;
     public bool setDesti = false;
     public Transform bewareOf;
-    [SerializeField] Transform head;
-    [SerializeField] Transform pivot;
+    [SerializeField] GameObject head;
+    private Transform pivot;
     public GameObject sporeParticle;
     [SerializeField] int cornerRayCount = 8;
-    [SerializeField] float cornerDetectionRadius = 5f;
-    [SerializeField] float attackDistance = 1f;
+    [SerializeField] float cornerDetectionRadius = 3f;
+    [SerializeField] float attackDistance = 3f;
     [SerializeField] bool attackState = false;
-
-
-
-    //새로운 버전의 AI
-    //유효하지 않은 목적지
-    public enum State
-    {
-        Wander,
-        Threaten,
-        Explode,
-        Run, 
-        Attack
-    }
-    public State currentState;
-    public bool sawPlayer = false;
-    [SerializeField] Rigidbody rigidbody;
-    private Vector3[] rayDirections;
-
+    public GameObject Obj_Transform;
 
     void Start()
     {
-        currentState = State.Wander;
-        rayDirections = new Vector3[cornerRayCount];
+        navMeshAgent = transform.parent.GetComponent<NavMeshAgent>();
+        pivot = transform.parent;
         ConstructBehaviorTree();
 
         damageMessage = new DamageMessage();
@@ -76,65 +60,39 @@ public class SporeLizardAI : MonoBehaviour
         //위협 시퀀스의 children Node
         ActionNode threaten = new ActionNode(Threaten);
         ActionNode explodeSpore = new ActionNode(ExplodeSpore);
-
-        //도망
-        ActionNode run = new ActionNode(Run);
+        ActionNode setRunDest = new ActionNode(SetRunDest);
+        ActionNode runFromPlayer = new ActionNode(RunFromPlayer);
 
         //공격 시퀀스의 children Node들
         ActionNode moveToPlayer = new ActionNode(MoveToPlayer);
         ActionNode attackPlayer = new ActionNode(AttackPlayer);
 
         //배회 시퀀스의 children Node들
-        ActionNode wander = new ActionNode(Wander);
+        ActionNode setDest = new ActionNode(SetDest);
+        ActionNode moveToDest = new ActionNode(MoveToDest);
 
         //셀렉터 노드에 들어갈 시퀀스 노드들
+        SequenceNode threatSequence = new SequenceNode(new List<Node> { threaten, explodeSpore, setRunDest, runFromPlayer });
         SequenceNode attackSequence = new SequenceNode(new List<Node> { moveToPlayer, attackPlayer });
-        topNode = new SelectorNode(new List<Node> { wander, threaten, explodeSpore, run, attackSequence});
+        SequenceNode wanderSequence = new SequenceNode(new List<Node> { setDest, moveToDest });
+        topNode = new SelectorNode(new List<Node> { threatSequence, attackSequence, wanderSequence });
     }
 
-    //[배회 시퀀스] 목적지 설정 및 이동
-    private Node.State Wander()
-    {
-        if (currentState != State.Wander) return Node.State.FAILURE;
-
-        if(sawPlayer)
-        {
-            if (!bewareOf.GetComponent<LivingEntity>().IsDead)
-            {
-                currentState = State.Threaten;
-                setDesti = false;
-                return Node.State.FAILURE;
-            }
-        }
-
-        if (!setDesti)
-        {
-            Debug.Log("목적지 설정");
-            Vector3 newDest = RandomNavMeshMovement.RandomNavSphere(transform.position, wanderRadius, -1);
-            setDesti = true;
-            navMeshAgent.SetDestination(newDest);
-        }
-
-        if (Vector3.Distance(head.position, navMeshAgent.destination) <= 1f)
-        {
-            Debug.Log("목적지 도착");
-            setDesti = false;
-            return Node.State.SUCCESS;
-        }
-        else return Node.State.RUNNING;
-    }
 
     //[위협 시퀀스] 플레이어 응시
     private Node.State Threaten()
     {
         //위협 대기시간 3~5초 동안 위협
         //또는 플레이어 진짜 가까이 다가오면 도망감.
-        if (currentState != State.Threaten) return Node.State.FAILURE;
+        if (bewareOf == null) return Node.State.FAILURE;
+
+        if (attackState) return Node.State.FAILURE;
 
         if (Vector3.Distance(transform.position, bewareOf.position) < threatDistance)
         {
             if (!isThreatening)
             {
+                setDesti = false;
                 isThreatening = true;
                 threatTime = Time.time;
                 threatDuration = Random.Range(3f, 5f);
@@ -143,44 +101,32 @@ public class SporeLizardAI : MonoBehaviour
             //위협하기
             if (Time.time - threatTime < threatDuration)
             {
-                rigidbody.velocity = Vector3.zero;
-                rigidbody.isKinematic = true;
-                navMeshAgent.isStopped = true;
-                Vector3 lookPosition = new Vector3(bewareOf.position.x, 0, bewareOf.position.z);
-                pivot.LookAt(lookPosition);
+                //플레이어가 더 가까이오면 도망
+                if (Vector3.Distance(transform.position, bewareOf.position) < runDistance) return Node.State.SUCCESS;
+
+                navMeshAgent.SetDestination(transform.position);
+                pivot.LookAt(bewareOf.position);
                 Debug.Log("위협 중");
 
                 return Node.State.RUNNING;
             }
             else
             {
-                rigidbody.isKinematic = false;
-                navMeshAgent.isStopped = false;
                 Debug.Log("위협 끝");
-                isThreatening = false;
-                currentState = State.Explode;
-                return Node.State.FAILURE;
+                return Node.State.SUCCESS;
             }
         }
-        else
-        {
-            rigidbody.isKinematic = false;
-            navMeshAgent.isStopped = false;
-            Debug.Log("위협 도중 종료");
-            currentState = State.Wander;
-            isThreatening = false;
-            return Node.State.FAILURE;
-        }
+        else return Node.State.FAILURE;
     }
-    
-    //[포자 시퀀스] 포자 발사
+
+    //[위협 시퀀스] 포자 발사
     private Node.State ExplodeSpore()
     {
-        if(currentState != State.Explode) return Node.State.FAILURE;
-
-        if (Random.value <= sporePercentage) 
+        //이거 포자 끝도 없이 생성될거 같음.
+        //포자 발사 여부를 확률로 결정
+        if (Random.value <= sporePercentage)
         {
-            if(haveSpore)
+            if (haveSpore)
             {
                 Debug.Log("포자 발사");
                 haveSpore = false;
@@ -189,15 +135,13 @@ public class SporeLizardAI : MonoBehaviour
         }
 
         //구석이었으면 공격시퀀스로
-        if (IsInCorner()) { haveSpore = true; currentState = State.Attack; return Node.State.FAILURE; }
-        else { haveSpore = true; currentState = State.Run; return Node.State.FAILURE; }
+        if (IsInCorner()) { attackState = true; return Node.State.FAILURE; }
+        else return Node.State.SUCCESS;
     }
 
-    //[도망 시퀀스] 도망목적지 설정 및 도망
-    private Node.State Run()
+    //[위협 시퀀스] 도망목적지 설정
+    private Node.State SetRunDest()
     {
-        if(currentState != State.Run) return Node.State.FAILURE;
-
         if (!setDesti)
         {
             Debug.Log("도망 목적지 설정");
@@ -208,7 +152,12 @@ public class SporeLizardAI : MonoBehaviour
             navMeshAgent.acceleration = runAccel;
             navMeshAgent.angularSpeed = runAngle;
         }
+        return Node.State.SUCCESS;
+    }
 
+    //[위협 시퀀스] 도망
+    private Node.State RunFromPlayer()
+    {
         if (Vector3.Distance(head.transform.position, wanderDest) <= 1f)
         {
             Debug.Log("도망 목적지 도착");
@@ -216,9 +165,8 @@ public class SporeLizardAI : MonoBehaviour
             navMeshAgent.speed = defaultSpeed;
             navMeshAgent.acceleration = defaultAccel;
             navMeshAgent.angularSpeed = defaultAngle;
+            isThreatening = false;
             bewareOf = null;
-
-            currentState = State.Wander;
             return Node.State.SUCCESS;
         }
         else return Node.State.RUNNING;
@@ -227,7 +175,12 @@ public class SporeLizardAI : MonoBehaviour
     //[공격 시퀀스] 플레이어에게 접근
     private Node.State MoveToPlayer()
     {
-        if (currentState != State.Attack) return Node.State.FAILURE;
+        if (bewareOf == null) return Node.State.FAILURE;
+
+        if (!IsInCorner()) return Node.State.FAILURE;
+
+        Obj_Transform.transform.position = head.transform.position;
+        Obj_Transform.transform.rotation = head.transform.rotation;
 
         float distance = Vector3.Distance(head.transform.position, bewareOf.position);
         Debug.Log("공격하러 이동" + head.transform.position + ", " + bewareOf.position + ", " + Vector3.Distance(head.transform.position, bewareOf.position));
@@ -248,6 +201,8 @@ public class SporeLizardAI : MonoBehaviour
     private Node.State AttackPlayer()
     {
         Debug.Log("플레이어 공격 노드");
+        Obj_Transform.transform.position = head.transform.position;
+        Obj_Transform.transform.rotation = head.transform.rotation;
         //Debug.Log(head.position + ", " + bewareOf.position + ", " + Vector3.Distance(head.position, bewareOf.position));
 
         if (Vector3.Distance(head.transform.position, bewareOf.position) <= attackDistance)
@@ -258,8 +213,7 @@ public class SporeLizardAI : MonoBehaviour
                 LivingEntity playerHealth = bewareOf.GetComponent<LivingEntity>();
                 playerHealth.ApplyDamage(damageMessage);
                 lastAttackTime = Time.time;
-
-                if (playerHealth.IsDead) currentState = State.Wander;
+                attackState = false;
                 return Node.State.SUCCESS;
             }
             else
@@ -274,7 +228,30 @@ public class SporeLizardAI : MonoBehaviour
 
     }
 
+    //[배회 시퀀스] 목적지 설정
+    private Node.State SetDest()
+    {
+        if (!setDesti)
+        {
+            Debug.Log("목적지 설정");
+            wanderDest = RandomNavMeshMovement.RandomNavSphere(transform.position, wanderRadius, -1);
+            navMeshAgent.SetDestination(wanderDest);
+            setDesti = true;
+        }
+        return Node.State.SUCCESS;
+    }
 
+    //[배회 시퀀스] 이동
+    private Node.State MoveToDest()
+    {
+        if (Vector3.Distance(head.transform.position, wanderDest) <= 1f)
+        {
+            Debug.Log("목적지 도착");
+            setDesti = false;
+            return Node.State.SUCCESS;
+        }
+        else return Node.State.RUNNING;
+    }
 
     //구석에 몰려있는지 확인함. (위협 -> 공격으로 넘어가기 위한 변수)
     bool IsInCorner()
@@ -284,8 +261,6 @@ public class SporeLizardAI : MonoBehaviour
         {
             float angle = i * (360f / cornerRayCount);
             Vector3 direction = Quaternion.Euler(0, angle, 0) * transform.forward;
-            rayDirections[i] = direction;  // Ray 방향 저장
-
             NavMeshHit hit;
             if (NavMesh.Raycast(transform.position, transform.position + direction * cornerDetectionRadius, out hit, NavMesh.AllAreas))
             {
@@ -295,14 +270,4 @@ public class SporeLizardAI : MonoBehaviour
         return blockedRayCount > cornerRayCount / 2; // 절반 이상의 방향이 막혀 있으면 구석으로 판단
     }
 
-    void OnDrawGizmos()
-    {
-        if (rayDirections == null) return;
-
-        Gizmos.color = Color.red;
-        for (int i = 0; i < rayDirections.Length; i++)
-        {
-            Gizmos.DrawRay(transform.position, rayDirections[i] * cornerDetectionRadius);
-        }
-    }
 }

@@ -57,7 +57,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3558361349704299588}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.345, y: 0, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -75,7 +75,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 3.5
+  m_Radius: 3
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &3558361349704299591
 MonoBehaviour:
@@ -114,7 +114,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4440759354408764637}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.7, y: 0.05, z: -3.584}
+  m_LocalPosition: {x: 4.7, y: 0.3, z: -3.584}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -173,7 +173,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6414842003054355559}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -0, y: 0.25, z: 0}
+  m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -244,7 +244,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca1e08e1ef9b72c4a9d54b5dc8cda329, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  navMeshAgent: {fileID: 0}
+  navMeshAgent: {fileID: 4440759354408764638}
   attackCooltime: 1
   threatDuration: 0
   isThreatening: 0
@@ -263,7 +263,17 @@ MonoBehaviour:
   sporeDuration: 4
   setDesti: 0
   bewareOf: {fileID: 0}
+  head: {fileID: 3558361349482716710}
+  pivot: {fileID: 3957379526496312935}
   sporeParticle: {fileID: 6049267475415141862, guid: a70fe4512eed14b4e95e7077ad4fadd2, type: 3}
+  cornerRayCount: 8
+  cornerDetectionRadius: 5
+  attackDistance: 1
+  attackState: 0
+  Obj_Transform: {fileID: 0}
+  currentState: 0
+  sawPlayer: 0
+  rigidbody: {fileID: 6414842003054355545}
 --- !u!54 &6414842003054355545
 Rigidbody:
   m_ObjectHideFlags: 0
