@@ -16,3 +16,4 @@ MonoBehaviour:
   itemMinPrice: 10
   itemMaxPrice: 30
   isBothHand: 0
+  image: {fileID: 21300000, guid: 5821173bcf848ed43a75585c088ab61d, type: 3}

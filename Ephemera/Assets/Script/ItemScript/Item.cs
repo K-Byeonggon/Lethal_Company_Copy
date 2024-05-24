@@ -41,6 +41,7 @@ public class Item : MonoBehaviour,IUIVisible,IItemUsable,IItemObtainable
         if (owner != null)
         {
             transform.SetParent(owner.pickedItem);
+            //collider.enabled = false;
             collider.enabled = false;
             rb.isKinematic = true;
             rb.useGravity = false;

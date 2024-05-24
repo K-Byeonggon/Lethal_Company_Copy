@@ -1,17 +1,16 @@
-using Mirror;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor.Purchasing;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-
-public class PlayerMove : NetworkBehaviour
+public class PlayerMoveEx : MonoBehaviour
 {
     private Vector2 _input;
     private CharacterController character;
     private Vector3 _direction;
-
+    private bool isRun;
     private float gravity = -9.81f;
     [SerializeField] private float gravityMultiplier = 3.0f;
     private float _velocity;
@@ -25,43 +24,40 @@ public class PlayerMove : NetworkBehaviour
     private float mouseX;
     private float mouseY;
 
-    [SerializeField] GameObject vCam;
-
-
+    [SerializeField]
+    private Transform vCam;
 
     private Animator animator;
+    PlayerStat playerStat;
 
     private void Awake()
     {
         character = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
-    }
-
-    public override void OnStartClient()
-    {
-        if (!isLocalPlayer)
-        {
-            Debug.Log("isNotLocalPlayer");
-            GetComponent<PlayerInput>().enabled = false;
-            character.enabled = false;
-            this.enabled = false;
-            vCam.SetActive(false);
-        }
+        playerStat = GetComponent<PlayerStat>();
     }
 
     private void Update()
     {
-        /*animator.SetBool("IsWalking", false);
-        if (Input.anyKey)
-        {
-            animator.SetBool("IsWalking", true);
-        }*/
         ApplyGravity();
         ApplyRotation();
         ApplyMovement();
         SetAnimator();
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+
+        if (isRun)
+        {
+            playerStat.UpdateStamina();
+            if (playerStat.stamina <= 0)
+            {
+                StopRunning();
+            }
+        }
+        else
+        {
+            playerStat.RefillStamina();
+        }
     }
 
     void ApplyGravity()
@@ -80,7 +76,6 @@ public class PlayerMove : NetworkBehaviour
 
     void ApplyRotation()
     {
-        //sda
         if (_input.sqrMagnitude == 0)
             return;
         var targetAngle = Mathf.Atan2(_direction.x, _direction.z) * Mathf.Rad2Deg;
@@ -95,30 +90,29 @@ public class PlayerMove : NetworkBehaviour
 
     public void PlayerMovement(InputAction.CallbackContext context)
     {
-        //_input = context.ReadValue<Vector2>();
-        //_direction = new Vector3(_input.x , 0.0f, _input.y);
-        //_direction = transform.forward * context.ReadValue<Vector2>();
-        //Vector3 moveVector = context.ReadValue<Vector3>();
-        //_direction = new Vector3(moveVector.x, 0, moveVector.y);
-
         _direction = context.ReadValue<Vector3>();
     }
 
     public void OnRun(InputAction.CallbackContext context)
     {
+        if (playerStat.stamina <= 0)
+            return;
 
         if (context.started)
         {
             speed = runspeed;
-            //animator.SetBool("IsRun", true);
+            isRun = true;
         }
-        else if (context.performed) { }
-        else if (context.canceled) 
+        else if (context.canceled)
         {
-            speed = 20.0f;
-            //animator.SetBool("IsRun", false);
+            StopRunning();
         }
+    }
 
+    public void StopRunning()
+    {
+        speed = 2.0f;
+        isRun = false;
     }
 
     public void OnJump(InputAction.CallbackContext context)
@@ -139,8 +133,10 @@ public class PlayerMove : NetworkBehaviour
     {
         Vector2 vector2 = context.ReadValue<Vector2>();
         mouseX += vector2.x * cameraSpeed * Time.deltaTime;
-        //mouseY += vector2.y * cameraSpeed * Time.deltaTime;
+        mouseY -= vector2.y * cameraSpeed * Time.deltaTime;
+        mouseY = Mathf.Clamp(mouseY, -90f, 90f);
         this.transform.localEulerAngles = new Vector3(0, mouseX, 0);
+        vCam.localEulerAngles = new Vector3(mouseY, 0, 0);
     }
 
     public void OnCrouch(InputAction.CallbackContext context)
@@ -148,10 +144,14 @@ public class PlayerMove : NetworkBehaviour
         Vector2 moveVector = context.ReadValue<Vector2>();
     }
 
-    public void EnbleGameplayControls()
+    public void EnableGameplayControls()
     {
 
     }
 
     private bool IsGround() => character.isGrounded;
+    public bool IsWalking()
+    {
+        return _direction != Vector3.zero;
+    }
 }

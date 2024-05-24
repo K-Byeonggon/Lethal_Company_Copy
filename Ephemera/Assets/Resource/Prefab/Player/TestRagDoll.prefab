@@ -900,9 +900,9 @@ GameObject:
   - component: {fileID: 3647780696001841151}
   - component: {fileID: 3647780696001841146}
   - component: {fileID: 3647780696001841145}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: TestRagDoll
-  m_TagString: ObtainableItem
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -947,7 +947,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2531569208361797775}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Avatar: {fileID: 9000000, guid: f590ff1a55145a545b9c7188b87a0598, type: 3}
   m_Controller: {fileID: 9100000, guid: 9055519e948fc8546b9f632d6d7fbc8f, type: 2}
   m_CullingMode: 1
@@ -1847,7 +1847,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6114469057738785451}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Armature
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -1862,7 +1862,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5639983811003680993}
   m_LocalRotation: {x: -0.7071067, y: -0.000007066864, z: 0.000006660907, w: 0.7071068}
-  m_LocalPosition: {x: 0.03, y: 0.07, z: -4}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 25, y: 25, z: 25}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -2302,8 +2302,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03c1534ee5c1dc24a87e9a9917a408ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isBothHandGrab: 1
-  itemData: {fileID: 11400000, guid: 31557e218044e9148bab091a760e3d9f, type: 2}
+  itemData: {fileID: 11400000, guid: 3f877804332f1b340ac0e5a930b5cc71, type: 2}
   itemPrice: 0
   image: {fileID: 0}
 --- !u!1 &6952986648567878542
