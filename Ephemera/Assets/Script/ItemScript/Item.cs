@@ -20,6 +20,8 @@ public class Item : NetworkBehaviour, IUIVisible, IItemUsable, IItemObtainable
     {
         itemPrice = itemData.GetRandomPrice();
     }
+
+    [Command]
     public void PickUp(Transform pickTransform)
     {
         itemCollider.enabled = false;
@@ -27,13 +29,16 @@ public class Item : NetworkBehaviour, IUIVisible, IItemUsable, IItemObtainable
         rigid.useGravity = false;
         rigid.velocity = Vector3.zero;
         rigid.angularVelocity = Vector3.zero;
+        OnClientSetParent(pickTransform);
     }
+    [Command]
     public void PickDown(Transform pickTransform)
     {
         itemCollider.enabled = true;
         rigid.isKinematic = false;
         rigid.useGravity = true;
         transform.position = pickTransform.position + pickTransform.forward;
+        OnClientUnsetParent();
         rigid.AddForce(pickTransform.forward * 5.0f, ForceMode.Impulse);
     }
 
@@ -50,21 +55,16 @@ public class Item : NetworkBehaviour, IUIVisible, IItemUsable, IItemObtainable
 
     public virtual void UseItem() { }
 
-
-    #region Command Function
-    [Command]
-    public void CmdChangePosRot(Transform parent)
-    {
-        OnClientChangePosRot(parent);
-    }
-    #endregion
-    #region ClientRpc Function
     [ClientRpc]
-    public void OnClientChangePosRot(Transform parent)
+    public void OnClientSetParent(Transform parent)
     {
+        transform.parent = parent;
         transform.position = parent.position;
         transform.rotation = parent.rotation;
     }
-    #endregion
-
+    [ClientRpc]
+    public void OnClientUnsetParent()
+    {
+        transform.parent = null;
+    }
 }

@@ -13,20 +13,6 @@ public class Inventory : NetworkBehaviour
 
     [SerializeField] Transform pickTransform;
 
-
-
-    private void Update()
-    {
-        if (!isLocalPlayer)
-            return;
-        Debug.Log($"conn : {netId}");
-        Debug.Log($"currentItemSlot : {currentItemSlot}");
-        if (slots[currentItemSlot].isEmpty != true)
-        {
-            GetCurrentItemComponent.CmdChangePosRot(pickTransform);
-        }
-    }
-
     public Item GetCurrentItemComponent
     {
         get
@@ -58,7 +44,7 @@ public class Inventory : NetworkBehaviour
             slots[currentItemSlot].isEmpty = false;
             slots[currentItemSlot].slotObjComponent = item.GetComponent<Item>();
             slots[currentItemSlot].slotObjComponent.PickUp(pickTransform);
-            slots[currentItemSlot].slotObjComponent.CmdChangePosRot(pickTransform);
+            
         }
     }
     public void RemoveItem()
@@ -95,7 +81,7 @@ public class Inventory : NetworkBehaviour
             OnClientSetCurrentItemActive(item.gameObject, isActive);
     }
     #endregion
-    
+
     #region ClientRpc Function
     [ClientRpc] public void OnClientSetCurrentItemActive(GameObject go, bool isActive)
     {

@@ -39,7 +39,6 @@ public class PlayerController : NetworkBehaviour
             Debug.Log("SetActivateLocalPlayer : "+ isActive);
             characterController.enabled = isActive;
             GetComponent<PlayerInput>().enabled = isActive;
-            //GetComponent<CapsuleCollider>().enabled = isActive;
             this.enabled = isActive;
         }
     }
@@ -56,7 +55,7 @@ public class PlayerController : NetworkBehaviour
     private void Update()
     {
         ApplyGravity();
-        ApplyRotation();
+        //ApplyRotation();
         ApplyMovement();
         SetAnimator();
         Cursor.visible = false;
@@ -107,15 +106,6 @@ public class PlayerController : NetworkBehaviour
 
         _direction.y = _velocity;
     }
-    void ApplyRotation()
-    {
-        //sda
-        if (_input.sqrMagnitude == 0)
-            return;
-        var targetAngle = Mathf.Atan2(_direction.x, _direction.z) * Mathf.Rad2Deg;
-        var angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref currentVelocity, smoothTime);
-        transform.rotation = Quaternion.Euler(0.0f, angle, 0.0f);
-    }
     void ApplyMovement()
     {
         characterController.Move(transform.TransformDirection(_direction) * speed * Time.deltaTime);
@@ -137,7 +127,7 @@ public class PlayerController : NetworkBehaviour
         mouseX += vector2.x * cameraSpeed * Time.deltaTime;
         mouseY -= vector2.y * cameraSpeed * Time.deltaTime;
         mouseY = Mathf.Clamp(mouseY, -90f, 90f);
-        this.transform.localEulerAngles = new Vector3(0, mouseX, 0);
+        this.transform.eulerAngles = new Vector3(0, mouseX, 0);
         vCam.localEulerAngles = new Vector3(mouseY, 0, 0);
     }
     public void OnUseItem(InputAction.CallbackContext context)

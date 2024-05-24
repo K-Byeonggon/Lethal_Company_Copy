@@ -202,7 +202,7 @@ public class GameManager : NetworkBehaviour
             return;
         //우주선 옮기고
         ShipController shipController = FindObjectOfType<ShipController>();
-        shipController.GetComponent<MovePlatform>().OnServerChangePosition(TerrainController.Instance.shipStartTransform.position);
+        shipController.OnServerChangePosition(TerrainController.Instance.shipStartTransform.position);
         //함선 출발
         shipController.StartLanding(TerrainController.Instance.GetLandingZone(selectPlanet).position);
         //게임 시간 활성화
