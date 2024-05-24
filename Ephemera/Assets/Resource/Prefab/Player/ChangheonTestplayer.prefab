@@ -1969,6 +1969,8 @@ GameObject:
   - component: {fileID: 1612770439}
   - component: {fileID: 1966698392}
   - component: {fileID: 1966698391}
+  - component: {fileID: 1966698393}
+  - component: {fileID: 1966698394}
   m_Layer: 8
   m_Name: ChangheonTestplayer
   m_TagString: Player
@@ -2027,13 +2029,13 @@ CharacterController:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Height: 5.63
-  m_Radius: 1
+  m_Height: 3.89
+  m_Radius: 0.37
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0
-  m_Center: {x: 0, y: 2.8, z: 0}
+  m_Center: {x: 0, y: 1.89, z: 0}
 --- !u!114 &-3321312102131644512
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2174,11 +2176,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   linesize: 10
   image: {fileID: 0}
-  moveVector: {x: 0, y: 0, z: 0}
   camera: {fileID: 0}
   inventory: {fileID: 1612770425}
-  playerHp: 100
   weaponHanger: {fileID: 932157460}
+  prefab: {fileID: 2531569208361797775, guid: bb413bbe6acaf284996e693592cdb80c, type: 3}
 --- !u!136 &1612770432
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2330,6 +2331,38 @@ MonoBehaviour:
   groundFootstep: {fileID: 8300000, guid: f3cdcec0270d3d446b49cd1f24098a70, type: 3}
   metalFootstep: {fileID: 8300000, guid: cc30ec69cfd7a164bb1c12e3bc48fb3b, type: 3}
   playerMove: {fileID: 1612770439}
+--- !u!54 &1966698393
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8428327494659538996}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
+--- !u!114 &1966698394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8428327494659538996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce0a048940e79ad4c937c798f9fd3b29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  ragdoll: {fileID: 2531569208361797775, guid: bb413bbe6acaf284996e693592cdb80c, type: 3}
+  stamina: 5
+  maxstamina: 0
 --- !u!1 &8570842213264681956
 GameObject:
   m_ObjectHideFlags: 0
