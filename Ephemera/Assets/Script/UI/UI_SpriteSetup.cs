@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UISpriteSetup : MonoBehaviour
+public class UI_SpriteSetup : MonoBehaviour
 {
     //Dictionary<>
     [SerializeField]

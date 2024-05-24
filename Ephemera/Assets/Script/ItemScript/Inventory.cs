@@ -1,95 +1,91 @@
+using Mirror;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.Progress;
 
-public class Inventory : MonoBehaviour
+public class Inventory : NetworkBehaviour
 {
-    private PlayerEx player;
+    private int currentItemSlot = 0;
+    private int maxSlot = 4;
     public List<Slotdata> slots = new List<Slotdata>();
-    public int maxSlot = 4; 
-    public int currentItemSlot = 0;
-    [SerializeField] public Transform pickedItem;
 
+    [SerializeField] Transform pickTransform;
 
-    private void Awake()
+    public Item GetCurrentItemComponent
     {
-        player = GetComponent<PlayerEx>();
-        if (player == null)
+        get
         {
-            Debug.LogError("PlayerEx component not found on this GameObject.");
+            if (slots[currentItemSlot].isEmpty != true)
+            {
+                return slots[currentItemSlot].slotObjComponent;
+            }
+            return null;
         }
+    }
+    public bool IsOutRange(int index) => (index < 0 || index >= maxSlot) ? true : false;
 
+
+    public override void OnStartClient()
+    {
         for (int i = 0; i < maxSlot; i++)
         {
             slots.Add(new Slotdata());
         }
+        ChangeItemSlot(0);
     }
-    private void Update()
+    public void AddItem(GameObject item)
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Debug.Log("GetMouseButtonDown");
-            UseItem();
-        }
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            Debug.Log("Detach item");
-            RemovetoInventory(this.gameObject);
-        }
-    }
-    public virtual void AddtoInventory(GameObject item)
-    {
-        if (slots[currentItemSlot].isEmpty)
+        if (item == null)
+            return;
+        if (slots[currentItemSlot].isEmpty == true)
         {
             slots[currentItemSlot].isEmpty = false;
-            slots[currentItemSlot].slotObj = item;
             slots[currentItemSlot].slotObjComponent = item.GetComponent<Item>();
-            item.GetComponent<Item>().PickUp(this);
+            slots[currentItemSlot].slotObjComponent.PickUp(pickTransform);
+            
         }
     }
-
-    public void RemovetoInventory(GameObject item)
+    public void RemoveItem()
     {
-        if (!slots[currentItemSlot].isEmpty)
+        if (slots[currentItemSlot].isEmpty == false)
         {
-            slots[currentItemSlot].slotObj.GetComponent<Item>().PickDown(this);
             slots[currentItemSlot].isEmpty = true;
-            slots[currentItemSlot].slotObj = null;
+            slots[currentItemSlot].slotObjComponent.PickDown(pickTransform);
             slots[currentItemSlot].slotObjComponent = null;
         }
     }
-
-    public virtual void ChangeItemSlot(int index)
+    public void ChangeItemSlot(int index)
     {
-        if (index < 0 || index >= maxSlot)
-            return;
+        if (IsOutRange(index)) return;
 
-        var currentItem = GetCurrentItem()?.GetComponent<Item>();
-        if (currentItem != null && currentItem.IsBothHandGrab)
-        {
-            return;
-        }
+        var currentItem = GetCurrentItemComponent;
+        if (currentItem != null && currentItem.IsBothHandGrab) return;
 
-        GetCurrentItem()?.SetActive(false);
+        CmdSetCurrentItemActive(false);
         currentItemSlot = index;
-        GetCurrentItem()?.SetActive(true);
-
-        Debug.Log("슬롯 :  " + currentItemSlot);
+        CmdSetCurrentItemActive(true);
+        UIController.Instance.ui_Game.ItemSelection(index);
     }
-
-    //아이템 사용
     public void UseItem()
     {
-        GetCurrentItemComponent()?.UseItem();
+        GetCurrentItemComponent?.UseItem();
     }
 
+    #region Command Function
+    [Command] public void CmdSetCurrentItemActive(bool isActive)
+    {
+        Item item = GetCurrentItemComponent;
+        if (item != null)
+            OnClientSetCurrentItemActive(item.gameObject, isActive);
+    }
+    #endregion
 
-    public virtual GameObject GetCurrentItem()
+    #region ClientRpc Function
+    [ClientRpc] public void OnClientSetCurrentItemActive(GameObject go, bool isActive)
     {
-        return slots[currentItemSlot].slotObj;
+        go?.SetActive(isActive);
     }
-    public virtual Item GetCurrentItemComponent()
-    {
-        return slots[currentItemSlot].slotObjComponent;
-    }
+    #endregion
 }

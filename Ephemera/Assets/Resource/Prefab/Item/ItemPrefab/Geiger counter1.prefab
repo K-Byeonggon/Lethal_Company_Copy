@@ -13,10 +13,11 @@ GameObject:
   - component: {fileID: 8915664251104805362}
   - component: {fileID: 6837377210101982538}
   - component: {fileID: -9129633900825205095}
-  - component: {fileID: 7084741051632729356}
+  - component: {fileID: 6964527221301231590}
+  - component: {fileID: 7372200922015032257}
   m_Layer: 0
   m_Name: Geiger counter1
-  m_TagString: ObtainableItem
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -28,14 +29,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8915664251107073842}
-  m_LocalRotation: {x: -0, y: -0.7069834, z: -0.7072302, w: 0}
+  m_LocalRotation: {x: -4.32978e-17, y: 0.7071067, z: 0.7071068, w: -4.3297806e-17}
   m_LocalPosition: {x: -4.810271, y: 0.055, z: -3.40442}
-  m_LocalScale: {x: 6, y: 6, z: 6}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: -89.98, y: 0, z: -180}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8915664251105903410
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -112,10 +113,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03c1534ee5c1dc24a87e9a9917a408ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemData: {fileID: 11400000, guid: 358869a8376d40f4a98f75a003198ce9, type: 2}
-  itemPrice: 0
-  image: {fileID: 0}
---- !u!54 &7084741051632729356
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  itemData: {fileID: 0}
+  itemCollider: {fileID: 6837377210101982538}
+  rigid: {fileID: 7372200922015032257}
+--- !u!114 &6964527221301231590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8915664251107073842}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  _assetId: 4053224789
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
+--- !u!54 &7372200922015032257
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -129,5 +150,5 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 112
+  m_Constraints: 0
   m_CollisionDetection: 0

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5557165677085691477}
   - component: {fileID: 4819153979747550062}
   - component: {fileID: 960562465}
+  - component: {fileID: -5682718621284824860}
   m_Layer: 6
   m_Name: Metal container
   m_TagString: ObtainableItem
@@ -61,9 +62,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03c1534ee5c1dc24a87e9a9917a408ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   itemData: {fileID: 11400000, guid: b53cdc8d96e54744683d8d6055103026, type: 2}
-  itemPrice: 0
-  image: {fileID: 0}
+  itemCollider: {fileID: 5557165677085691477}
+  rigid: {fileID: 960562465}
 --- !u!54 &960562465
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -80,6 +84,23 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &-5682718621284824860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5557165677085591795}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  _assetId: 2708524577
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1 &5557165677085591797
 GameObject:
   m_ObjectHideFlags: 0

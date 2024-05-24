@@ -41,6 +41,78 @@ MonoBehaviour:
     m_Address: Scavenger
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: ac0b38f5ddc064648a0fbc0def698130
+    m_Address: SpaceObject
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: d7473a60838e2434cb642d6005659aa7
+    m_Address: GameManager
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 15c083a84e99520468c240850ea1889a
+    m_Address: Terrain
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: d1b286cb8728dd74ca4f2cc3f0f610e4
+    m_Address: SpaceShip
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 2b6d64aeca1c46e4f98f184d922263fa
+    m_Address: DungeonGenerator
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 698630d33f8df6c478fafe106d2295aa
+    m_Address: Player
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 3f6d3dd6820b730459f46c869980ebfe
+    m_Address: Tablet_pc
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 2b32b98a57510234f912ae79f281f6a3
+    m_Address: ProFlashlight_Low
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 8234a8811cddae24fb59b1d4515d0129
+    m_Address: Phone_1
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: c460d0ba1afeb07458506a3b3d540eee
+    m_Address: Metal container
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 7f20ef084dc7cdf47abacc4875e8776d
+    m_Address: Laptop
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 1fbb6846b99f7d4448cf9d1492980863
+    m_Address: duck
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 5956713d29ce4844aa391fc3e6277389
+    m_Address: Crowbar
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: e6df1c2de05875c4cad627bf9434535e
+    m_Address: circular_saw
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: bbd4ebbddc72b2b41ad75beaf1136cbb
+    m_Address: Camera_on
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: d3adbfdaf9774974d8a05aa6b9f515e0
+    m_Address: Barrel
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: ad6c37468d9e0b84ebb98e718792950c
+    m_Address: asynchronous_motor
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: fbe66732d8714ae4e93e491692195406
+    m_Address: Mine
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: f53dd5718acd92348a91adf0d1df758a, type: 2}
   m_SchemaSet:

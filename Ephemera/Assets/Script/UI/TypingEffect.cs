@@ -95,10 +95,10 @@ public class TypingEffect : MonoBehaviour
                       $"9\n" +
                       $"0\n";
 
-        StartCoroutine(_typing());
+        StartCoroutine(TypingChar());
     }
 
-    IEnumerator _typing()
+    IEnumerator TypingChar()
     {
         int count = 0;
         yield return new WaitForSeconds(startTime);
@@ -124,10 +124,10 @@ public class TypingEffect : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
-        StartCoroutine(_typingLine());
+        StartCoroutine(TypingLine());
     }
 
-    IEnumerator _typingLine()
+    IEnumerator TypingLine()
     {
         int count = 0;
         yield return new WaitForSeconds(startTime);
@@ -169,5 +169,6 @@ public class TypingEffect : MonoBehaviour
         loadingUI.text = "";
 
         this.gameObject.SetActive(false);
+        UIController.Instance.SetActivateUI(typeof(UI_Game));
     }
 }

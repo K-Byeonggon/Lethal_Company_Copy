@@ -96,6 +96,7 @@ GameObject:
   - component: {fileID: 7080483090332164085}
   - component: {fileID: 6373388084434496468}
   - component: {fileID: 7949504549459532082}
+  - component: {fileID: 1792384170926941721}
   m_Layer: 6
   m_Name: Camera_on
   m_TagString: ObtainableItem
@@ -145,9 +146,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03c1534ee5c1dc24a87e9a9917a408ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   itemData: {fileID: 11400000, guid: 8ddeb6e718c4ee34cbc898d234711deb, type: 2}
-  itemPrice: 0
-  image: {fileID: 0}
+  itemCollider: {fileID: 7080483090332164085}
+  rigid: {fileID: 7949504549459532082}
 --- !u!54 &7949504549459532082
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -164,6 +168,23 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &1792384170926941721
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 141928}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  _assetId: 1482158884
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1 &172122
 GameObject:
   m_ObjectHideFlags: 0

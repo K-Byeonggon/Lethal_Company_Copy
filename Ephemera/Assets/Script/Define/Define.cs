@@ -2,6 +2,22 @@ using System;
 using UnityEngine;
 
 
+public enum VirtualCameraType
+{
+    SpaceShip,
+    SpaceShipMiniature,
+}
+public enum InputType
+{
+    OnMove,
+    OnRun,
+    OnJump,
+    OnChangItem,
+    OnLook,
+    OnAttack,
+    OnInteraction,
+    OnCrouch,
+}
 public enum GameStateType
 {
     ResetState,

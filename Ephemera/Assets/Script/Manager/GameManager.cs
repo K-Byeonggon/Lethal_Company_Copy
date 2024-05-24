@@ -1,39 +1,30 @@
+using DunGen;
 using Mirror;
 using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.InputSystem.XR;
+using static UnityEditor.Experimental.AssetDatabaseExperimental.AssetDatabaseCounters;
 
 
 public class GameManager : NetworkBehaviour
 {
     #region Field
     public static GameManager Instance;
-
-    //돈
-    [SyncVar]
-    private int currentMoney;
-    //목표 금액
-    [SyncVar]
-    private int targetMoney;
-
     //최대 마감일
     private const int maxDeadline = 3;
-
-    //남은 마감일
-    [SyncVar]
-    private int currentDeadline;
-
-    //현재 게임 상태
-    //[SyncVar]
-    //private GameState currentGameState;
-
-    //private Dictionary<GameStateType, GameState> gameStates = new Dictionary<GameStateType, GameState>();
-
     //판매 배율
+    RuntimeDungeon rd;
+    Coroutine timeCoroutine;
+
+    public PlayerController localPlayerController;
+
     private int SalePriceMagnification
     {
         get
@@ -54,112 +45,194 @@ public class GameManager : NetworkBehaviour
             
         }
     }
-
-    //플레이어 상태
-    //List<PlayerStatue> statue;
-
-    //나의 플레이어 캐릭터
-    //PlayerStatue myPlayerStatue;
-
     #endregion
+    #region Sync Field
+    //소지금
+    [SyncVar] private int currentMoney;
+    //목표 금액
+    [SyncVar] private int targetMoney;
+    //남은 마감일
+    [SyncVar] private int currentDeadline;
+    //현재 시간
+    [SyncVar] private int currentTime = 0;
+    //선택 행성
+    [SyncVar] private Planet selectPlanet;
+    #endregion
+    #region Function
+    public GameTime GetCurrentTime()
+    {
+        return new GameTime(currentTime);
+    }
+    ///<summary>
+    ///terrain활성화
+    ///</summary>
+    public void ActivatePlanetTerrain(int index)
+    {
+        TerrainController.Instance.SetActivePlanetTerrain((Planet)index, true);
+    }
 
+    public void CreateRoom(int seed)
+    {
+        rd = Instantiate(ResourceManager.Instance.GetPrefab("DungeonGenerator")).GetComponent<RuntimeDungeon>();
+        rd.Generator.Seed = seed;
+        rd.Generate();
+
+        /*//내부 첫 문과 마지막 문에 ExitDoor 추가
+        ExitDoor extFrontDoor = rd.Generator.CurrentDungeon.MainPathTiles[0].Entrance.gameObject.AddComponent<ExitDoor>();
+        ExitDoor extBackDoor = rd.Generator.CurrentDungeon.MainPathTiles.Last().Entrance.gameObject.AddComponent<ExitDoor>();
+        //외부 첫 문과 마지막 문에 EntryDoor 추가
+        EntryDoor etrFrontDoor = TerrainController.Instance.GetFrontDoor(selectPlanet).AddComponent<EntryDoor>();
+        EntryDoor etrBackDoor = TerrainController.Instance.GetBackDoor(selectPlanet).AddComponent<EntryDoor>();
+
+        extFrontDoor.entryPosition = etrFrontDoor.transform;
+        etrFrontDoor.exitPosition = extFrontDoor.transform;
+        extBackDoor.entryPosition = etrBackDoor.transform;
+        etrBackDoor.exitPosition = extBackDoor.transform;*/
+    }
+    public void DestroyRoom()
+    {
+        Destroy(rd.gameObject);
+    }
+    #endregion
     #region Action
     private event Action TotalRevenueDisplay;
     private event Action CurrentMoneyDisplay;
     private event Action DeadLineDisplay;
     private event Action TargetMoneyDisplay;
     private event Action PlayerStateDisplay;
+    private event Action TimeDisplay;
     #endregion
-
-    #region UnityEngine Function
+    #region MonoBehaviour Function
     private void Awake()
     {
         Instance = this;
     }
-    private void Start()
+    #endregion
+    #region NetworkBehaviour Function
+    public override void OnStartClient()
     {
         //모든 플레이어가 준비되었을 시
         //OnServerChangeGameState(GameStateType.ResetState);
         if(isServer == true)
         {
-            GameReset();
+            OnServerGameReset();
         }
     }
     #endregion
-
     #region Server Function 서버에서 실행되는 함수
     /// <summary>
     /// 게임 리셋(서버에서만 호출)
     /// </summary>
-    [Server]
-    public void GameReset()
+    [Server] public void OnServerGameReset()
     {
+        Debug.Log("GameReset");
         //소지금 리셋
-        SetCurrentMoney(0);
+        OnClientSetCurrentMoney(0);
         //목표금액 리셋
-        TargetMoneyChanged(150);
+        OnServerTargetMoneyChanged(150);
         //데드라인 리셋
-        DeadlineReset();
+        OnServerDeadlineReset();
+        //카메라 리셋
+        OnClientGameStartInit();
+        OnServerSetActivePlayer(true);
+        //캐릭터 제어 비활성화
+        OnServerSetActiveController(false);
     }
     /// <summary>
     /// 소지 금액 변경(서버에서만 호출)
     /// </summary>
-    [Server]
-    public void CurrentMoneyChanged(int money)
+    [Server] public void OnServerCurrentMoneyChanged(int money)
     {
         currentMoney += money;
-        SetCurrentMoney(currentMoney);
+        OnClientSetCurrentMoney(currentMoney);
     }
     /// <summary>
     /// 목표 금액 변경(서버에서만 호출)
     /// </summary>
-    [Server]
-    public void TargetMoneyChanged(int targetMoney)
+    [Server] public void OnServerTargetMoneyChanged(int targetMoney)
     {
         this.targetMoney = targetMoney;
-        SetTargetMoney(this.targetMoney);
+        OnClientSetTargetMoney(this.targetMoney);
     }
     /// <summary>
     /// 데드라인 1 차감
     /// </summary>
-    [Server]
-    public void DayPasses()
+    [Server] public void OnServerDayPasses()
     {
-        SetDeadLine(currentDeadline - 1);
+        OnClientSetDeadLine(currentDeadline - 1);
     }
     /// <summary>
     /// 데드라인 리셋
     /// </summary>
-    [Server]
-    public void DeadlineReset()
+    [Server] public void OnServerDeadlineReset()
     {
-        SetDeadLine(maxDeadline);
+        OnClientSetDeadLine(maxDeadline);
     }
     /// <summary>
     /// 아이템 판매
     /// </summary>
-    [Server]
-    public void SellItem(Item[] items)
+    [Server] public void OnServerSellItem(Item[] items)
     {
         int totalPrice = 0;
         foreach (Item item in items)
         {
-            totalPrice += item.itemPrice;
+            totalPrice += item.ItemPrice;
         }
 
-        CurrentMoneyChanged(totalPrice);
-        DisplayTotalRevenue();
+        OnServerCurrentMoneyChanged(totalPrice);
+        OnClientDisplayTotalRevenue();
     }
     /// <summary>
-    /// 게임 상태 변경
+    /// 성간이동
     /// </summary>
-    /*[Server]
-    public void OnServerChangeGameState(GameStateType gameStateType)
+    [Server] public void OnServerStartHyperDrive(int index)
     {
-        ChangeState(gameStateType);
-    }*/
-    #endregion
+        if (SpaceSystem.Instance.StartWarpDrive(index))
+        {
+            OnClientStartHyperDrive();
+            selectPlanet = (Planet)index;
+        }
+    }
+    /// <summary>
+    /// 행성 진입
+    /// </summary>
+    [Server] public void OnServerEnterPlanet()
+    {
+        if (TerrainController.Instance.GetTerrainCount() <= (int)selectPlanet)
+            return;
+        //우주선 옮기고
+        ShipController shipController = FindObjectOfType<ShipController>();
+        shipController.OnServerChangePosition(TerrainController.Instance.shipStartTransform.position);
+        //함선 출발
+        shipController.StartLanding(TerrainController.Instance.GetLandingZone(selectPlanet).position);
+        //게임 시간 활성화
+        timeCoroutine = StartCoroutine(IncrementTimeCounter());
 
+        OnClientEnterPlanet(OnServerGetRandomSeed());
+    }
+    /// <summary>
+    /// 랜덤 시드 생성
+    /// </summary>
+    [Server] public int OnServerGetRandomSeed()
+    {
+        return Environment.TickCount;
+    }
+    /// <summary>
+    /// 모든 플레이어 카메라 셋팅
+    /// </summary>
+    [Server] public void OnServerActiveLocalPlayerCamera()
+    {
+        OnCLientActiveLocalPlayerCamera();
+    }
+    [Server] public void OnServerSetActivePlayer(bool isActive)
+    {
+        OnCLientSetActivePlayer(isActive);
+    }
+    [Server] public void OnServerSetActiveController(bool isActive)
+    {
+        OnClientSetActiveController(isActive);
+    }
+    #endregion
     #region Command Function 클라이언트에서 호출하고 서버에서 실행되는 함수
     //플레이어 상태 변화
     /*[Command]
@@ -169,13 +242,49 @@ public class GameManager : NetworkBehaviour
         //SetPlayerState(myPlayerStatue);
     }*/
     #endregion
-
     #region ClientRpc Function 서버가 원격 프로시저 호출(RPC)로 모든 클라이언트에서 실행되는 함수
+    [ClientRpc] public void OnClientGameStartInit()
+    {
+        CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShipMiniature);
+    }
+    [ClientRpc] public void OnClientEnterPlanet(int seed)
+    {
+        //UI 숨기고
+        UIController.Instance.SetActivateUI(null);
+        //미니어쳐 Ship 숨기고
+        ObjectReference.Instance.GetGameObject("ShipMiniature").SetActive(false);
+        //spaceSystem 숨기고
+        SpaceSystem.Instance.SetActivateSpaceSystem(false);
+        //terrain 활성화하고
+        ActivatePlanetTerrain((int)selectPlanet);
+        //방 생성하고
+        CreateRoom(seed);
+        //카메라 옮기고
+        CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShip);
+    }
+    [ClientRpc] public void OnClientStartHyperDrive()
+    {
+        VolumeController.Instance.StartWarpGlitch();
+    }
+    [ClientRpc] public void OnCLientActiveLocalPlayerCamera()
+    {
+        CameraReference.Instance.SetActiveLocalPlayerVirtualCamera();
+    }
+    [ClientRpc] public void OnCLientSetActivePlayer(bool isActive)
+    {
+        Debug.Log(localPlayerController);
+        localPlayerController?.SetActivateLocalPlayer(isActive);
+    }
+    [ClientRpc] public void OnClientSetActiveController(bool isActive)
+    {
+        localPlayerController?.SetActivateLocalController(isActive);
+    }
+    #endregion
+    #region ClientRpc Action 서버가 원격 프로시저 호출(RPC)로 모든 클라이언트에서 실행되는 Action
     /// <summary>
     /// 현재 소지금 변경(모든 클라이언트)
     /// </summary>
-    [ClientRpc]
-    private void SetCurrentMoney(int money)
+    [ClientRpc] private void OnClientSetCurrentMoney(int money)
     {
         currentMoney = money;
         CurrentMoneyDisplay?.Invoke();
@@ -183,8 +292,7 @@ public class GameManager : NetworkBehaviour
     /// <summary>
     /// 목표 금액 변경(모든 클라이언트)
     /// </summary>
-    [ClientRpc]
-    private void SetTargetMoney(int targetMoney)
+    [ClientRpc] private void OnClientSetTargetMoney(int targetMoney)
     {
         this.targetMoney = targetMoney;
         TargetMoneyDisplay?.Invoke();
@@ -192,8 +300,7 @@ public class GameManager : NetworkBehaviour
     /// <summary>
     /// 데드라인 변경(모든 클라이언트)
     /// </summary>
-    [ClientRpc]
-    private void SetDeadLine(int deadLine)
+    [ClientRpc] private void OnClientSetDeadLine(int deadLine)
     {
         this.currentDeadline = deadLine;
         DeadLineDisplay?.Invoke();
@@ -201,8 +308,7 @@ public class GameManager : NetworkBehaviour
     /// <summary>
     /// 캐릭터 상태 변경(모든 클라이언트)
     /// </summary>
-    [ClientRpc]
-    private void SetPlayerState(int targetMoney)
+    [ClientRpc] private void OnClientSetPlayerState(int targetMoney)
     {
         this.targetMoney = targetMoney;
         PlayerStateDisplay?.Invoke();
@@ -210,23 +316,20 @@ public class GameManager : NetworkBehaviour
     /// <summary>
     /// 총 수익 UI 출력 (모든 클라이언트)
     /// </summary>
-    [ClientRpc]
-    private void DisplayTotalRevenue()
+    [ClientRpc] private void OnClientDisplayTotalRevenue()
     {
         TotalRevenueDisplay?.Invoke();
     }
     /// <summary>
-    /// 게임 상태 변경 (모든 클라이언트)
+    /// 총 수익 UI 출력 (모든 클라이언트)
     /// </summary>
-    /*[ClientRpc]
-    private void ChangeState(GameStateType gameStateType)
+    [ClientRpc] private void OnClientDisplayTime()
     {
-        currentGameState?.OnStateExit();
-        currentGameState = gameStates[gameStateType];
-        currentGameState.OnStateEnter();
-    }*/
+        GameTime time = GetCurrentTime();
+        //Debug.Log($"{time.hour} : {time.minute.ToString("D2")}");
+        TimeDisplay?.Invoke();
+    }
     #endregion
-
     #region ActionRegist Action등록
     /// <summary>
     /// 현재 소지금 UI갱신 이벤트 등록
@@ -263,150 +366,45 @@ public class GameManager : NetworkBehaviour
     {
         PlayerStateDisplay = action;
     }
+    /// <summary>
+    /// 시간 UI 출력 이벤트 등록
+    /// </summary>
+    public void RegistTimeDisplayAction(Action action = null)
+    {
+        TimeDisplay = action;
+    }
+    #endregion
+    #region IEnumerator
+    [Server]
+    private IEnumerator IncrementTimeCounter()
+    {
+        currentTime = 0;
+        while (true)
+        {
+            // 1초 대기
+            yield return new WaitForSeconds(1.0f);
+            // 변수 증가
+            currentTime++;
+            // 증가한 값 출력 (디버그용)
+            //GameTime time = GetCurrentTime();
+            OnClientDisplayTime();
+            if (currentTime >= 960)
+            {
+                //함선 복귀 이벤트
+                yield break;
+            }
+        }
+    }
     #endregion
 }
-/*
-#region GameStateClass 게임 상태 클래스
-// 진행 순서 ResetState - SelectPlanetState - MapLoadState - EntryPlanetState - GameProgressState - ReturnState - GameOverState
-/// <summary>
-/// 게임 리셋
-/// </summary>
-class ResetState : GameState
+
+public struct GameTime
 {
-    public ResetState(GameManager manager) : base(manager)
+    public int hour;
+    public int minute;
+    public GameTime(int time)
     {
-    }
-
-    public override void OnStateEnter()
-    {
-        gameManager.GameReset();
-        gameManager.OnServerChangeGameState(GameStateType.SelectPlanetState);
-    }
-
-    public override void OnStateExit()
-    {
-        
+        hour = time / 60 + 8;
+        minute = time % 60;
     }
 }
-/// <summary>
-/// 행성 선택
-/// </summary>
-class SelectPlanetState : GameState
-{
-    public SelectPlanetState(GameManager manager) : base(manager)
-    {
-    }
-
-    public override void OnStateEnter()
-    {
-        //행성선택 UI 활성화
-        
-    }
-
-    public override void OnStateExit()
-    {
-
-    }
-}
-/// <summary>
-/// 맵 로드
-/// </summary>
-class MapLoadState : GameState
-{
-    public MapLoadState(GameManager manager) : base(manager)
-    {
-    }
-
-    public override void OnStateEnter()
-    {
-        //모든 유저 맵 비동기 로딩
-        //모두 로딩 완료 시 다음 씬으로 전환
-    }
-
-    public override void OnStateExit()
-    {
-
-    }
-}
-/// <summary>
-/// 행성 진입
-/// </summary>
-class EntryPlanetState : GameState
-{
-    public EntryPlanetState(GameManager manager) : base(manager)
-    {
-    }
-
-    public override void OnStateEnter()
-    {
-        //행성 진입 화면 보여줌
-        //진입 완료시 GameProgressState로 진입
-    }
-
-    public override void OnStateExit()
-    {
-
-    }
-}
-/// <summary>
-/// 목표 진행
-/// </summary>
-class GameProgressState: GameState
-{
-    public GameProgressState(GameManager manager) : base(manager)
-    {
-    }
-
-    public override void OnStateEnter()
-    {
-        //목표 진행
-        //함선 복귀 버튼을 누를 시 ReturnState로 진입
-        //모두 사망 혹은 시간 초과시 GameOverState로 진입
-    }
-
-    public override void OnStateExit()
-    {
-
-    }
-}
-/// <summary>
-/// 복귀
-/// </summary>
-class ReturnState : GameState
-{
-    public ReturnState(GameManager manager) : base(manager)
-    {
-    }
-
-    public override void OnStateEnter()
-    {
-        //행성 탈출 화면 보여줌
-        //탈출 완료시 SelectPlanetState로 진입
-    }
-
-    public override void OnStateExit()
-    {
-
-    }
-}
-/// <summary>
-/// 게임 오버
-/// </summary>
-class GameOverState : GameState
-{
-    public GameOverState(GameManager manager) : base(manager)
-    {
-    }
-
-    public override void OnStateEnter()
-    {
-        //게임 플레이 씬을 다시 불러옴
-    }
-
-    public override void OnStateExit()
-    {
-
-    }
-}
-#endregion
-*/

@@ -1,7 +1,8 @@
+using Mirror;
 using System.Collections;
 using UnityEngine;
 
-public class Mine_Item : MonoBehaviour
+public class Mine_Item : NetworkBehaviour
 {
     [SerializeField]
     private GameObject explosionPrefab;
