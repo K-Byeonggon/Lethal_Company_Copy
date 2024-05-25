@@ -33,6 +33,7 @@ public class SnareFleaAI : MonsterAI
 
     void Start()
     {
+        openDoorDelay = 4f;
         navMeshAgent = transform.GetComponent<NavMeshAgent>();
         ConstructBehaviorTree();
 

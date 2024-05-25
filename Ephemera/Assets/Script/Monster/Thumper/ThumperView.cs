@@ -32,6 +32,8 @@ public class ThumperView : FieldOfView
 
                 if (!Physics.Raycast(transform.position, directionToTarget, distanceToTarget, obstacleMask))
                 {
+                    //플레이어 죽었으면 무시
+                    if(targetTransform.GetComponent<LivingEntity>().IsDead) { continue; }
                     //덤퍼가 플레이어 봄.
                     Debug.Log("덤퍼가 " + targetTransform.name + " 보고 있음.");
                     thumper.sawPlayer = true;

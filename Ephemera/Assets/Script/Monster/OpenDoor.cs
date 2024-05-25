@@ -14,6 +14,8 @@ public class OpenDoor : MonoBehaviour
         if(other.tag == "Door")
         {
             Door door = other.GetComponent<Door>();
+            if(door.IsOpen) { return; }
+
             if (!opening)
             {
                 opening = true;
@@ -35,17 +37,21 @@ public class OpenDoor : MonoBehaviour
         }
     }
 
-    /*
+    
     private IEnumerator OpenCoroutine(Door door)
     {
+        navMeshAgent.isStopped = true;
         yield return new WaitForSeconds(monster.OpenDoorDelay);
         door.OpenDoor();
-    }*/
+        yield return new WaitForSeconds(0.6f);//문열리는 시간
+        navMeshAgent.isStopped = false;
+    }
+    /*
     private IEnumerator OpenCoroutine(Door door)
     {
         navMeshAgent.isStopped = true;
         yield return new WaitForSeconds(3f);
         door.OpenDoor();
         navMeshAgent.isStopped = false;
-    }
+    }*/
 }

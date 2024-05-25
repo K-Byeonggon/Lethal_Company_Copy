@@ -19,6 +19,7 @@ public class CoilheadAI : MonsterAI
 
     void Start()
     {
+        openDoorDelay = 3f;
         navMeshAgent = GetComponent<NavMeshAgent>();
 
         ConstructBehaviorTree();
@@ -84,8 +85,8 @@ public class CoilheadAI : MonsterAI
     private Node.State MoveToPlayer()
     {
         Debug.Log("MoveToPlayer");
-        Debug.Log(transform.name + transform.position + ", " + target.name + target.position);
-        Debug.Log(Vector3.Distance(transform.position, target.position));
+        //Debug.Log(transform.name + transform.position + ", " + target.name + target.position);
+        //Debug.Log(Vector3.Distance(transform.position, target.position));
         if(Vector3.Distance(transform.position, target.position) <= attackDistance)
         {
             Debug.Log("´Ù°¡°¬´Ù.");

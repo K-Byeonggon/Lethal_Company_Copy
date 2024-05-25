@@ -49,7 +49,6 @@ public class SporeLizardAI : MonsterAI
     }
     public State currentState;
     public bool sawPlayer = false;
-    [SerializeField] Rigidbody rigidbody;
     private Vector3[] rayDirections;
 
 
@@ -143,8 +142,8 @@ public class SporeLizardAI : MonsterAI
             //À§ÇùÇÏ±â
             if (Time.time - threatTime < threatDuration)
             {
-                rigidbody.velocity = Vector3.zero;
-                rigidbody.isKinematic = true;
+                //rigidbody.velocity = Vector3.zero;
+                //rigidbody.isKinematic = true;
                 navMeshAgent.isStopped = true;
                 Vector3 lookPosition = new Vector3(bewareOf.position.x, 0, bewareOf.position.z);
                 pivot.LookAt(lookPosition);
@@ -154,7 +153,7 @@ public class SporeLizardAI : MonsterAI
             }
             else
             {
-                rigidbody.isKinematic = false;
+                //rigidbody.isKinematic = false;
                 navMeshAgent.isStopped = false;
                 Debug.Log("À§Çù ³¡");
                 isThreatening = false;
@@ -164,7 +163,7 @@ public class SporeLizardAI : MonsterAI
         }
         else
         {
-            rigidbody.isKinematic = false;
+            //rigidbody.isKinematic = false;
             navMeshAgent.isStopped = false;
             Debug.Log("À§Çù µµÁß Á¾·á");
             currentState = State.Wander;
