@@ -5,12 +5,9 @@ using UnityEngine;
 public class Door : MonoBehaviour
 {
     private bool isOpen;
-    private Animator animator;
-
-    private void OnEnable()
-    {
-        animator = transform.parent.GetComponent<Animator>();
-    }
+    public bool IsOpen { get { return isOpen; } }
+    [SerializeField] Animator animator;
+    [SerializeField] UnityEngine.AI.NavMeshObstacle obstacle;
 
     //플레이어에서 Ray를 쏴서 E를 누르면 GetComponent<Door>().UseDoor()하면 되지 않을까?
     public void UseDoor()
@@ -23,12 +20,14 @@ public class Door : MonoBehaviour
     {
         isOpen = true;
         animator.SetBool("IsOpen", true);
+        obstacle.enabled = true;
     }
 
     public void CloseDoor() 
     { 
         isOpen = false;
-        animator.SetBool("IsOpen", false);    
+        animator.SetBool("IsOpen", false);
+        obstacle.enabled = false;
     }
 
 }

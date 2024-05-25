@@ -13,9 +13,10 @@ GameObject:
   - component: {fileID: 1871740391687966484}
   - component: {fileID: 8759681631971677449}
   - component: {fileID: 7078035086883566024}
+  - component: {fileID: 5683369971074034570}
   m_Layer: 0
   m_Name: Door Real
-  m_TagString: Untagged
+  m_TagString: Door
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -110,6 +111,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95cff6ee612b56746a0125943c906748, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animator: {fileID: 6325505424689193580}
+  obstacle: {fileID: 5683369971074034570}
+--- !u!208 &5683369971074034570
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5544255650195688064}
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &6234677730344884651
 GameObject:
   m_ObjectHideFlags: 0
@@ -121,7 +140,7 @@ GameObject:
   - component: {fileID: 2030110597079592669}
   m_Layer: 0
   m_Name: Door Default
-  m_TagString: Untagged
+  m_TagString: Door
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -155,7 +174,7 @@ GameObject:
   - component: {fileID: 7974965526982289845}
   m_Layer: 0
   m_Name: Door Angle
-  m_TagString: Untagged
+  m_TagString: Door
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -209,3 +228,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95cff6ee612b56746a0125943c906748, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animator: {fileID: 0}
+  obstacle: {fileID: 0}

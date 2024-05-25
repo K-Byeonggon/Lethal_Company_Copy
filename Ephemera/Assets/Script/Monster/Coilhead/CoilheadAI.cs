@@ -13,7 +13,7 @@ public class CoilheadAI : MonsterAI
     [SerializeField] float attackDistance = 1f;
     private float lastAttackTime;
     [SerializeField] float attackCooltime = 0.2f;
-    [SerializeField] float wanderRadius = 10f;
+    [SerializeField] float wanderRadius = 30f;
     public bool setDesti = false;
 
 

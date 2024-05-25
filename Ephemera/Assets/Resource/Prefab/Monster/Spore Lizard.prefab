@@ -89,6 +89,65 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70154e92a101d494899fb07141844b22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &4003077196722858210
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3768287354385324322}
+  - component: {fileID: 8579495251157089758}
+  - component: {fileID: 7810917196005269411}
+  m_Layer: 0
+  m_Name: Detect Door
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3768287354385324322
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4003077196722858210}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.25, y: 0, z: -0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5881487197927887405}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &8579495251157089758
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4003077196722858210}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.51
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &7810917196005269411
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4003077196722858210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18de47db20eb9534298d935661823731, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  monster: {fileID: 6414842003054355544}
 --- !u!1 &4440759354408764637
 GameObject:
   m_ObjectHideFlags: 0
@@ -179,6 +238,7 @@ Transform:
   m_Children:
   - {fileID: 3558361349482716710}
   - {fileID: 3558361349704299589}
+  - {fileID: 3768287354385324322}
   m_Father: {fileID: 3957379526496312935}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
@@ -260,7 +320,6 @@ MonoBehaviour:
   defaultSpeed: 3.5
   defaultAccel: 8
   defaultAngle: 120
-  sporeDuration: 4
   setDesti: 0
   bewareOf: {fileID: 0}
   head: {fileID: 3558361349482716710}
@@ -270,7 +329,6 @@ MonoBehaviour:
   cornerDetectionRadius: 5
   attackDistance: 1
   attackState: 0
-  Obj_Transform: {fileID: 0}
   currentState: 0
   sawPlayer: 0
   rigidbody: {fileID: 6414842003054355545}

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class SporeLizardAI : MonoBehaviour
+public class SporeLizardAI : MonsterAI
 {
     private Node topNode;
     public UnityEngine.AI.NavMeshAgent navMeshAgent;
@@ -37,7 +37,6 @@ public class SporeLizardAI : MonoBehaviour
     [SerializeField] bool attackState = false;
 
 
-
     //새로운 버전의 AI
     //유효하지 않은 목적지
     public enum State
@@ -56,6 +55,7 @@ public class SporeLizardAI : MonoBehaviour
 
     void Start()
     {
+        openDoorDelay = 1f;
         currentState = State.Wander;
         rayDirections = new Vector3[cornerRayCount];
         ConstructBehaviorTree();
