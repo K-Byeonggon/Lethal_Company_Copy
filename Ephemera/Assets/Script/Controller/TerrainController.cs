@@ -45,15 +45,6 @@ public class TerrainController : MonoBehaviour
         }
         return null;
     }
-    public GameObject GetBackDoor(Planet planet)
-    {
-        foreach (var item in planetTerrain)
-        {
-            if (item.planet == planet)
-                return item.backDoor;
-        }
-        return null;
-    }
     public int GetTerrainCount()
     {
         return planetTerrain.Count;
@@ -67,5 +58,4 @@ public class PlanetTerrain
     public GameObject Terrain;
     public Transform LandingZone;
     public GameObject frontDoor;//TerrainDoor frontDoor;
-    public GameObject backDoor; //TerrainDoor backDoor;
 }

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using Unity.VisualScripting;
 using Mirror;
-public class Item : NetworkBehaviour, IUIVisible, IItemUsable, IItemObtainable
+public class Item : NetworkBehaviour, IItemUsable, IItemObtainable, IUIVisible
 {
     [SerializeField] public ItemData itemData;
     [SyncVar] private int itemPrice;
@@ -13,58 +13,32 @@ public class Item : NetworkBehaviour, IUIVisible, IItemUsable, IItemObtainable
     public Sprite itemSprite => itemData.image;
     public bool IsBothHandGrab => itemData.isBothHand;
 
-    [SerializeField] Collider itemCollider;
-    [SerializeField] Rigidbody rigid;
+    [SerializeField] public Collider itemCollider;
+    [SerializeField] public Rigidbody rigid;
+    [SerializeField] public List<MeshRenderer> renderers;
 
     public override void OnStartServer()
     {
+        //rigid.isKinematic = true;
+        //rigid.useGravity = false;
+        //rigid.velocity = Vector3.zero;
+        //rigid.angularVelocity = Vector3.zero;
+
         itemPrice = itemData.GetRandomPrice();
     }
-
-    [Command]
-    public void PickUp(Transform pickTransform)
-    {
-        itemCollider.enabled = false;
-        rigid.isKinematic = true;
-        rigid.useGravity = false;
-        rigid.velocity = Vector3.zero;
-        rigid.angularVelocity = Vector3.zero;
-        OnClientSetParent(pickTransform);
-    }
-    [Command]
-    public void PickDown(Transform pickTransform)
-    {
-        itemCollider.enabled = true;
-        rigid.isKinematic = false;
-        rigid.useGravity = true;
-        transform.position = pickTransform.position + pickTransform.forward;
-        OnClientUnsetParent();
-        rigid.AddForce(pickTransform.forward * 5.0f, ForceMode.Impulse);
-    }
-
     public void ShowPickupUI()
     {
         //image.gameObject.SetActive(true);
     }
 
-    public void UIvisible()
-    {
-        //Image image = UIManager.Instance.GetUI<Image>("UIÀÌ¸§");
-        //image.gameObject.SetActive(true);
-    }
-
     public virtual void UseItem() { }
 
+
     [ClientRpc]
-    public void OnClientSetParent(Transform parent)
+    public void SetRendererActive(bool isActive)
     {
-        transform.parent = parent;
-        transform.position = parent.position;
-        transform.rotation = parent.rotation;
+        renderers.ForEach(rend => rend.enabled = isActive);
     }
-    [ClientRpc]
-    public void OnClientUnsetParent()
-    {
-        transform.parent = null;
-    }
+
+    
 }

@@ -8,6 +8,10 @@ using UnityEngine;
 public class ShipController : NetworkBehaviour
 {
     public Transform spawnPoint;
+    [SerializeField]
+    Transform leftDoor;
+    [SerializeField]
+    Transform rightDoor;
 
     #region OnTrigger Function
     private void OnTriggerEnter(Collider other)
@@ -42,7 +46,7 @@ public class ShipController : NetworkBehaviour
                 OnServerChangePosition(destination);
                 GameManager.Instance.OnServerActiveLocalPlayerCamera();
                 GameManager.Instance.OnServerSetActivePlayer(true);
-                UIController.Instance.SetActivateUI(typeof(UI_Setup));
+                SetGameUI();
                 yield break;
             }
             //transform.rotation = Quaternion.Slerp(transform.rotation, lookAt, 0.01f);
@@ -83,4 +87,69 @@ public class ShipController : NetworkBehaviour
         player.parent = null;
     }
     #endregion
+    [ClientRpc]
+    public void SetGameUI()
+    {
+        UIController.Instance.SetActivateUI(typeof(UI_Setup));
+    }
+
+
+
+    [Command(requiresAuthority = false)]
+    public void OpenDoor()
+    {
+        //ShipController shipController = FindObjectOfType<ShipController>();
+        //shipController.StartOpenCoroutine();
+        StartOpenCoroutine();
+    }
+    [Command(requiresAuthority = false)]
+    public void CloseDoor()
+    {
+        //ShipController shipController = FindObjectOfType<ShipController>();
+        //shipController.StartCloseCoroutine();
+        StartCloseCoroutine();
+    }
+
+    [ClientRpc]
+    public void StartOpenCoroutine()
+    {
+        Debug.Log("CmdOpenDoor called");
+        StartCoroutine(DoorOpenCoroutine());
+    }
+    [ClientRpc]
+    public void StartCloseCoroutine()
+    {
+        StartCoroutine(DoorCloseCoroutine());
+    }
+
+    IEnumerator DoorOpenCoroutine()
+    {
+        while (true)
+        {
+            leftDoor.localScale = Vector3.Lerp(leftDoor.localScale, new Vector3(0, 1, 1), 0.1f);
+            rightDoor.localScale = Vector3.Lerp(rightDoor.localScale, new Vector3(0, 1, 1), 0.1f);
+            if (leftDoor.localScale.x < 0.01f && rightDoor.localScale.x < 0.01f)
+            {
+                leftDoor.localScale = new Vector3(0, 1, 1);
+                rightDoor.localScale = new Vector3(0, 1, 1);
+                break;
+            }
+            yield return null;
+        }
+    }
+    IEnumerator DoorCloseCoroutine()
+    {
+        while (true)
+        {
+            leftDoor.localScale = Vector3.Lerp(leftDoor.localScale, new Vector3(1, 1, 1), 0.1f);
+            rightDoor.localScale = Vector3.Lerp(rightDoor.localScale, new Vector3(1, 1, 1), 0.1f);
+            if (leftDoor.localScale.x > 0.99f && rightDoor.localScale.x > 0.99f)
+            {
+                leftDoor.localScale = Vector3.one;
+                rightDoor.localScale = Vector3.one;
+                break;
+            }
+            yield return null;
+        }
+    }
 }

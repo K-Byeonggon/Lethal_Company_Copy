@@ -1,3 +1,4 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,9 +8,10 @@ public class HandLight_Item : Item
 {
     private bool isActive = true;
     [SerializeField]
-    Light flashlight;   
+    Light flashlight;
 
-    
+
+    [ClientRpc]
     public override void UseItem()
     {
         if (isActive == true)

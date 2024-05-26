@@ -1,16 +1,10 @@
 using DunGen;
 using Mirror;
-using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Principal;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.InputSystem.XR;
-using static UnityEditor.Experimental.AssetDatabaseExperimental.AssetDatabaseCounters;
+using UnityEngine.InputSystem.Layouts;
 
 
 public class GameManager : NetworkBehaviour
@@ -42,7 +36,7 @@ public class GameManager : NetworkBehaviour
                 default:
                     return 10;
             }
-            
+
         }
     }
     #endregion
@@ -77,21 +71,33 @@ public class GameManager : NetworkBehaviour
 
     public void CreateRoom(int seed)
     {
+        //임시 주석
         rd = Instantiate(ResourceManager.Instance.GetPrefab("DungeonGenerator")).GetComponent<RuntimeDungeon>();
         rd.Generator.Seed = seed;
         rd.Generate();
 
-        /*//내부 첫 문과 마지막 문에 ExitDoor 추가
-        ExitDoor extFrontDoor = rd.Generator.CurrentDungeon.MainPathTiles[0].Entrance.gameObject.AddComponent<ExitDoor>();
-        ExitDoor extBackDoor = rd.Generator.CurrentDungeon.MainPathTiles.Last().Entrance.gameObject.AddComponent<ExitDoor>();
-        //외부 첫 문과 마지막 문에 EntryDoor 추가
-        EntryDoor etrFrontDoor = TerrainController.Instance.GetFrontDoor(selectPlanet).AddComponent<EntryDoor>();
-        EntryDoor etrBackDoor = TerrainController.Instance.GetBackDoor(selectPlanet).AddComponent<EntryDoor>();
 
-        extFrontDoor.entryPosition = etrFrontDoor.transform;
-        etrFrontDoor.exitPosition = extFrontDoor.transform;
-        extBackDoor.entryPosition = etrBackDoor.transform;
-        etrBackDoor.exitPosition = extBackDoor.transform;*/
+        //내부 첫 문과 마지막 문에 ExitDoor 추가
+
+        //위치에 문 오브젝트 추가
+        //rd.Generator.CurrentDungeon.MainPathTiles[0].Entrance.transform.position;
+
+        
+        /*GameObject go = Instantiate(ResourceManager.Instance.GetPrefab("duck"));
+        go.name = "duck";
+        go.transform.position = Vector3.up * 2;
+        NetworkServer.Spawn(go);*/
+    }
+    public void GeneraterObject()
+    {
+        if (isServer)
+        {
+            NavMeshGenerator navMeshGenerator = Instantiate(ResourceManager.Instance.GetPrefab("NavMeshBake")).GetComponent<NavMeshGenerator>();
+            navMeshGenerator.BakeNavMesh();
+            //StartCoroutine(BakeNavMeshCoroutine());
+            //NavMeshGenerator navMeshGenerator = rd.GetComponent<NavMeshGenerator>();
+            //StartCoroutine(BuildNavMesh(navMeshGenerator.navMeshSurface, new Bounds(Vector3.zero, new Vector3(1000, 1000, 1000))));
+        }
     }
     public void DestroyRoom()
     {
@@ -117,7 +123,7 @@ public class GameManager : NetworkBehaviour
     {
         //모든 플레이어가 준비되었을 시
         //OnServerChangeGameState(GameStateType.ResetState);
-        if(isServer == true)
+        if (isServer == true)
         {
             OnServerGameReset();
         }
@@ -138,6 +144,7 @@ public class GameManager : NetworkBehaviour
         OnServerDeadlineReset();
         //카메라 리셋
         OnClientGameStartInit();
+
         OnServerSetActivePlayer(true);
         //캐릭터 제어 비활성화
         OnServerSetActiveController(false);
@@ -242,9 +249,10 @@ public class GameManager : NetworkBehaviour
     /*[Command]
     public void CmdPlayerStateChange(NetworkMessage message)
     {
-        //myPlayerStatue.Hp -= message.damage;
-        //SetPlayerState(myPlayerStatue);
+    //myPlayerStatue.Hp -= message.damage;
+    //SetPlayerState(myPlayerStatue);
     }*/
+    
     #endregion
     #region ClientRpc Function 서버가 원격 프로시저 호출(RPC)로 모든 클라이언트에서 실행되는 함수
     [ClientRpc] public void OnClientGameStartInit()
@@ -263,6 +271,8 @@ public class GameManager : NetworkBehaviour
         ActivatePlanetTerrain((int)selectPlanet);
         //방 생성하고
         CreateRoom(seed);
+        //몬스터, 아이템 생성하고
+        GeneraterObject();
         //카메라 옮기고
         CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShip);
     }
@@ -400,6 +410,54 @@ public class GameManager : NetworkBehaviour
         }
     }
     #endregion
+
+    [Server]
+    public void SpawnItem()
+    {
+        int itemSpawnCount = UnityEngine.Random.Range(RoomReference.Instance.RoomCount / 2, RoomReference.Instance.RoomCount);
+
+        List<string> itemKey = new List<string>()
+        {
+            "asynchronous_motor",
+            "Barrel",
+            "Camera_on",
+            "circular_saw",
+            "Crowbar",
+            "duck",
+            "Laptop",
+            "Metal container",
+            "Mine",
+            "Phone_1",
+            "ProFlashlight_Low",
+            "Tablet_pc",
+        };
+
+        for (int i = 0; i < itemSpawnCount; i++)
+        {
+            Vector3 vec = RoomReference.Instance.GetRandomPosition();
+            int itemIndex = UnityEngine.Random.Range(0, itemKey.Count);
+            GameObject item = Instantiate(ResourceManager.Instance.GetPrefab(itemKey[itemIndex]));
+            item.transform.position = vec;
+            NetworkServer.Spawn(item);
+        }
+    }
+    [Server]
+    public void OnServerDoorLinkSequence()
+    {
+        OnClientDoorLinkSequence();
+    }
+    [ClientRpc]
+    public void OnClientDoorLinkSequence()
+    {
+        Debug.Log(GameObject.Find("Entrance").transform.GetChild(0).name);
+        Debug.Log(TerrainController.Instance.GetFrontDoor(selectPlanet).name);
+
+        LinkDoor extFrontDoor = GameObject.Find("Entrance").transform.GetChild(0).GetComponent<LinkDoor>();
+        LinkDoor etrFrontDoor = TerrainController.Instance.GetFrontDoor(selectPlanet).GetComponent<LinkDoor>();
+
+        extFrontDoor.LinkTransform = etrFrontDoor.transform;
+        etrFrontDoor.LinkTransform = extFrontDoor.transform;
+    }
 }
 
 public struct GameTime

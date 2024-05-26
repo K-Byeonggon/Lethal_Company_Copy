@@ -61,4 +61,8 @@ public class UIController : MonoBehaviour
             }
         }
     }
+    public void SetActivateUIElement<T>(Type element)
+    {
+
+    }
 }

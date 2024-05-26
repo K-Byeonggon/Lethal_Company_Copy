@@ -28,7 +28,10 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private CharacterController characterController;
     [SerializeField] private Animator animator;
     [SerializeField] private Inventory inventory;
+    [SerializeField] private PlayerRaycast playerRaycast;
+    [SerializeField] public GameObject deadBody;
     private bool IsGround() => characterController.isGrounded;
+    public bool IsWalking() => _direction != Vector3.zero;
     #endregion
 
     #region Initialize Function
@@ -37,8 +40,7 @@ public class PlayerController : NetworkBehaviour
         if (isLocalPlayer)
         {
             Debug.Log("SetActivateLocalPlayer : "+ isActive);
-            characterController.enabled = isActive;
-            GetComponent<PlayerInput>().enabled = isActive;
+            SetActivateLocalController(isActive);
             this.enabled = isActive;
         }
     }
@@ -48,6 +50,7 @@ public class PlayerController : NetworkBehaviour
         {
             characterController.enabled = isActive;
             GetComponent<PlayerInput>().enabled = isActive;
+            playerRaycast.enabled = isActive;
         }
     }
     public void SetCameraSpeed(float value)
@@ -112,7 +115,8 @@ public class PlayerController : NetworkBehaviour
     }
     void ApplyMovement()
     {
-        characterController.Move(transform.TransformDirection(_direction) * speed * Time.deltaTime);
+        if(characterController.enabled == true)
+            characterController.Move(transform.TransformDirection(_direction) * speed * Time.deltaTime);
     }
     public void SetAnimator()
     {
@@ -154,7 +158,27 @@ public class PlayerController : NetworkBehaviour
     }
     public void OnInteraction(InputAction.CallbackContext context)
     {
-
+        if (context.started)
+        {
+            if (playerRaycast.HitObject == null)
+                return;
+            //상호작용 오브젝트일 경우
+            if (playerRaycast.HitObject.TryGetComponent<Item>(out Item item))
+            {
+                inventory.AddItem(playerRaycast.HitObject);
+                Debug.Log("Item obtained: " + playerRaycast.HitObject.name);
+            }
+            //문일 경우
+            else if (playerRaycast.HitObject.TryGetComponent<LinkDoor>(out LinkDoor door))
+            {
+                CmdTeleport(door.GetTeleportionPosition());
+            }
+            //그 외의 상호작용 물품일 경우
+            else if (playerRaycast.HitObject.TryGetComponent<IInteractive>(out IInteractive InteractiveObject))
+            {
+                InteractiveObject.OnInteractive();
+            }
+        }
     }
     public void OnCrouch(InputAction.CallbackContext context)
     {
@@ -185,14 +209,14 @@ public class PlayerController : NetworkBehaviour
     #endregion
     #region Network Command Function
     [Command]
-    public void CmdTeleport(Transform transform, Vector3 position)
+    public void CmdTeleport(Vector3 position)
     {
-        OnClientTeleport(transform, position);
+        OnClientTeleport(position);
     }
     #endregion
     #region Network ClientRpc Function
     [ClientRpc]
-    public void OnClientTeleport(Transform transform, Vector3 position)
+    public void OnClientTeleport(Vector3 position)
     {
         transform.position = position;
     }

@@ -26,7 +26,6 @@ public class UI_SpriteSetup : MonoBehaviour
                 item.Key.sizeDelta = new Vector2(item.Value / 100 * widthRatio, item.Key.rect.height);
             }
             yield return YieldInstructionCache.WaitForSeconds(0.1f);
-            Debug.Log(widthRatio);
 
             if (widthRatio > 99)
             {
@@ -34,7 +33,7 @@ public class UI_SpriteSetup : MonoBehaviour
                 {
                     item.Key.sizeDelta = new Vector2(item.Value, item.Key.rect.height);
                 }
-                Debug.Log("End UI SetUp");
+                //Debug.Log("End UI SetUp");
                 break;
             }
         }

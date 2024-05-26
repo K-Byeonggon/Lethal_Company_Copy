@@ -12,7 +12,7 @@ public class TypingEffect : MonoBehaviour
     [SerializeField]
     private float startTime = 0.5f;
     [SerializeField]
-    private float typingTime = 0.1f;
+    private float typingTime = 0.3f;
 
     public TextMeshProUGUI textUI;
     public TextMeshProUGUI loadingUI;
@@ -141,10 +141,10 @@ public class TypingEffect : MonoBehaviour
 
         var resetTexts = m_resetText.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
 
-        foreach (var resetText in resetTexts)
+        /*foreach (var resetText in resetTexts)
         {
             Debug.Log(resetText);
-        }
+        }*/
 
         for (int i = 0; i < resetTexts.Length; i++)
         {

@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 using static UnityEditor.Progress;
 
 public class Inventory : NetworkBehaviour
@@ -38,13 +39,17 @@ public class Inventory : NetworkBehaviour
     public void AddItem(GameObject item)
     {
         if (item == null)
+        {
+            Debug.Log("Item is Null");
             return;
+        }
         if (slots[currentItemSlot].isEmpty == true)
         {
+            Debug.Log($"pickTransform : {pickTransform}");
             slots[currentItemSlot].isEmpty = false;
             slots[currentItemSlot].slotObjComponent = item.GetComponent<Item>();
-            slots[currentItemSlot].slotObjComponent.PickUp(pickTransform);
-            
+            //PickUp(item.transform);
+            PickUp(item.GetComponent<NetworkIdentity>());
         }
     }
     public void RemoveItem()
@@ -52,7 +57,8 @@ public class Inventory : NetworkBehaviour
         if (slots[currentItemSlot].isEmpty == false)
         {
             slots[currentItemSlot].isEmpty = true;
-            slots[currentItemSlot].slotObjComponent.PickDown(pickTransform);
+            //PickDown(slots[currentItemSlot].slotObjComponent.transform);
+            PickDown(slots[currentItemSlot].slotObjComponent.GetComponent<NetworkIdentity>());
             slots[currentItemSlot].slotObjComponent = null;
         }
     }
@@ -63,29 +69,93 @@ public class Inventory : NetworkBehaviour
         var currentItem = GetCurrentItemComponent;
         if (currentItem != null && currentItem.IsBothHandGrab) return;
 
-        CmdSetCurrentItemActive(false);
+        CmdSetCurrentItemActive(currentItemSlot, false);
         currentItemSlot = index;
-        CmdSetCurrentItemActive(true);
+        CmdSetCurrentItemActive(currentItemSlot, true);
         UIController.Instance.ui_Game.ItemSelection(index);
     }
-    public void UseItem()
+    [Command] public void UseItem()
     {
         GetCurrentItemComponent?.UseItem();
     }
 
     #region Command Function
-    [Command] public void CmdSetCurrentItemActive(bool isActive)
+    [Command] public void CmdSetCurrentItemActive(int itemSlotIndex, bool isActive)
     {
-        Item item = GetCurrentItemComponent;
+        Item item = slots[itemSlotIndex].slotObjComponent;
         if (item != null)
-            OnClientSetCurrentItemActive(item.gameObject, isActive);
+            OnClientSetCurrentItemActive(itemSlotIndex, isActive);
     }
     #endregion
 
     #region ClientRpc Function
-    [ClientRpc] public void OnClientSetCurrentItemActive(GameObject go, bool isActive)
+    [Server] public void OnClientSetCurrentItemActive(int itemSlotIndex, bool isActive)
     {
-        go?.SetActive(isActive);
+        if(slots[itemSlotIndex].slotObjComponent != null)
+        {
+            slots[itemSlotIndex].slotObjComponent.SetRendererActive(isActive);
+        }
+        
     }
     #endregion
+
+
+    [Command]
+    public void PickUp(NetworkIdentity itemIdentity)
+    {
+        /*var itemComponent = item.GetComponent<Item>();
+
+        itemComponent.itemCollider.enabled = false;
+        itemComponent.rigid.isKinematic = true;
+        itemComponent.rigid.useGravity = false;
+        itemComponent.rigid.velocity = Vector3.zero;
+        itemComponent.rigid.angularVelocity = Vector3.zero;*/
+
+        OnClientSetParent(itemIdentity);
+    }
+    [Command]
+    public void PickDown(NetworkIdentity itemIdentity)
+    {
+        OnClientUnsetParent(itemIdentity);
+        /*var itemComponent = item.GetComponent<Item>();
+
+        itemComponent.itemCollider.enabled = true;
+        itemComponent.rigid.isKinematic = false;
+        itemComponent.rigid.useGravity = true;
+        item.position = transform.position + transform.forward;
+
+        OnClientUnsetParent(item);
+        itemComponent.rigid.AddForce(transform.forward * 5.0f, ForceMode.Impulse);*/
+    }
+    [ClientRpc]
+    public void OnClientSetParent(NetworkIdentity itemIdentity)
+    {
+        var itemComponent = itemIdentity.GetComponent<Item>();
+
+        itemComponent.itemCollider.enabled = false;
+        itemComponent.rigid.isKinematic = true;
+        itemComponent.rigid.useGravity = false;
+        itemComponent.rigid.velocity = Vector3.zero;
+        itemComponent.rigid.angularVelocity = Vector3.zero;
+
+
+        itemComponent.transform.parent = pickTransform;
+        itemComponent.transform.position = pickTransform.position;
+        itemComponent.transform.rotation = pickTransform.rotation;
+    }
+    [ClientRpc]
+    public void OnClientUnsetParent(NetworkIdentity itemIdentity)
+    {
+        var itemComponent = itemIdentity.GetComponent<Item>();
+
+        itemComponent.itemCollider.enabled = true;
+        itemComponent.rigid.isKinematic = false;
+        itemComponent.rigid.useGravity = true;
+        itemIdentity.transform.position = transform.position + transform.forward;
+
+        itemIdentity.transform.parent = null;
+        itemComponent.rigid.AddForce(transform.forward * 5.0f, ForceMode.Impulse);
+
+        //item.parent = null;
+    }
 }

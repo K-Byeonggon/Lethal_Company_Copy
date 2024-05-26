@@ -1,8 +1,9 @@
+using Mirror;
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class CrowBar_Item : Item, IItemUsable
+public class CrowBar_Item : Item
 {
     private Quaternion originalRotation;
     private bool isUsingItem = false;
@@ -17,8 +18,9 @@ public class CrowBar_Item : Item, IItemUsable
         audioSource = GetComponent<AudioSource>();
     }
 
-    
+
     // Start is called before the first frame update
+    [ClientRpc]
     public override void UseItem()
     {
         if (!isUsingItem)

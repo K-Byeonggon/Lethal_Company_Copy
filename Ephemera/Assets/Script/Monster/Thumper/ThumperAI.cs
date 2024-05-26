@@ -148,7 +148,7 @@ public class ThumperAI : MonsterAI
     //[배회 시퀀스] 목적지 설정
     private Node.State SetDest()
     {
-        Debug.Log("배회 시퀀스");
+        //Debug.Log("배회 시퀀스");
 
         if (!wandering)
         {

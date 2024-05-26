@@ -13,13 +13,13 @@ public class ThumperHitWall : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("부딫혔어요");
+        //Debug.Log("부딫혔어요");
         thumper.hitWall = true;
     }
 
     private void OnTriggerExit(Collider other)
     {
-        Debug.Log("hitWall 갱신해용");
+        //Debug.Log("hitWall 갱신해용");
         thumper.hitWall = false;
     }
 }

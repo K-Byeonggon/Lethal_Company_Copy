@@ -43,7 +43,7 @@ public class PlayerEx : MonoBehaviour
             IUIVisible iUIVisible = hit.transform.GetComponent<IUIVisible>();
             if (iUIVisible != null)
             {
-                iUIVisible.UIvisible();
+                //iUIVisible.SetUIvisible();
             }
             else
             {

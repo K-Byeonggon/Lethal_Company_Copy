@@ -26,6 +26,9 @@ public class UI_Game : MonoBehaviour
     private TextMeshProUGUI weaponName;
 
     [SerializeField]
+    private GameObject interactionImage;
+
+    [SerializeField]
     private List<UI_SpriteSetup> uISpriteSetups;
 
     private List<Slider> otherHpBars;
@@ -41,7 +44,7 @@ public class UI_Game : MonoBehaviour
         if (isActive == false)
             return;
 
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        /*if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             ItemSelection(0);
         }
@@ -56,7 +59,7 @@ public class UI_Game : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha4))
         {
             ItemSelection(3);
-        }
+        }*/
     }
     public void Init()
     {
@@ -72,10 +75,10 @@ public class UI_Game : MonoBehaviour
     {
 
     }
-    //UI 상호작용 깜박임
-    public void UIInteraction()
+    //UI 상호작용 표시
+    public void UIInteraction(bool isActive)
     {
-
+        interactionImage.SetActive(isActive);
     }
     public void SetUp()
     {

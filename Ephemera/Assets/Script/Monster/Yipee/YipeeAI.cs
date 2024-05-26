@@ -159,7 +159,7 @@ public class YipeeAI : MonsterAI
     //랜덤 목적지 설정(한번만 실행)(돌아다니기 시퀀스)
     private Node.State SetDest()
     {
-        Debug.Log("SetDest");
+        //Debug.Log("SetDest");
         if (itemFind) return Node.State.FAILURE;        //아이템을 찾아서 아이템을 추적하는 상태면,
         else if (setDesti) return Node.State.SUCCESS;   //이미 목적지 설정이 되어있으면,
         else

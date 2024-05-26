@@ -113,6 +113,18 @@ MonoBehaviour:
     m_Address: Mine
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: f729edc28efba874489e7e9b2fc1736e
+    m_Address: Room
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: a62c81c3c148fae48b50bbad5919dbb1
+    m_Address: NavMeshBake
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: a16dcb9de51aed14ca39729f185a9c22
+    m_Address: Geiger counter1
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: f53dd5718acd92348a91adf0d1df758a, type: 2}
   m_SchemaSet:

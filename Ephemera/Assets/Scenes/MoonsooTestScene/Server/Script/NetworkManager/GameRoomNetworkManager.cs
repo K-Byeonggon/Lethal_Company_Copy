@@ -85,7 +85,11 @@ public class GameRoomNetworkManager : NetworkRoomManager
             NetworkServer.Spawn(terrain);
         }
     }
-
+    public override void OnRoomClientExit() 
+    {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+    }
 
     /*//room플레이어 생성 함수
     void OnCreateRoomCharacter(NetworkConnectionToClient conn, CreateRoomCharacterMessage message)
