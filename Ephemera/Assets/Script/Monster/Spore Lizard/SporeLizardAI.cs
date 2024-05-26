@@ -44,7 +44,7 @@ public class SporeLizardAI : MonsterAI
         Wander,
         Threaten,
         Explode,
-        Run,
+        Run, 
         Attack
     }
     public State currentState;
@@ -54,7 +54,7 @@ public class SporeLizardAI : MonsterAI
 
     void Start()
     {
-        //openDoorDelay = 1f;
+        openDoorDelay = 1f;
         currentState = State.Wander;
         rayDirections = new Vector3[cornerRayCount];
         ConstructBehaviorTree();
@@ -88,7 +88,7 @@ public class SporeLizardAI : MonsterAI
 
         //셀렉터 노드에 들어갈 시퀀스 노드들
         SequenceNode attackSequence = new SequenceNode(new List<Node> { moveToPlayer, attackPlayer });
-        topNode = new SelectorNode(new List<Node> { wander, threaten, explodeSpore, run, attackSequence });
+        topNode = new SelectorNode(new List<Node> { wander, threaten, explodeSpore, run, attackSequence});
     }
 
     //[배회 시퀀스] 목적지 설정 및 이동
@@ -96,7 +96,7 @@ public class SporeLizardAI : MonsterAI
     {
         if (currentState != State.Wander) return Node.State.FAILURE;
 
-        if (sawPlayer)
+        if(sawPlayer)
         {
             if (!bewareOf.GetComponent<LivingEntity>().IsDead)
             {
@@ -171,15 +171,15 @@ public class SporeLizardAI : MonsterAI
             return Node.State.FAILURE;
         }
     }
-
+    
     //[포자 시퀀스] 포자 발사
     private Node.State ExplodeSpore()
     {
-        if (currentState != State.Explode) return Node.State.FAILURE;
+        if(currentState != State.Explode) return Node.State.FAILURE;
 
-        if (Random.value <= sporePercentage)
+        if (Random.value <= sporePercentage) 
         {
-            if (haveSpore)
+            if(haveSpore)
             {
                 Debug.Log("포자 발사");
                 haveSpore = false;
@@ -195,7 +195,7 @@ public class SporeLizardAI : MonsterAI
     //[도망 시퀀스] 도망목적지 설정 및 도망
     private Node.State Run()
     {
-        if (currentState != State.Run) return Node.State.FAILURE;
+        if(currentState != State.Run) return Node.State.FAILURE;
 
         if (!setDesti)
         {

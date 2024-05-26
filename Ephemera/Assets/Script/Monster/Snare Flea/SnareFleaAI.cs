@@ -33,6 +33,7 @@ public class SnareFleaAI : MonsterAI
 
     void Start()
     {
+        openDoorDelay = 4f;
         navMeshAgent = transform.GetComponent<NavMeshAgent>();
         ConstructBehaviorTree();
 
@@ -58,6 +59,9 @@ public class SnareFleaAI : MonsterAI
         //Á×À½ ½ÃÄö½ºÀÇ children Node
         ActionNode dead = new ActionNode(Dead);
 
+        //½ºÆù ½ÃÄö½º
+        ActionNode spawned = new ActionNode(Spawned);
+
         //Å½»ö ½ÃÄö½º
         ActionNode detect = new ActionNode(Detect);
 
@@ -80,7 +84,7 @@ public class SnareFleaAI : MonsterAI
         SequenceNode runSequence = new SequenceNode(new List<Node> { runFromPlayer, toCeiling, hangOn });
 
 
-        topNode = new SelectorNode(new List<Node> { dead, detect, attackSequence, groundAttackSequence, runSequence });
+        topNode = new SelectorNode(new List<Node> { dead, spawned, detect, attackSequence, groundAttackSequence, runSequence });
         
     }
 
@@ -92,6 +96,20 @@ public class SnareFleaAI : MonsterAI
             return Node.State.SUCCESS;
         }
         else return Node.State.FAILURE;
+    }
+    
+    private Node.State Spawned()
+    {
+        if(!sawPlayer && isGrounded && !jumped)
+        {
+            Debug.Log("Á¡ÇÁ");
+            jumped = true;
+            navMeshAgent.enabled = false;
+            rigidbody.useGravity = false;
+            rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            jumpedTime = Time.time;
+        }
+        return Node.State.FAILURE;
     }
 
     //[Å½»ö ½ÃÄö½º] ÇÃ·¹ÀÌ¾î Å½ÁöÇØ¼­ ¶³¾îÁö±â

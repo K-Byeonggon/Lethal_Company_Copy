@@ -12,6 +12,9 @@ TagManager:
   - TrackingObject
   - Actors
   - Monster
+  - Shop
+  - SellItem
+  - Door
   layers:
   - Default
   - TransparentFX

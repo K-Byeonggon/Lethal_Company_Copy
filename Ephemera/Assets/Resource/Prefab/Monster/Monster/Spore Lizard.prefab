@@ -42,6 +42,7 @@ GameObject:
   - component: {fileID: 3558361349704299589}
   - component: {fileID: 3558361349704299590}
   - component: {fileID: 3558361349704299591}
+  - component: {fileID: 8118426172404048503}
   m_Layer: 0
   m_Name: Detect Player
   m_TagString: Untagged
@@ -60,7 +61,8 @@ Transform:
   m_LocalPosition: {x: -0.345, y: 0, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 3768287354385324322}
   m_Father: {fileID: 5881487197927887405}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -89,6 +91,82 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70154e92a101d494899fb07141844b22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!54 &8118426172404048503
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3558361349704299588}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!1 &4003077196722858210
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3768287354385324322}
+  - component: {fileID: 8579495251157089758}
+  - component: {fileID: 7810917196005269411}
+  m_Layer: 0
+  m_Name: Detect Door
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3768287354385324322
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4003077196722858210}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.09499997, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3558361349704299589}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &8579495251157089758
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4003077196722858210}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.51
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &7810917196005269411
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4003077196722858210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18de47db20eb9534298d935661823731, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  monster: {fileID: 6414842003054355544}
+  navMeshAgent: {fileID: 4440759354408764638}
 --- !u!1 &4440759354408764637
 GameObject:
   m_ObjectHideFlags: 0
@@ -264,9 +342,8 @@ GameObject:
   - component: {fileID: 2063656925447312071}
   - component: {fileID: 6946899865525738915}
   - component: {fileID: 6414842003054355544}
-  - component: {fileID: 6414842003054355545}
   - component: {fileID: 6414842003054355546}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Spore Lizard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -281,7 +358,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6414842003054355559}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalPosition: {x: -0, y: 0.25, z: -0.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -379,23 +456,6 @@ MonoBehaviour:
   attackState: 0
   currentState: 0
   sawPlayer: 0
-  rigidbody: {fileID: 6414842003054355545}
---- !u!54 &6414842003054355545
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6414842003054355559}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 112
-  m_CollisionDetection: 1
 --- !u!136 &6414842003054355546
 CapsuleCollider:
   m_ObjectHideFlags: 0

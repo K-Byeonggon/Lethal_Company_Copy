@@ -11,7 +11,7 @@ public class YipeeAI : MonsterAI
     public float stoppingDistance = 2f;
     public UnityEngine.AI.NavMeshAgent navMeshAgent;
 
-    [SerializeField] float attackDistance = 0.5f;
+    [SerializeField] float attackDistance = 1.5f;
     public Transform nest;
     [SerializeField] Transform Item;
     public bool setDesti = false;
@@ -27,8 +27,14 @@ public class YipeeAI : MonsterAI
     [SerializeField] float attackCooltime = 2f;
     private float lastAttackTime;
 
+    private bool startBeWatched = false;
+    private float lastBeWatchedTime;
+    public bool sawPlayer = false;
+    public List<GameObject> item = new List<GameObject>();
+
     void Start()
     {
+        
         navMeshAgent = GetComponent<NavMeshAgent>();
         ConstructBehaviorTree();
 
@@ -40,11 +46,8 @@ public class YipeeAI : MonsterAI
 
     void Update()
     {
-        if(isServer)
-        {
-            topNode.Evaluate();
-            Debug.Log(itemHave);
-        }
+        CheckWatched(); StolenItem();
+        topNode.Evaluate();
     }
 
     private void ConstructBehaviorTree()
@@ -75,7 +78,7 @@ public class YipeeAI : MonsterAI
         SequenceNode attackSequence = new SequenceNode(new List<Node> { attackWill, moveToPlayer, attackPlayer });
         SequenceNode wanderSequence = new SequenceNode(new List<Node> { setDest, moveToDest });
         SequenceNode detectSequence = new SequenceNode(new List<Node> { setDestToScrap, moveToScrap, getScrap, moveToNest, setScrap });
-        topNode = new SelectorNode(new List<Node> { dead, attackSequence, threathen, wanderSequence, detectSequence, });
+        topNode = new SelectorNode(new List<Node> { dead, attackSequence, threathen, /*wanderSequence,*/ detectSequence, });
     }
 
     //죽음 시퀀스 노드
@@ -100,19 +103,23 @@ public class YipeeAI : MonsterAI
             return Node.State.SUCCESS; 
         }
         //2. 플레이어가 자신을 7초 이상 쳐다봤는지 확인
-        else if (false) { /*플레이어 Transform 갱신*/ return Node.State.SUCCESS; }
+        //이거는 Update에서 CheckWatched를 통해 isAttacked를 바꿔준다. 그러면 1번 경우에 걸려서 공격함.
+        
         //3. 플레이어가 둥지의 폐품 훔쳐간것을 봄.
-        else if(false) { /*플레이어 Transform 갱신*/ return Node.State.SUCCESS; }
+        //이거도 Update에서 StolenItem으로 isAttacked를 바꿔줌.
+
         else return Node.State.FAILURE;
     }
 
     //플레이어에게 접근(공격 시퀀스)
     private Node.State MoveToPlayer()
     {
+        Debug.Log("접근은 하는 것 같은데");
         float distance = Vector3.Distance(transform.position, player.position);
+        Debug.Log(player.position + "," + transform.position + ", " + distance);
         if (distance > attackDistance)
         {
-            detectedItem.transform.parent = null;
+            if(detectedItem != null && detectedItem.transform.parent == transform) detectedItem.transform.parent = null;
             navMeshAgent.SetDestination(player.position);
             return Node.State.RUNNING;
         }
@@ -125,6 +132,7 @@ public class YipeeAI : MonsterAI
     //플레이어를 공격(공격 시퀀스)
     private Node.State AttackPlayer()
     {
+        Debug.Log("공격을 안하나?");
         if (Vector3.Distance(transform.position, player.position) <= attackDistance)
         {
             // 공격 로직 수행
@@ -133,7 +141,7 @@ public class YipeeAI : MonsterAI
                 LivingEntity playerHealth = player.GetComponent<LivingEntity>();
                 playerHealth.ApplyDamage(damageMessage);
                 lastAttackTime = Time.time;
-                if (playerHealth.dead) isAttacked = false;
+                if (playerHealth.dead) { isAttacked = false; player = null; }
 
                 return Node.State.FAILURE;
             }
@@ -145,12 +153,13 @@ public class YipeeAI : MonsterAI
     private Node.State Threaten()
     {
         if (bewareOf == null || itemHave) return Node.State.FAILURE;
-        if (Vector3.Distance(bewareOf.position, nest.position) < 2f)
+        if (Vector3.Distance(bewareOf.position, nest.position) < 3f)
         {
-            if(Vector3.Distance(transform.position, bewareOf.position) < 2f)
+            if(Vector3.Distance(transform.position, bewareOf.position) < 3f)
             {
                 navMeshAgent.SetDestination(transform.position);
-                transform.LookAt(bewareOf.position);
+                Vector3 lookPosition = new Vector3(bewareOf.position.x, transform.position.y, bewareOf.position.z);
+                transform.LookAt(lookPosition);
                 Debug.Log("위협하는 동작");
                 return Node.State.SUCCESS;
             }
@@ -162,7 +171,7 @@ public class YipeeAI : MonsterAI
     //랜덤 목적지 설정(한번만 실행)(돌아다니기 시퀀스)
     private Node.State SetDest()
     {
-        //Debug.Log("SetDest");
+        Debug.Log("SetDest");
         if (itemFind) return Node.State.FAILURE;        //아이템을 찾아서 아이템을 추적하는 상태면,
         else if (setDesti) return Node.State.SUCCESS;   //이미 목적지 설정이 되어있으면,
         else
@@ -277,5 +286,45 @@ public class YipeeAI : MonsterAI
             return Node.State.FAILURE;
         }
         else return Node.State.SUCCESS;
+    }
+
+    private void CheckWatched()
+    {
+        if (!startBeWatched && beWatched)
+        {
+            startBeWatched = true;
+            lastBeWatchedTime = Time.time;
+        }
+
+        if(!beWatched)
+        {
+            Debug.Log("안보고 있음");
+            startBeWatched = false;
+        }
+
+        if (beWatched && Time.time - lastBeWatchedTime > 7f)
+        {
+            Debug.Log("7초 쳐다 봤음");
+            isAttacked = true;
+            player = watchedBy.transform;
+        }
+    }
+
+    private void StolenItem()
+    {
+        if (sawPlayer)
+        {
+            if(Vector3.Distance(transform.position, nest.position) < 4f)
+            {
+                foreach(var i in item)
+                {
+                    if(i.transform.parent != null)
+                    {
+                        isAttacked = true;
+                        break;
+                    }
+                }
+            }
+        }
     }
 }

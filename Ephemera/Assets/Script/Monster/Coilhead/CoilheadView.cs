@@ -31,7 +31,9 @@ public class CoilheadView : FieldOfView
                 float distanceToTarget = Vector3.Distance(transform.position, targetTransform.position);
 
                 if (!Physics.Raycast(transform.position, directionToTarget, distanceToTarget, obstacleMask))
-                {
+                {                    
+                    //플레이어 죽었으면 무시
+                    if (targetTransform.GetComponent<LivingEntity>().IsDead) { continue; }
                     //코일헤드는 플레이어를 발견하면 공격 시퀀스를 수행한다.
                     Debug.Log("코일헤드가 " + targetTransform.name + " 보고 있음.");
                     coilhead.sawPlayer = true;
