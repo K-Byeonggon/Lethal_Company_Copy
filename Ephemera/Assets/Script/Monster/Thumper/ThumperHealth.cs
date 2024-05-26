@@ -4,19 +4,21 @@ using UnityEngine;
 
 public class ThumperHealth : LivingEntity
 {
+    [SerializeField]
     ThumperAI thumper;
 
-    private void OnEnable()
+    /*private void OnEnable()
     {
         maxHealth = 40f;
         health = maxHealth;
         dead = false;
-    }
+    }*/
 
-
-    private void Start()
+    public override void OnStartServer()
     {
-        thumper = GetComponent<ThumperAI>();
+        maxHealth = 40f;
+        health = maxHealth;
+        dead = false;
     }
 
     public override bool ApplyDamage(DamageMessage damageMessage)

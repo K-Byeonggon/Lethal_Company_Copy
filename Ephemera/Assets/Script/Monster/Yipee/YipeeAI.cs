@@ -40,8 +40,11 @@ public class YipeeAI : MonsterAI
 
     void Update()
     {
-        topNode.Evaluate();
-        Debug.Log(itemHave);
+        if(isServer)
+        {
+            topNode.Evaluate();
+            Debug.Log(itemHave);
+        }
     }
 
     private void ConstructBehaviorTree()

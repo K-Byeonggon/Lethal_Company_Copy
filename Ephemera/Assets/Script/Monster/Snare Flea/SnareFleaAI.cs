@@ -45,9 +45,12 @@ public class SnareFleaAI : MonsterAI
 
     void Update()
     {
-        CheckGround();
-        //CheckCeiling();
-        topNode.Evaluate();
+        if (isServer)
+        {
+            CheckGround();
+            //CheckCeiling();
+            topNode.Evaluate();
+        }
     }
 
     private void ConstructBehaviorTree()

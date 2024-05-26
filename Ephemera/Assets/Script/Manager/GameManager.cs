@@ -458,6 +458,25 @@ public class GameManager : NetworkBehaviour
         extFrontDoor.LinkTransform = etrFrontDoor.transform;
         etrFrontDoor.LinkTransform = extFrontDoor.transform;
     }
+
+
+    [Server]
+    public void OnServerClearMonster()
+    {
+        MonsterReference monsterReference = MonsterReference.Instance;
+        foreach (GameObject monster in monsterReference.monsterList)
+        {
+            NetworkServer.Destroy(monster);
+        }
+        monsterReference.monsterList.Clear();
+        OnClientClearMonster();
+    }
+    [ClientRpc]
+    public void OnClientClearMonster()
+    {
+        MonsterReference monsterReference = MonsterReference.Instance;
+        monsterReference.monsterList.Clear();
+    }
 }
 
 public struct GameTime

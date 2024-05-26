@@ -4,20 +4,22 @@ using UnityEngine;
 
 public class YipeeHealth : LivingEntity
 {
+    [SerializeField]
     YipeeAI yipee;
 
-    private void OnEnable()
+    /*private void OnEnable()
     {
         //ºñÃà¹ú·¹´Â »ð 2´ë¿¡ Á×´Â´Ù.
         maxHealth = 20f;
         health = maxHealth;
         dead = false;
-    }
-
-
-    private void Start()
+    }*/
+    public override void OnStartServer()
     {
-        yipee = GetComponent<YipeeAI>();
+        //ºñÃà¹ú·¹´Â »ð 2´ë¿¡ Á×´Â´Ù.
+        maxHealth = 20f;
+        health = maxHealth;
+        dead = false;
     }
 
     public override bool ApplyDamage(DamageMessage damageMessage)
@@ -39,5 +41,4 @@ public class YipeeHealth : LivingEntity
         base.Die();
         Debug.Log("ºñÃà¹ú·¹ Á×À½");
     }
-
 }

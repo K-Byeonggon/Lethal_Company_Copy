@@ -4,7 +4,13 @@ using UnityEngine;
 
 public class PlayerHealth : LivingEntity
 {
-    private void OnEnable()
+    /*private void OnEnable()
+    {
+        maxHealth = 100f;
+        health = maxHealth;
+        dead = false;
+    }*/
+    public override void OnStartServer()
     {
         maxHealth = 100f;
         health = maxHealth;

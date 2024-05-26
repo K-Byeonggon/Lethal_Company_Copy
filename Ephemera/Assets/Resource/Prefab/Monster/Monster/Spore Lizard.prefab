@@ -99,6 +99,10 @@ GameObject:
   m_Component:
   - component: {fileID: 3957379526496312935}
   - component: {fileID: 4440759354408764638}
+  - component: {fileID: -2056017507561170654}
+  - component: {fileID: -5549663608257410486}
+  - component: {fileID: -4411980619617487099}
+  - component: {fileID: -2067758411242439153}
   m_Layer: 0
   m_Name: Spore Lizard
   m_TagString: Untagged
@@ -129,7 +133,7 @@ NavMeshAgent:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4440759354408764637}
-  m_Enabled: 1
+  m_Enabled: 0
   m_AgentTypeID: 0
   m_Radius: 0.5
   m_Speed: 3.5
@@ -144,6 +148,110 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &-2056017507561170654
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4440759354408764637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  _assetId: 4185276364
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
+--- !u!114 &-5549663608257410486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4440759354408764637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a553cb17010b2403e8523b558bffbc14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  target: {fileID: 3957379526496312935}
+  syncPosition: 1
+  syncRotation: 1
+  syncScale: 0
+  onlySyncOnChange: 1
+  compressRotation: 1
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 1
+  coordinateSpace: 0
+  sendIntervalMultiplier: 1
+  timelineOffset: 0
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+  bufferResetMultiplier: 3
+  changedDetection: 1
+  positionSensitivity: 0.01
+  rotationSensitivity: 0.01
+  scaleSensitivity: 0.01
+--- !u!114 &-4411980619617487099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4440759354408764637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca1e08e1ef9b72c4a9d54b5dc8cda329, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  navMeshAgent: {fileID: 0}
+  attackCooltime: 1
+  threatDuration: 0
+  isThreatening: 0
+  threatDistance: 3.5
+  runDistance: 2
+  wanderRadius: 10
+  sporePercentage: 0.7
+  haveSpore: 1
+  runRadius: 20
+  runSpeed: 5
+  runAccel: 16
+  runAngle: 240
+  defaultSpeed: 3.5
+  defaultAccel: 8
+  defaultAngle: 120
+  setDesti: 0
+  bewareOf: {fileID: 0}
+  head: {fileID: 0}
+  pivot: {fileID: 0}
+  sporeParticle: {fileID: 0}
+  cornerRayCount: 8
+  cornerDetectionRadius: 5
+  attackDistance: 1
+  attackState: 0
+  currentState: 0
+  sawPlayer: 0
+  rigidbody: {fileID: 0}
+--- !u!114 &-2067758411242439153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4440759354408764637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70154e92a101d494899fb07141844b22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6414842003054355559
 GameObject:
   m_ObjectHideFlags: 0
@@ -260,7 +368,6 @@ MonoBehaviour:
   defaultSpeed: 3.5
   defaultAccel: 8
   defaultAngle: 120
-  sporeDuration: 4
   setDesti: 0
   bewareOf: {fileID: 0}
   head: {fileID: 3558361349482716710}
@@ -270,7 +377,6 @@ MonoBehaviour:
   cornerDetectionRadius: 5
   attackDistance: 1
   attackState: 0
-  Obj_Transform: {fileID: 0}
   currentState: 0
   sawPlayer: 0
   rigidbody: {fileID: 6414842003054355545}

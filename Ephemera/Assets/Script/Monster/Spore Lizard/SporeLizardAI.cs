@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class SporeLizardAI : MonoBehaviour
+public class SporeLizardAI : MonsterAI
 {
     private Node topNode;
     public UnityEngine.AI.NavMeshAgent navMeshAgent;
@@ -37,7 +37,6 @@ public class SporeLizardAI : MonoBehaviour
     [SerializeField] bool attackState = false;
 
 
-
     //새로운 버전의 AI
     //유효하지 않은 목적지
     public enum State
@@ -45,17 +44,17 @@ public class SporeLizardAI : MonoBehaviour
         Wander,
         Threaten,
         Explode,
-        Run, 
+        Run,
         Attack
     }
     public State currentState;
     public bool sawPlayer = false;
-    [SerializeField] Rigidbody rigidbody;
     private Vector3[] rayDirections;
 
 
     void Start()
     {
+        //openDoorDelay = 1f;
         currentState = State.Wander;
         rayDirections = new Vector3[cornerRayCount];
         ConstructBehaviorTree();
@@ -89,7 +88,7 @@ public class SporeLizardAI : MonoBehaviour
 
         //셀렉터 노드에 들어갈 시퀀스 노드들
         SequenceNode attackSequence = new SequenceNode(new List<Node> { moveToPlayer, attackPlayer });
-        topNode = new SelectorNode(new List<Node> { wander, threaten, explodeSpore, run, attackSequence});
+        topNode = new SelectorNode(new List<Node> { wander, threaten, explodeSpore, run, attackSequence });
     }
 
     //[배회 시퀀스] 목적지 설정 및 이동
@@ -97,7 +96,7 @@ public class SporeLizardAI : MonoBehaviour
     {
         if (currentState != State.Wander) return Node.State.FAILURE;
 
-        if(sawPlayer)
+        if (sawPlayer)
         {
             if (!bewareOf.GetComponent<LivingEntity>().IsDead)
             {
@@ -143,8 +142,8 @@ public class SporeLizardAI : MonoBehaviour
             //위협하기
             if (Time.time - threatTime < threatDuration)
             {
-                rigidbody.velocity = Vector3.zero;
-                rigidbody.isKinematic = true;
+                //rigidbody.velocity = Vector3.zero;
+                //rigidbody.isKinematic = true;
                 navMeshAgent.isStopped = true;
                 Vector3 lookPosition = new Vector3(bewareOf.position.x, 0, bewareOf.position.z);
                 pivot.LookAt(lookPosition);
@@ -154,7 +153,7 @@ public class SporeLizardAI : MonoBehaviour
             }
             else
             {
-                rigidbody.isKinematic = false;
+                //rigidbody.isKinematic = false;
                 navMeshAgent.isStopped = false;
                 Debug.Log("위협 끝");
                 isThreatening = false;
@@ -164,7 +163,7 @@ public class SporeLizardAI : MonoBehaviour
         }
         else
         {
-            rigidbody.isKinematic = false;
+            //rigidbody.isKinematic = false;
             navMeshAgent.isStopped = false;
             Debug.Log("위협 도중 종료");
             currentState = State.Wander;
@@ -172,15 +171,15 @@ public class SporeLizardAI : MonoBehaviour
             return Node.State.FAILURE;
         }
     }
-    
+
     //[포자 시퀀스] 포자 발사
     private Node.State ExplodeSpore()
     {
-        if(currentState != State.Explode) return Node.State.FAILURE;
+        if (currentState != State.Explode) return Node.State.FAILURE;
 
-        if (Random.value <= sporePercentage) 
+        if (Random.value <= sporePercentage)
         {
-            if(haveSpore)
+            if (haveSpore)
             {
                 Debug.Log("포자 발사");
                 haveSpore = false;
@@ -196,7 +195,7 @@ public class SporeLizardAI : MonoBehaviour
     //[도망 시퀀스] 도망목적지 설정 및 도망
     private Node.State Run()
     {
-        if(currentState != State.Run) return Node.State.FAILURE;
+        if (currentState != State.Run) return Node.State.FAILURE;
 
         if (!setDesti)
         {

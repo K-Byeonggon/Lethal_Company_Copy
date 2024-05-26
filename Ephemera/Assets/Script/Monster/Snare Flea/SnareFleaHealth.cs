@@ -4,19 +4,20 @@ using UnityEngine;
 
 public class SnareFleaHealth : LivingEntity
 {
+    [SerializeField]
     SnareFleaAI snare;
 
-    private void OnEnable()
+    /*private void OnEnable()
     {
         maxHealth = 20f;
         health = maxHealth;
         dead = false;
-    }
-
-
-    private void Start()
+    }*/
+    public override void OnStartServer()
     {
-        snare = GetComponent<SnareFleaAI>();
+        maxHealth = 20f;
+        health = maxHealth;
+        dead = false;
     }
 
     public override bool ApplyDamage(DamageMessage damageMessage)

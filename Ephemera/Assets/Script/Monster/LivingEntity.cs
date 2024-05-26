@@ -1,9 +1,10 @@
+using Mirror;
 using System;
 using UnityEngine;
 
 //데미지 주는 오브젝트의 스크립트에서 LivingEntity 컴포넌트 가져와서 ApplyDamage()실행.
 //실행전 DamageMessage 새로 만들어서 .damage 편집
-public class LivingEntity : MonoBehaviour, IDamageable
+public class LivingEntity : NetworkBehaviour, IDamageable
 {
     public float maxHealth = 100f;
     public float health { get; protected set; }
@@ -20,7 +21,12 @@ public class LivingEntity : MonoBehaviour, IDamageable
         }
     }
 
-    protected virtual void OnEnable()
+    /*protected virtual void OnEnable()
+    {
+        dead = false;
+        health = maxHealth;
+    }*/
+    public override void OnStartServer()
     {
         dead = false;
         health = maxHealth;

@@ -51,7 +51,10 @@ public class CoilheadAI : MonsterAI
 
     void Update()
     {
-        topNode.Evaluate();
+        if (isServer)
+        {
+            topNode.Evaluate();
+        }
     }
 
     //[정지 시퀀스] 정지

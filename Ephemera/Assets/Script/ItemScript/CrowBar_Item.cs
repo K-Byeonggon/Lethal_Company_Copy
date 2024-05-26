@@ -75,7 +75,7 @@ public class CrowBar_Item : Item
         if (collision.gameObject.CompareTag("Monster"))
         {
             LivingEntity livingEntity = collision.gameObject.GetComponent<LivingEntity>();
-            Debug.Log("ũ�ο�ٿ� ������ :" + collision.gameObject.name);
+            Debug.Log("CollisionEnter Target :" + collision.gameObject.name);
             DamageMessage damageMessage = new DamageMessage();
             damageMessage.damager = gameObject;
             damageMessage.damage = 10;

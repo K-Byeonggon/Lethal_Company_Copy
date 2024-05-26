@@ -45,7 +45,10 @@ public class ThumperAI : MonsterAI
 
     void Update()
     {
-        topNode.Evaluate();
+        if (isServer)
+        {
+            topNode.Evaluate();
+        }
     }
 
     private void ConstructBehaviorTree()
