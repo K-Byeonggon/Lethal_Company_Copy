@@ -7,8 +7,10 @@ using UnityEngine;
 public class LivingEntity : NetworkBehaviour, IDamageable
 {
     public float maxHealth = 100f;
-    public float health { get; protected set; }
-    public bool dead { get; protected set; }
+    [SyncVar]
+    public float health;
+    [SyncVar]
+    public bool dead = false;
 
     public event Action OnDeath;
 
@@ -54,6 +56,8 @@ public class LivingEntity : NetworkBehaviour, IDamageable
     {
         if (OnDeath != null) OnDeath();
         dead = true;
+        NetworkIdentity identity = GetComponent<NetworkIdentity>();
+        GameManager.Instance.DestroyObject(identity);
     }
-
+    
 }

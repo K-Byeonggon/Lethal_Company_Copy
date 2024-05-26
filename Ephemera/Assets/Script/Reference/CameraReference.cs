@@ -69,6 +69,48 @@ public class CameraReference : SingleTon<CameraReference>
             item.Value.SetActive(false);
         }
     }
+    // other player 첫번째 VCam활성
+    public void SetActiveFirstOtherPlayerVirtualCamera()
+    {
+        if (playerVirtualCameraDic.Count == 0)
+            return;
+        playerVirtualCameraDic.Values.First().SetActive(false);
+        loaclPlayerCamera.SetActive(false);
+    }
+    // other player 다음 VCam활성
+    public void SetActiveNextOtherPlayerVirtualCamera()
+    {
+        if (playerVirtualCameraDic.Count == 0)
+            return;
+        GameObject activeCam = null;
+        List<GameObject> values = new List<GameObject>(playerVirtualCameraDic.Values);
+        foreach (var item in values)
+        {
+            if (item.activeInHierarchy == true)
+                activeCam = item;
+        }
+        if (activeCam == null)
+            return;
+        //활성화된 카메라의 번호
+        int currentIndex = values.IndexOf(activeCam);
+        if (currentIndex == values.Count - 1)
+            currentIndex = 0;
+        else
+            currentIndex += 1;
+
+
+        loaclPlayerCamera.SetActive(false);
+        foreach (var item in playerVirtualCameraDic)
+        {
+            item.Value.SetActive(false);
+        }
+        foreach (var item in objectVirtualCameraDic)
+        {
+            item.Value.SetActive(false);
+        }
+        values[currentIndex].SetActive(true);
+    }
+    
     // other player VCam활성
     public void SetActivePlayerVirtualCamera(uint netId)
     {

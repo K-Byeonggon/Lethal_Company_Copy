@@ -1155,6 +1155,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3996926241865125359}
   - component: {fileID: 7032304748702406549}
+  - component: {fileID: 3439053171662160474}
   - component: {fileID: -8591675033052490884}
   - component: {fileID: 6491472293351222643}
   - component: {fileID: 659450159180359110}
@@ -1167,9 +1168,9 @@ GameObject:
   - component: {fileID: 3654313335990062565}
   - component: {fileID: 4208394754710468567}
   - component: {fileID: 8166364040229186960}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1213,6 +1214,26 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &3439053171662160474
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4340414033375958869}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 346e10adf1ad3794baf21daa1c45cb51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  maxHealth: 100
+  health: 0
+  dead: 0
+  DeadBody: {fileID: 1278589083176677876, guid: 18d4940007efaa54b97f0d19d8a39e21, type: 3}
+  controller: {fileID: -8591675033052490884}
 --- !u!114 &-8591675033052490884
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1239,7 +1260,7 @@ MonoBehaviour:
   animator: {fileID: 7032304748702406549}
   inventory: {fileID: 659450159180359110}
   playerRaycast: {fileID: -7925644858333692408}
-  deadBody: {fileID: 0}
+  playerHealth: {fileID: 3439053171662160474}
 --- !u!114 &6491472293351222643
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -7,8 +7,8 @@ public class SnareFleaAI : MonsterAI
 {
 
     private Node topNode;
-    public UnityEngine.AI.NavMeshAgent navMeshAgent;
-    SnareFleaHealth snareHealth;
+    [SerializeField] public UnityEngine.AI.NavMeshAgent navMeshAgent;
+    [SerializeField] SnareFleaHealth snareHealth;
     private DamageMessage damageMessage;
     [SerializeField] float attackCooltime = 2f;
     private float lastAttackTime;
@@ -20,7 +20,7 @@ public class SnareFleaAI : MonsterAI
     public float checkDistance = 1.0f; // 땅을 체크할 최대 거리
     public LayerMask groundLayer; // 땅 레이어 설정
     public LayerMask ceilingLayer; // 천장 레이어 설정
-    private Rigidbody rigidbody;
+    [SerializeField] private Rigidbody rigidbody;
     [SerializeField] float bindDistance = 1f;
     [SerializeField] float attackDistance = 1.5f;
     [SerializeField] float runDistance = 8f;
@@ -34,16 +34,18 @@ public class SnareFleaAI : MonsterAI
     void Start()
     {
         openDoorDelay = 4f;
-        navMeshAgent = transform.GetComponent<NavMeshAgent>();
         ConstructBehaviorTree();
 
-        snareHealth = GetComponent<SnareFleaHealth>();
-        rigidbody = GetComponent<Rigidbody>();
         damageMessage = new DamageMessage();
         damageMessage.damage = 10;
         damageMessage.damager = gameObject;
     }
-
+    public override void OnStartServer()
+    {
+        enabled = true;
+        navMeshAgent.enabled = true;
+        MonsterReference.Instance.AddMonsterToList(gameObject);
+    }
     void Update()
     {
         if (isServer)

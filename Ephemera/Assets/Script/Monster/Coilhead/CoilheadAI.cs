@@ -6,7 +6,7 @@ using UnityEngine.AI;
 public class CoilheadAI : MonsterAI
 {
     private Node topNode;
-    public UnityEngine.AI.NavMeshAgent navMeshAgent;
+    [SerializeField] public UnityEngine.AI.NavMeshAgent navMeshAgent;
     private DamageMessage damageMessage;
     public bool sawPlayer = false;
     public Transform target;
@@ -20,7 +20,6 @@ public class CoilheadAI : MonsterAI
     void Start()
     {
         openDoorDelay = 3f;
-        navMeshAgent = GetComponent<NavMeshAgent>();
 
         ConstructBehaviorTree();
 
@@ -49,7 +48,12 @@ public class CoilheadAI : MonsterAI
         SequenceNode wanderSequence = new SequenceNode(new List<Node> { setDest, moveToDest });
         topNode = new SelectorNode(new List<Node> { stop, attackSequence, wanderSequence } );
     }
-
+    public override void OnStartServer()
+    {
+        enabled = true;
+        navMeshAgent.enabled = true;
+        MonsterReference.Instance.AddMonsterToList(gameObject);
+    }
     void Update()
     {
         if (isServer)

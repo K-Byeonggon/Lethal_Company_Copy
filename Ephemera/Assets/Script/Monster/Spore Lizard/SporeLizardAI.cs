@@ -1,3 +1,4 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,7 +7,7 @@ using UnityEngine.AI;
 public class SporeLizardAI : MonsterAI
 {
     private Node topNode;
-    public UnityEngine.AI.NavMeshAgent navMeshAgent;
+    [SerializeField] public UnityEngine.AI.NavMeshAgent navMeshAgent;
     private DamageMessage damageMessage;
     [SerializeField] float attackCooltime = 1f;
     private float lastAttackTime;
@@ -44,7 +45,7 @@ public class SporeLizardAI : MonsterAI
         Wander,
         Threaten,
         Explode,
-        Run, 
+        Run,
         Attack
     }
     public State currentState;
@@ -63,10 +64,18 @@ public class SporeLizardAI : MonsterAI
         damageMessage.damage = 20;
         damageMessage.damager = gameObject;
     }
-
+    public override void OnStartServer()
+    {
+        enabled = true;
+        navMeshAgent.enabled = true;
+        MonsterReference.Instance.AddMonsterToList(gameObject);
+    }
     void Update()
     {
-        topNode.Evaluate();
+        if (isServer)
+        {
+            topNode.Evaluate();
+        }
     }
 
     private void ConstructBehaviorTree()
@@ -88,7 +97,7 @@ public class SporeLizardAI : MonsterAI
 
         //셀렉터 노드에 들어갈 시퀀스 노드들
         SequenceNode attackSequence = new SequenceNode(new List<Node> { moveToPlayer, attackPlayer });
-        topNode = new SelectorNode(new List<Node> { wander, threaten, explodeSpore, run, attackSequence});
+        topNode = new SelectorNode(new List<Node> { wander, threaten, explodeSpore, run, attackSequence });
     }
 
     //[배회 시퀀스] 목적지 설정 및 이동
@@ -96,7 +105,7 @@ public class SporeLizardAI : MonsterAI
     {
         if (currentState != State.Wander) return Node.State.FAILURE;
 
-        if(sawPlayer)
+        if (sawPlayer)
         {
             if (!bewareOf.GetComponent<LivingEntity>().IsDead)
             {
@@ -171,25 +180,36 @@ public class SporeLizardAI : MonsterAI
             return Node.State.FAILURE;
         }
     }
-    
+
     //[포자 시퀀스] 포자 발사
     private Node.State ExplodeSpore()
     {
-        if(currentState != State.Explode) return Node.State.FAILURE;
+        if (currentState != State.Explode) return Node.State.FAILURE;
 
-        if (Random.value <= sporePercentage) 
+        if (Random.value <= sporePercentage)
         {
-            if(haveSpore)
+            if (haveSpore)
             {
                 Debug.Log("포자 발사");
                 haveSpore = false;
-                Instantiate(sporeParticle, transform.position, Quaternion.identity);
+                //Instantiate(sporeParticle, transform.position, Quaternion.identity);
+                OnServerInstantiateParticle();
             }
         }
 
         //구석이었으면 공격시퀀스로
         if (IsInCorner()) { haveSpore = true; currentState = State.Attack; return Node.State.FAILURE; }
         else { haveSpore = true; currentState = State.Run; return Node.State.FAILURE; }
+    }
+    [Server]
+    public void OnServerInstantiateParticle()
+    {
+        OnClientInstantiateParticle();
+    }
+    [ClientRpc]
+    public void OnClientInstantiateParticle()
+    {
+        Instantiate(sporeParticle, transform.position, Quaternion.identity);
     }
 
     //[도망 시퀀스] 도망목적지 설정 및 도망

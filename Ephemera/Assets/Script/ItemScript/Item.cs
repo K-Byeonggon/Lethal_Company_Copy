@@ -25,6 +25,7 @@ public class Item : NetworkBehaviour, IItemUsable, IItemObtainable, IUIVisible
         //rigid.angularVelocity = Vector3.zero;
 
         itemPrice = itemData.GetRandomPrice();
+
     }
     public void ShowPickupUI()
     {

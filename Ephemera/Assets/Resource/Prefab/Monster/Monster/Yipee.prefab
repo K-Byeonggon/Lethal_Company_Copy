@@ -15,6 +15,8 @@ GameObject:
   - component: {fileID: 7773932593971514799}
   - component: {fileID: 1880644337964504990}
   - component: {fileID: 8500672499381534836}
+  - component: {fileID: -8811470113832088918}
+  - component: {fileID: 960013210798975473}
   m_Layer: 9
   m_Name: Yipee
   m_TagString: Monster
@@ -111,11 +113,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 154691372587434215}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9a1e576fcd2c01041884efecd18697ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   player: {fileID: 0}
   bewareOf: {fileID: 0}
   detectionRange: 10
@@ -131,6 +136,7 @@ MonoBehaviour:
   itemFind: 0
   itemHave: 0
   isAttacked: 0
+  yipeeHealth: {fileID: 1880644337964504990}
   attackCooltime: 2
   sawPlayer: 0
   item: []
@@ -146,7 +152,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba96368184ab27c4aa8c643a4f2cddb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   maxHealth: 100
+  health: 0
+  dead: 0
+  yipee: {fileID: 0}
 --- !u!195 &8500672499381534836
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -154,7 +166,7 @@ NavMeshAgent:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 154691372587434215}
-  m_Enabled: 1
+  m_Enabled: 0
   m_AgentTypeID: 0
   m_Radius: 0.25
   m_Speed: 3.5
@@ -169,6 +181,58 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &-8811470113832088918
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 154691372587434215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  _assetId: 88639460
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
+--- !u!114 &960013210798975473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 154691372587434215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a553cb17010b2403e8523b558bffbc14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  target: {fileID: 8976726864382546908}
+  syncPosition: 1
+  syncRotation: 1
+  syncScale: 0
+  onlySyncOnChange: 1
+  compressRotation: 1
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 1
+  coordinateSpace: 0
+  sendIntervalMultiplier: 1
+  timelineOffset: 0
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+  bufferResetMultiplier: 3
+  changedDetection: 1
+  positionSensitivity: 0.01
+  rotationSensitivity: 0.01
+  scaleSensitivity: 0.01
 --- !u!1 &5319460158284415471
 GameObject:
   m_ObjectHideFlags: 0

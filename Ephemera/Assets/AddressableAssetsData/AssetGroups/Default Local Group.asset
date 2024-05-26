@@ -125,6 +125,26 @@ MonoBehaviour:
     m_Address: Geiger counter1
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: 7f19433af9afc504bbc45868698b7b36
+    m_Address: Coilhead
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: c302f8b7050db3343889b45d66f3ca28
+    m_Address: Yipee
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: ce5c42e40d604bd40902069a3057d29a
+    m_Address: Thumper
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 19c8862c7a8f8a245b4b3b5bbb2b6a26
+    m_Address: Snare Flea
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 9e74f22dc7ae45545ac0079915ca51bb
+    m_Address: Spore Lizard
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: f53dd5718acd92348a91adf0d1df758a, type: 2}
   m_SchemaSet:

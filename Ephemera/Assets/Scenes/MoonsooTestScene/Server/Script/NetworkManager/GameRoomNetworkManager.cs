@@ -17,7 +17,7 @@ public class GameRoomNetworkManager : NetworkRoomManager
     int SpawnCount = 0;
 
     public static GameRoomNetworkManager Instance => NetworkRoomManager.singleton as GameRoomNetworkManager;
-     
+
     public override void Start()
     {
         base.Start();
@@ -43,7 +43,7 @@ public class GameRoomNetworkManager : NetworkRoomManager
         NetworkServer.Spawn(roomCharacter, conn);
     }
     //클라이언트가 접속했을 때 클라이언트에서 호출되는 함수
-    public override void OnRoomClientConnect() 
+    public override void OnRoomClientConnect()
     {
         Debug.Log("OnRoomClientConnect");
         //ResourceManager.Instance.GetPrefab("RoomPlayer");
@@ -62,7 +62,7 @@ public class GameRoomNetworkManager : NetworkRoomManager
     public override void OnRoomServerSceneChanged(string sceneName)
     {
         Debug.Log(sceneName);
-        if(sceneName == "Assets/Scenes/GamePlay.unity")
+        if (sceneName == "Assets/Scenes/GamePlay.unity")
         {
             GameObject gameManager = Instantiate(ResourceManager.Instance.GetPrefab("GameManager"));
             NetworkServer.Spawn(gameManager);
@@ -72,12 +72,12 @@ public class GameRoomNetworkManager : NetworkRoomManager
             NetworkServer.Spawn(ship);
 
             Transform spawnPointList = ship.GetComponent<ShipController>().spawnPoint;
-            foreach(Transform spawnPoint in spawnPointList)
+            foreach (Transform spawnPoint in spawnPointList)
             {
                 SpawnPoint.Add(spawnPoint);
             }
-            
-            
+
+
             GameObject space = Instantiate(spaceSystem);
             NetworkServer.Spawn(space);
 
@@ -85,11 +85,17 @@ public class GameRoomNetworkManager : NetworkRoomManager
             NetworkServer.Spawn(terrain);
         }
     }
-    public override void OnRoomClientExit() 
+    public override void OnRoomClientExit()
     {
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
     }
+    /*public override void OnServerDisconnect(NetworkConnectionToClient conn)
+    {
+        base.OnServerDisconnect(conn);
+        GameManager.Instance.OnServerDisconnectProcessing(conn);
+    }*/
+    
 
     /*//room플레이어 생성 함수
     void OnCreateRoomCharacter(NetworkConnectionToClient conn, CreateRoomCharacterMessage message)

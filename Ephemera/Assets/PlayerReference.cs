@@ -7,7 +7,7 @@ public class PlayerReference : MonoBehaviour
     public static PlayerReference Instance;
 
     [SerializeField]
-    Dictionary<uint, PlayerController> playerDic = new Dictionary<uint, PlayerController>();
+    Dictionary<uint, PlayerHealth> playerDic = new Dictionary<uint, PlayerHealth>();
 
     public int PlayerCount => playerDic.Count;
 
@@ -16,9 +16,20 @@ public class PlayerReference : MonoBehaviour
         Instance = this;
     }
 
-    public void AddPlayerToDic(PlayerController player)
+    public void AddPlayerToDic(PlayerHealth player)
     {
-        Instance.playerDic.Add(player.netId, player);
+        if (playerDic.ContainsValue(player) == false)
+            Instance.playerDic.Add(player.netId, player);
+    }
+    public void RemovePlayerToDic(PlayerHealth player)
+    {
+        if (playerDic.ContainsValue(player))
+            Instance.playerDic.Remove(player.netId);
+    }
+    public void RemovePlayerToDic(uint netId)
+    {
+        if (playerDic.ContainsKey(netId))
+            Instance.playerDic.Remove(netId);
     }
 
     public void ClearRoom()

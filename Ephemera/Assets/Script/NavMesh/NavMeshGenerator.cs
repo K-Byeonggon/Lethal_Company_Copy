@@ -40,6 +40,7 @@ public class NavMeshGenerator : MonoBehaviour
         surface.AddData();
 
         GameManager.Instance.SpawnItem();
+        GameManager.Instance.SpawnMonster();
         GameManager.Instance.OnServerDoorLinkSequence();
     }
 }

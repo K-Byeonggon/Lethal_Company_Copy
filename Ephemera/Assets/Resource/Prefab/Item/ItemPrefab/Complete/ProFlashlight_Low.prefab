@@ -415,7 +415,7 @@ GameObject:
   - component: {fileID: 8280217315608322830}
   m_Layer: 6
   m_Name: ProFlashlight_Low
-  m_TagString: UsableItem
+  m_TagString: ObtainableItem
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

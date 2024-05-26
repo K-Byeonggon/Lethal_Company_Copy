@@ -36,64 +36,47 @@ public class TypingEffect : MonoBehaviour
                  $"Time is {time}\n\n\n" +
                  $"{osString}\n" +
                  $"Version {osVersion}\n";
+        /*m_resetText = $"1\n" +
+                      $"6\n" +
+                      $"6\n" +
+                      $"0\n";*/
 
-        m_resetText = $"1\n" +
-                      $"2\n" +
-                      $"3\n" +
-                      $"4\n" +
-                      $"5\n" +
-                      $"6\n" +
-                      $"7\n" +
-                      $"8\n" +
-                      $"9\n" +
-                      $"1\n" +
-                      $"2\n" +
-                      $"3\n" +
-                      $"4\n" +
-                      $"5\n" +
-                      $"6\n" +
-                      $"7\n" +
-                      $"8\n" +
-                      $"9\n" +
-                      $"0\n" +
-                      $"1\n" +
-                      $"2\n" +
-                      $"3\n" +
-                      $"4\n" +
-                      $"5\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"7\n" +
-                      $"8\n" +
-                      $"9\n" +
-                      $"0\n";
+        m_resetText = @"
+============================================
+||         SYSTEM INITIALIZING...          ||
+============================================
+||                                         ||
+||    LOADING CORE MODULES...              ||
+||                                         ||
+||    AUTHENTICATION REQUIRED...           ||
+||                                         ||
+||    ACCESS GRANTED.                      ||
+||                                         ||
+============================================
+||                                         ||
+||    RETRIEVING MISSION DATA...           ||
+||                                         ||
+||    CONNECTION SECURED.                  ||
+||                                         ||
+||    ENCRYPTING COMMUNICATION CHANNEL...  ||
+||                                         ||
+||    MISSION OBJECTIVE:                   ||
+||    >> INFILTRATE THE ENEMY BASE         ||
+||    >> EXTRACT THE TARGET                ||
+||    >> RETURN TO SAFEHOUSE               ||
+||                                         ||
+============================================
+||                                         ||
+||    INITIALIZING SYSTEM CHECKS...        ||
+||                                         ||
+||    LOADING SATELLITE IMAGERY...         ||
+||                                         ||
+||    SCANNING FOR HOSTILES...             ||
+||                                         ||
+||    ALL SYSTEMS GO.                      ||
+||                                         ||
+============================================
+";
 
         StartCoroutine(TypingChar());
     }

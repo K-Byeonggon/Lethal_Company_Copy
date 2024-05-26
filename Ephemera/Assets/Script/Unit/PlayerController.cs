@@ -29,7 +29,7 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private Inventory inventory;
     [SerializeField] private PlayerRaycast playerRaycast;
-    [SerializeField] public GameObject deadBody;
+    [SerializeField] private PlayerHealth playerHealth;
     private bool IsGround() => characterController.isGrounded;
     public bool IsWalking() => _direction != Vector3.zero;
     #endregion
@@ -61,12 +61,15 @@ public class PlayerController : NetworkBehaviour
     #region MonoBehaviour Function
     private void Update()
     {
-        ApplyGravity();
-        //ApplyRotation();
-        ApplyMovement();
-        SetAnimator();
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+        if(playerHealth.dead == false)
+        {
+            ApplyGravity();
+            //ApplyRotation();
+            ApplyMovement();
+            SetAnimator();
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+        }
     }
     #endregion
     #region NetworkBehaviour Function
@@ -140,7 +143,14 @@ public class PlayerController : NetworkBehaviour
     }
     public void OnUseItem(InputAction.CallbackContext context)
     {
-        inventory.UseItem();
+        if(playerHealth.dead == true)
+        {
+            CameraReference.Instance.SetActiveNextOtherPlayerVirtualCamera();
+        }
+        else
+        {
+            inventory.UseItem();
+        }
     }
     public void OnJump(InputAction.CallbackContext context)
     {
@@ -221,6 +231,17 @@ public class PlayerController : NetworkBehaviour
         transform.position = position;
     }
     #endregion
+
+    public void PlayerDie()
+    {
+        //CameraReference.Instance
+        SetActivateLocalPlayer(false);
+    }
+    public void PlayerRespawn()
+    {
+        //CameraReference.Instance.
+        SetActivateLocalPlayer(true);
+    }
 
     public void EnbleGameplayControls()
     {

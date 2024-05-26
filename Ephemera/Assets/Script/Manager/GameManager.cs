@@ -3,8 +3,10 @@ using Mirror;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem.Layouts;
+using static UnityEditor.Progress;
 
 
 public class GameManager : NetworkBehaviour
@@ -18,6 +20,8 @@ public class GameManager : NetworkBehaviour
     Coroutine timeCoroutine;
 
     public PlayerController localPlayerController;
+
+    ShipController shipController;
 
     private int SalePriceMagnification
     {
@@ -36,7 +40,6 @@ public class GameManager : NetworkBehaviour
                 default:
                     return 10;
             }
-
         }
     }
     #endregion
@@ -64,9 +67,9 @@ public class GameManager : NetworkBehaviour
     ///<summary>
     ///terrain활성화
     ///</summary>
-    public void ActivatePlanetTerrain(int index)
+    public void SetActivatePlanetTerrain(int index, bool isActive)
     {
-        TerrainController.Instance.SetActivePlanetTerrain((Planet)index, true);
+        TerrainController.Instance.SetActivePlanetTerrain((Planet)index, isActive);
     }
 
     public void CreateRoom(int seed)
@@ -88,6 +91,13 @@ public class GameManager : NetworkBehaviour
         go.transform.position = Vector3.up * 2;
         NetworkServer.Spawn(go);*/
     }
+    public void DestoryRoom()
+    {
+        if(rd != null)
+            Destroy(rd.gameObject);
+        RoomReference.Instance.ClearRoom();
+    }
+    
     public void GeneraterObject()
     {
         if (isServer)
@@ -99,16 +109,12 @@ public class GameManager : NetworkBehaviour
             //StartCoroutine(BuildNavMesh(navMeshGenerator.navMeshSurface, new Bounds(Vector3.zero, new Vector3(1000, 1000, 1000))));
         }
     }
-    public void DestroyRoom()
-    {
-        Destroy(rd.gameObject);
-    }
     #endregion
     #region Action
     private event Action TotalRevenueDisplay;
     private event Action CurrentMoneyDisplay;
-    private event Action DeadLineDisplay;
-    private event Action TargetMoneyDisplay;
+    private event Action<string> DeadLineDisplay;
+    private event Action<string> TargetMoneyDisplay;
     private event Action PlayerStateDisplay;
     private event Action TimeDisplay;
     #endregion
@@ -144,7 +150,7 @@ public class GameManager : NetworkBehaviour
         OnServerDeadlineReset();
         //카메라 리셋
         OnClientGameStartInit();
-
+        //플레이어 설정
         OnServerSetActivePlayer(true);
         //캐릭터 제어 비활성화
         OnServerSetActiveController(false);
@@ -170,7 +176,35 @@ public class GameManager : NetworkBehaviour
     /// </summary>
     [Server] public void OnServerDayPasses()
     {
-        OnClientSetDeadLine(currentDeadline - 1);
+        if(currentDeadline - 1 < 0)
+        {
+            //다음 이벤트
+            if(currentMoney > targetMoney)
+            {
+                //소지금 리셋
+                //OnClientSetCurrentMoney(0);
+                //목표금액 리셋
+                int newTargetMoney = targetMoney * 2;
+                OnServerTargetMoneyChanged(newTargetMoney);
+                //데드라인 리셋
+                OnServerDeadlineReset();
+                //카메라 리셋
+                OnClientGameStartInit();
+                //플레이어 설정
+                OnServerSetActivePlayer(true);
+                //캐릭터 제어 비활성화
+                OnServerSetActiveController(false);
+            }
+            //패배 이벤트
+            else
+            {
+                OnServerGameReset();
+            }
+        }
+        else
+        {
+            OnClientSetDeadLine(currentDeadline - 1);
+        }
     }
     /// <summary>
     /// 데드라인 리셋
@@ -212,14 +246,37 @@ public class GameManager : NetworkBehaviour
         if (TerrainController.Instance.GetTerrainCount() <= (int)selectPlanet)
             return;
         //우주선 옮기고
-        ShipController shipController = FindObjectOfType<ShipController>();
+        if(shipController == null)
+            shipController = FindObjectOfType<ShipController>();
         shipController.OnServerChangePosition(TerrainController.Instance.shipStartTransform.position);
         //함선 출발
         shipController.StartLanding(TerrainController.Instance.GetLandingZone(selectPlanet).position);
         //게임 시간 활성화
         timeCoroutine = StartCoroutine(IncrementTimeCounter());
+        int seed = OnServerGetRandomSeed();
+        OnClientEnterPlanet(seed);
+    }
+    /// <summary>
+    /// 행성 탈출
+    /// </summary>
+    [Server]
+    public void OnServerEscapePlanet()
+    {
+        //우주선 옮기고
+        if (shipController == null)
+            shipController = FindObjectOfType<ShipController>();
 
-        OnClientEnterPlanet(OnServerGetRandomSeed());
+        //함선 출발
+        shipController.StartLanding(TerrainController.Instance.shipStartTransform.position);
+        //게임 시간 활성화
+        if(timeCoroutine != null)
+            StopCoroutine(timeCoroutine);
+
+
+        StartCoroutine(DestroyAllObjectsAfterDelay());
+        //MonsterReference.Instance.DestroyAll();
+        //ItemReference.Instance.DestroyAll();
+        //OnClientEscapePlanet();
     }
     /// <summary>
     /// 랜덤 시드 생성
@@ -261,6 +318,7 @@ public class GameManager : NetworkBehaviour
     }
     [ClientRpc] public void OnClientEnterPlanet(int seed)
     {
+        Debug.Log($"seed : {seed}");
         //UI 숨기고
         UIController.Instance.SetActivateUI(null);
         //미니어쳐 Ship 숨기고
@@ -268,13 +326,31 @@ public class GameManager : NetworkBehaviour
         //spaceSystem 숨기고
         SpaceSystem.Instance.SetActivateSpaceSystem(false);
         //terrain 활성화하고
-        ActivatePlanetTerrain((int)selectPlanet);
+        SetActivatePlanetTerrain((int)selectPlanet, true);
         //방 생성하고
         CreateRoom(seed);
         //몬스터, 아이템 생성하고
         GeneraterObject();
         //카메라 옮기고
         CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShip);
+    }
+    [ClientRpc]
+    public void OnClientEscapePlanet()
+    {
+        //UI 보여주고
+        UIController.Instance.SetActivateUI(typeof(UI_Selecter));
+        //미니어쳐 Ship 보여주고
+        ObjectReference.Instance.GetGameObject("ShipMiniature").SetActive(true);
+        //spaceSystem 보여주고
+        SpaceSystem.Instance.SetActivateSpaceSystem(true);
+        //terrain 비활성화하고
+        SetActivatePlanetTerrain((int)selectPlanet, false);
+        //방 삭제하고
+        DestoryRoom();
+        MonsterReference.Instance.DestroyAll();
+        ItemReference.Instance.DestroyAll();
+        //카메라 옮기고
+        CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShipMiniature);
     }
     [ClientRpc] public void OnClientStartHyperDrive()
     {
@@ -309,7 +385,7 @@ public class GameManager : NetworkBehaviour
     [ClientRpc] private void OnClientSetTargetMoney(int targetMoney)
     {
         this.targetMoney = targetMoney;
-        TargetMoneyDisplay?.Invoke();
+        TargetMoneyDisplay?.Invoke(this.targetMoney.ToString());
     }
     /// <summary>
     /// 데드라인 변경(모든 클라이언트)
@@ -317,7 +393,7 @@ public class GameManager : NetworkBehaviour
     [ClientRpc] private void OnClientSetDeadLine(int deadLine)
     {
         this.currentDeadline = deadLine;
-        DeadLineDisplay?.Invoke();
+        DeadLineDisplay?.Invoke(currentDeadline.ToString());
     }
     /// <summary>
     /// 캐릭터 상태 변경(모든 클라이언트)
@@ -355,14 +431,14 @@ public class GameManager : NetworkBehaviour
     /// <summary>
     /// 목표 금액 UI갱신 이벤트 등록
     /// </summary>
-    public void RegistTargetMoneyDisplayAction(Action action = null)
+    public void RegistTargetMoneyDisplayAction(Action<string> action = null)
     {
         TargetMoneyDisplay = action;
     }
     /// <summary>
     /// 플레이어 상태 변경 출력 이벤트 등록
     /// </summary>
-    public void RegistDeadLineDisplayAction(Action action = null)
+    public void RegistDeadLineDisplayAction(Action<string> action = null)
     {
         DeadLineDisplay = action;
     }
@@ -439,6 +515,31 @@ public class GameManager : NetworkBehaviour
             GameObject item = Instantiate(ResourceManager.Instance.GetPrefab(itemKey[itemIndex]));
             item.transform.position = vec;
             NetworkServer.Spawn(item);
+            ItemReference.Instance.AddItemToList(item);
+        }
+    }
+    [Server]
+    public void SpawnMonster()
+    {
+        int monsterSpawnCount = UnityEngine.Random.Range(2, 4);
+
+        List<string> monsterKey = new List<string>()
+        {
+            "Coilhead",
+            "Snare Flea",
+            "Spore Lizard",
+            "Thumper",
+            "Yipee",
+        };
+
+        for (int i = 0; i < monsterSpawnCount; i++)
+        {
+            Vector3 vec = RoomReference.Instance.GetRandomPosition();
+            int itemIndex = UnityEngine.Random.Range(0, monsterKey.Count);
+            GameObject monster = Instantiate(ResourceManager.Instance.GetPrefab(monsterKey[itemIndex]));
+            monster.transform.position = vec;
+            NetworkServer.Spawn(monster);
+            MonsterReference.Instance.AddMonsterToList(monster);
         }
     }
     [Server]
@@ -477,6 +578,45 @@ public class GameManager : NetworkBehaviour
         MonsterReference monsterReference = MonsterReference.Instance;
         monsterReference.monsterList.Clear();
     }
+    [Command]
+    public void DestroyObject(NetworkIdentity identity)
+    {
+        NetworkServer.Destroy(identity.gameObject);
+    }
+
+    /// <summary>
+    /// 일정 시간이 지난 후에 모든 몬스터와 아이템을 파괴
+    /// </summary>
+    [Server]
+    private IEnumerator DestroyAllObjectsAfterDelay()
+    {
+        float delay = 5.0f;
+        yield return new WaitForSeconds(delay);
+
+
+        MonsterReference.Instance.DestroyAll();
+        ItemReference.Instance.DestroyAll();
+        OnClientEscapePlanet();
+        OnServerDayPasses();
+    }
+    
+    /*[ClientRpc]
+    public void OnServerDisconnectProcessing(NetworkConnectionToClient conn)
+    {
+        DisconnectProcessing(conn);
+    }
+    [ClientRpc]
+    public void DisconnectProcessing(NetworkConnectionToClient conn)
+    {
+        if (PlayerReference.Instance != null)
+        {
+            PlayerReference.Instance.RemovePlayerToDic(conn.identity.netId);
+        }
+        if (CameraReference.Instance != null)
+        {
+            CameraReference.Instance.DeregistPlayerVirtualCamera(conn.identity.netId);
+        }
+    }*/
 }
 
 public struct GameTime

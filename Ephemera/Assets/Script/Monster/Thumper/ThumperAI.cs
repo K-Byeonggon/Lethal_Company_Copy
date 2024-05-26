@@ -11,7 +11,7 @@ public class ThumperAI : MonsterAI
     public Vector3 destination;
     public bool hitWall = false;
 
-    public UnityEngine.AI.NavMeshAgent navMeshAgent;
+    [SerializeField] public UnityEngine.AI.NavMeshAgent navMeshAgent;
 
     [SerializeField] float attackDistance = 1f;
     public bool setDesti = false;
@@ -20,7 +20,7 @@ public class ThumperAI : MonsterAI
     public bool wandering = false;
 
     private DamageMessage damageMessage;
-    private ThumperHealth thumperHealth;
+    [SerializeField] private ThumperHealth thumperHealth;
     [SerializeField] float attackCooltime = 0.33f;
     private float lastAttackTime;
 
@@ -34,15 +34,18 @@ public class ThumperAI : MonsterAI
 
     void Start()
     {
-        navMeshAgent = transform.parent.GetComponent<NavMeshAgent>();
         ConstructBehaviorTree();
 
-        thumperHealth = GetComponent<ThumperHealth>();
         damageMessage = new DamageMessage();
         damageMessage.damage = 40;
         damageMessage.damager = gameObject;
     }
-
+    public override void OnStartServer()
+    {
+        enabled = true;
+        navMeshAgent.enabled = true;
+        MonsterReference.Instance.AddMonsterToList(gameObject);
+    }
     void Update()
     {
         if (isServer)

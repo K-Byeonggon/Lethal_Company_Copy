@@ -295,12 +295,15 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8006850880350360621}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd8e502bd786d954cbbab313676612b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  navMeshAgent: {fileID: 0}
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  navMeshAgent: {fileID: 8006850880350360620}
   sawPlayer: 0
   target: {fileID: 0}
   attackDistance: 1

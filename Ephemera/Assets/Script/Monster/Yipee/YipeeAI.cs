@@ -1,3 +1,4 @@
+using Mirror;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -9,7 +10,7 @@ public class YipeeAI : MonsterAI
     public Transform bewareOf;
     public float detectionRange = 10f;
     public float stoppingDistance = 2f;
-    public UnityEngine.AI.NavMeshAgent navMeshAgent;
+    [SerializeField] public UnityEngine.AI.NavMeshAgent navMeshAgent;
 
     [SerializeField] float attackDistance = 1.5f;
     public Transform nest;
@@ -23,7 +24,7 @@ public class YipeeAI : MonsterAI
     public bool isAttacked = false;
 
     private DamageMessage damageMessage;
-    private YipeeHealth yipeeHealth;
+    [SerializeField] private YipeeHealth yipeeHealth;
     [SerializeField] float attackCooltime = 2f;
     private float lastAttackTime;
 
@@ -34,20 +35,31 @@ public class YipeeAI : MonsterAI
 
     void Start()
     {
-        
-        navMeshAgent = GetComponent<NavMeshAgent>();
         ConstructBehaviorTree();
 
-        yipeeHealth = GetComponent<YipeeHealth>();
         damageMessage = new DamageMessage();
         damageMessage.damage = 30;
         damageMessage.damager = gameObject;
     }
-
+    public override void OnStartServer()
+    {
+        enabled = true;
+        navMeshAgent.enabled = true;
+        MonsterReference.Instance.AddMonsterToList(gameObject);
+    }
     void Update()
     {
-        CheckWatched(); StolenItem();
-        topNode.Evaluate();
+        if(isServer)
+        {
+            if(nest == null)
+            {
+                GameObject nestObject = new GameObject("Nest");
+                nestObject.transform.position = transform.position;
+                nest = nestObject.transform;
+            }
+            CheckWatched(); StolenItem();
+            topNode.Evaluate();
+        }
     }
 
     private void ConstructBehaviorTree()
@@ -78,7 +90,7 @@ public class YipeeAI : MonsterAI
         SequenceNode attackSequence = new SequenceNode(new List<Node> { attackWill, moveToPlayer, attackPlayer });
         SequenceNode wanderSequence = new SequenceNode(new List<Node> { setDest, moveToDest });
         SequenceNode detectSequence = new SequenceNode(new List<Node> { setDestToScrap, moveToScrap, getScrap, moveToNest, setScrap });
-        topNode = new SelectorNode(new List<Node> { dead, attackSequence, threathen, /*wanderSequence,*/ detectSequence, });
+        topNode = new SelectorNode(new List<Node> { dead, attackSequence, threathen, wanderSequence, detectSequence, });
     }
 
     //죽음 시퀀스 노드
@@ -86,7 +98,8 @@ public class YipeeAI : MonsterAI
     {
         if (yipeeHealth.IsDead)
         {
-            detectedItem.transform.parent = null;
+            OnServerSetItemParent(detectedItem.GetComponent<NetworkIdentity>(), false);
+            //detectedItem.transform.parent = null;
             navMeshAgent.SetDestination(transform.position);
             return Node.State.SUCCESS;
         }
@@ -119,7 +132,8 @@ public class YipeeAI : MonsterAI
         Debug.Log(player.position + "," + transform.position + ", " + distance);
         if (distance > attackDistance)
         {
-            if(detectedItem != null && detectedItem.transform.parent == transform) detectedItem.transform.parent = null;
+            if(detectedItem != null && detectedItem.transform.parent == transform) OnServerSetItemParent(detectedItem.GetComponent<NetworkIdentity>(), false); //detectedItem.transform.parent = null;
+
             navMeshAgent.SetDestination(player.position);
             return Node.State.RUNNING;
         }
@@ -248,8 +262,9 @@ public class YipeeAI : MonsterAI
             if (detectedItem.transform.parent != null && detectedItem.transform.parent != transform) return Node.State.FAILURE;
 
             Debug.Log("들어올림");
-            detectedItem.transform.position = transform.GetChild(1).position;
-            detectedItem.transform.SetParent(transform.GetChild(1));
+            //detectedItem.transform.position = transform.GetChild(1).position;
+            //detectedItem.transform.SetParent(transform.GetChild(1));
+            OnServerSetItemParent(detectedItem.GetComponent<NetworkIdentity>(), true);
             itemHave = true;
 
             //둥지로 목적지 설정.
@@ -279,7 +294,8 @@ public class YipeeAI : MonsterAI
         if(itemHave)
         {
             Debug.Log("내려놓음");
-            detectedItem.transform.parent = null;
+            //detectedItem.transform.parent = null;
+            OnServerSetItemParent(detectedItem.GetComponent<NetworkIdentity>(), false);
             setDesti = false;
             itemFind = false;
             itemHave = false;
@@ -325,6 +341,32 @@ public class YipeeAI : MonsterAI
                     }
                 }
             }
+        }
+    }
+    [Server]
+    public void OnServerSetItemParent(NetworkIdentity itemIdentity, bool isParent)
+    {
+        OnClientSetItemParent(itemIdentity, isParent);
+    }
+    [ClientRpc]
+    public void OnClientSetItemParent(NetworkIdentity itemIdentity, bool isParent)
+    {
+        var itemComponent = itemIdentity.GetComponent<Item>();
+
+        itemComponent.itemCollider.enabled = !isParent;
+        itemComponent.rigid.isKinematic = isParent;
+        itemComponent.rigid.useGravity = !isParent;
+        itemComponent.rigid.velocity = Vector3.zero;
+        itemComponent.rigid.angularVelocity = Vector3.zero;
+
+        if(isParent == true)
+        {
+            itemComponent.transform.parent = transform.GetChild(1);
+            itemComponent.transform.position = transform.GetChild(1).position;
+        }
+        else
+        {
+            itemComponent.transform.parent = null;
         }
     }
 }
