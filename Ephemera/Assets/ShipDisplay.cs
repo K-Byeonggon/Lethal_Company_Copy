@@ -14,8 +14,8 @@ public class ShipDisplay : NetworkBehaviour
     TextMeshProUGUI TargetMoneyText;
     public override void OnStartClient()
     {
-        GameManager.Instance.RegistTargetMoneyDisplayAction(ChangeDeadLineText);
-        GameManager.Instance.RegistDeadLineDisplayAction(ChangeTargetMoneyText);
+        GameManager.Instance.RegistTargetMoneyDisplayAction(ChangeTargetMoneyText);
+        GameManager.Instance.RegistDeadLineDisplayAction(ChangeDeadLineText);
     }
     public void ChangeDeadLineText(string day)
     {

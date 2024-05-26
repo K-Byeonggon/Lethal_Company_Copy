@@ -5,6 +5,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.Rendering.DebugUI;
 
 public class UI_Game : MonoBehaviour
 {
@@ -12,24 +13,27 @@ public class UI_Game : MonoBehaviour
     private Slider playerHpBar;
     [SerializeField]
     private Slider playerStaminaBar;
-    [SerializeField]
-    private UI_Blink settingIcon;
-    [SerializeField]
-    private UI_Blink missionIcon;
-    [SerializeField]
-    private List<OtherPlayerStatus> OtherPlayers;
+    //[SerializeField]
+    //private UI_Blink settingIcon;
+    //[SerializeField]
+    //private UI_Blink missionIcon;
+    //[SerializeField]
+    //private List<OtherPlayerStatus> OtherPlayers;
     [SerializeField]
     private List<Image> items;
-    [SerializeField]
-    private Image weapon;
-    [SerializeField]
-    private TextMeshProUGUI weaponName;
+    //[SerializeField]
+    //private Image weapon;
+    //[SerializeField]
+    //private TextMeshProUGUI weaponName;
 
     [SerializeField]
     private GameObject interactionImage;
 
     [SerializeField]
     private List<UI_SpriteSetup> uISpriteSetups;
+
+    [SerializeField]
+    private TextMeshProUGUI monnyText;
 
     private List<Slider> otherHpBars;
 
@@ -38,28 +42,12 @@ public class UI_Game : MonoBehaviour
     private void Start()
     {
         Init();
+        GameManager.Instance.RegistCurrentMoneyDisplayAction(CurrentMonnyChangeEvent);
     }
     private void Update()
     {
         if (isActive == false)
             return;
-
-        /*if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            ItemSelection(0);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            ItemSelection(1);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            ItemSelection(2);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            ItemSelection(3);
-        }*/
     }
     public void Init()
     {
@@ -102,5 +90,8 @@ public class UI_Game : MonoBehaviour
     {
         items[index].sprite = image;
     }
-
+    public void CurrentMonnyChangeEvent(string value)
+    {
+        monnyText.text = $"Monny : {value}";
+    }
 }

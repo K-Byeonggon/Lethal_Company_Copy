@@ -55,7 +55,13 @@ public class UIController : MonoBehaviour
             else
             {
                 if (ui.Key == type)
+                {
                     ui.Value.SetActive(true);
+                    if(typeof(UI_Setup) == type)
+                    {
+                        ui.Value.GetComponent<UI_Setup>().StartSystem();
+                    }
+                }
                 else
                     ui.Value.SetActive(false);
             }

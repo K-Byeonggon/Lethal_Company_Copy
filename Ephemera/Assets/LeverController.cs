@@ -1,6 +1,7 @@
 using Mirror;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class LeverController : NetworkBehaviour, IInteractive, IUIVisible
@@ -17,7 +18,11 @@ public class LeverController : NetworkBehaviour, IInteractive, IUIVisible
     [Command(requiresAuthority = false)]
     public void OnInteractive()
     {
+        if(GameManager.Instance.IsLand == false)
+            return;
+
         LeverLerpStart();
+        GameManager.Instance.OnServerEscapePlanet();
     }
 
     [ClientRpc]

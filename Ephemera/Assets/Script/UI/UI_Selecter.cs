@@ -72,8 +72,8 @@ public class UI_Selecter : MonoBehaviour
     }
     private void DisplayPlanetInfo(int index)
     {
-        planetInfoTitle.text = $"1";
-        planetInfoContext.text = $"{index}";
+        planetInfoTitle.text = $"{images[index].name}";
+        planetInfoContext.text = $"It's {images[index].name}";
     }
 
     public void OnStartHyperDrive()

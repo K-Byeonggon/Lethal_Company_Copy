@@ -1,10 +1,6 @@
 using Mirror;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Controls;
-
 public class PlayerController : NetworkBehaviour
 {
     #region Field
@@ -183,6 +179,16 @@ public class PlayerController : NetworkBehaviour
             {
                 CmdTeleport(door.GetTeleportionPosition());
             }
+            //상점일 경우
+            else if (playerRaycast.HitObject.TryGetComponent<SellItem>(out SellItem sellItem))
+            {
+                if (inventory.GetCurrentItemComponent != null)
+                {
+                    int price = inventory.GetCurrentItemComponent.ItemPrice;
+                    sellItem.OnInteractive(price);
+                    inventory.RemoveItem();
+                }
+            }
             //그 외의 상호작용 물품일 경우
             else if (playerRaycast.HitObject.TryGetComponent<IInteractive>(out IInteractive InteractiveObject))
             {
@@ -214,11 +220,11 @@ public class PlayerController : NetworkBehaviour
     }
     public void OnDetachItem(InputAction.CallbackContext context)
     {
-        inventory.RemoveItem();
+        inventory.ThrowItem();
     }
     #endregion
     #region Network Command Function
-    [Command]
+    [Command(requiresAuthority = false)]
     public void CmdTeleport(Vector3 position)
     {
         OnClientTeleport(position);
@@ -240,7 +246,14 @@ public class PlayerController : NetworkBehaviour
     public void PlayerRespawn()
     {
         //CameraReference.Instance.
-        SetActivateLocalPlayer(true);
+        //SetActivateLocalPlayer(true);
+        playerHealth.Revive();
+
+        if (GameManager.Instance.shipController == null)
+            GameManager.Instance.shipController = FindObjectOfType<ShipController>();
+        int order = PlayerReference.Instance.GetPlayerOrder(PlayerReference.Instance.localPlayer.netId);
+        Transform point = GameManager.Instance.shipController.spawnPoint.GetChild(order);
+        CmdTeleport(point.position);
     }
 
     public void EnbleGameplayControls()

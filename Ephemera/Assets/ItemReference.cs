@@ -21,6 +21,10 @@ public class ItemReference : MonoBehaviour
     {
         Instance.itemList.Add(item);
     }
+    public void ExceptItemToList(GameObject item)
+    {
+        Instance.itemList.Remove(item);
+    }
     public void DestroyItem(GameObject item)
     {
         if (itemList.Contains(item))

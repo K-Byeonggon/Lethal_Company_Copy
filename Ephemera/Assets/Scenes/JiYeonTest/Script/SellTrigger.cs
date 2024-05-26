@@ -1,9 +1,10 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SellTrigger : MonoBehaviour
+public class SellTrigger : NetworkBehaviour
 {
     public Button Sellbutton;
 

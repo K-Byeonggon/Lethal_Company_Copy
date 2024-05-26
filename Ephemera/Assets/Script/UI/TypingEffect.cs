@@ -25,23 +25,7 @@ public class TypingEffect : MonoBehaviour
     private string osVersion = "1.02";
 
     private string m_bootText;
-    private string m_resetText;
-    
-
-    private char[] loadingChar = { '-','/','|','\\'};
-    // Start is called before the first frame update
-    void Start()
-    {
-        m_bootText = $"Date is {date}\n" +
-                 $"Time is {time}\n\n\n" +
-                 $"{osString}\n" +
-                 $"Version {osVersion}\n";
-        /*m_resetText = $"1\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"0\n";*/
-
-        m_resetText = @"
+    private string m_resetText = @"
 ============================================
 ||         SYSTEM INITIALIZING...          ||
 ============================================
@@ -77,6 +61,16 @@ public class TypingEffect : MonoBehaviour
 ||                                         ||
 ============================================
 ";
+
+
+    private char[] loadingChar = { '-','/','|','\\'};
+    // Start is called before the first frame update
+    public void StartSystem()
+    {
+        m_bootText = $"Date is {date}\n" +
+                 $"Time is {time}\n\n\n" +
+                 $"{osString}\n" +
+                 $"Version {osVersion}\n";
 
         StartCoroutine(TypingChar());
     }

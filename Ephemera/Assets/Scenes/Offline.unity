@@ -1585,5 +1585,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: SceneInstaller
       objectReference: {fileID: 0}
+    - target: {fileID: 8231600785963979414, guid: 30133d98013c08d4fbe5ff5cd692c43d, type: 3}
+      propertyPath: prefabs.Array.size
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8231600785963979414, guid: 30133d98013c08d4fbe5ff5cd692c43d, type: 3}
+      propertyPath: prefabs.Array.data[24]
+      value: 
+      objectReference: {fileID: 1278589083176677876, guid: 18d4940007efaa54b97f0d19d8a39e21, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 30133d98013c08d4fbe5ff5cd692c43d, type: 3}

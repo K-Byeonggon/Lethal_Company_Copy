@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.30692244, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -193,6 +193,10 @@ PrefabInstance:
     - target: {fileID: 4062460215016377822, guid: 1fbb6846b99f7d4448cf9d1492980863, type: 3}
       propertyPath: m_Name
       value: duck (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7277039470803578473, guid: 1fbb6846b99f7d4448cf9d1492980863, type: 3}
+      propertyPath: sceneId
+      value: 3191241760
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1fbb6846b99f7d4448cf9d1492980863, type: 3}
@@ -656,6 +660,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3412705869938443207, guid: 8cad89a706b5aeb42ae65d180df61d90, type: 3}
+      propertyPath: sceneId
+      value: 3210842270
+      objectReference: {fileID: 0}
+    - target: {fileID: 3469686134604424431, guid: 8cad89a706b5aeb42ae65d180df61d90, type: 3}
+      propertyPath: sceneId
+      value: 2548862089
+      objectReference: {fileID: 0}
     - target: {fileID: 4162362530480638432, guid: 8cad89a706b5aeb42ae65d180df61d90, type: 3}
       propertyPath: m_Name
       value: Itemparent
@@ -703,6 +715,10 @@ PrefabInstance:
     - target: {fileID: 4162362530480638435, guid: 8cad89a706b5aeb42ae65d180df61d90, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6941247955222775148, guid: 8cad89a706b5aeb42ae65d180df61d90, type: 3}
+      propertyPath: sceneId
+      value: 1939085071
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8cad89a706b5aeb42ae65d180df61d90, type: 3}
@@ -891,6 +907,10 @@ PrefabInstance:
     - target: {fileID: 4062460215016377822, guid: 1fbb6846b99f7d4448cf9d1492980863, type: 3}
       propertyPath: m_Name
       value: duck
+      objectReference: {fileID: 0}
+    - target: {fileID: 7277039470803578473, guid: 1fbb6846b99f7d4448cf9d1492980863, type: 3}
+      propertyPath: sceneId
+      value: 2415787543
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1fbb6846b99f7d4448cf9d1492980863, type: 3}
@@ -1554,16 +1574,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db1c77fd80394844bbfd20e9f1e9060d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  gravityMultiplier: 5.03
-  smoothTime: 0.05
-  speed: 30
-  runspeed: 50
-  jumpforce: 9.42
-  cameraSpeed: 3
-  vCam: {fileID: 0}
 --- !u!143 &953678337
 CharacterController:
   m_ObjectHideFlags: 0
@@ -1624,10 +1634,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4800fc430ae97ac4cbefeb7aa1e9ef0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   slots: []
-  maxSlot: 4
-  currentItemSlot: 0
-  pickedItem: {fileID: 0}
+  pickTransform: {fileID: 0}
 --- !u!114 &953678345
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1642,11 +1653,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   linesize: 10
   image: {fileID: 0}
-  moveVector: {x: 0, y: 0, z: 0}
   camera: {fileID: 0}
   inventory: {fileID: 0}
-  playerHp: 100
-  coin: 200
+  weaponHanger: {fileID: 0}
+  prefab: {fileID: 0}
 --- !u!114 &953678346
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1896,10 +1906,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 145180512041372699, guid: 095fe75f7c2fdcd45921429a65817e8a, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -6.16
-      objectReference: {fileID: 0}
     - target: {fileID: 145180512041372700, guid: 095fe75f7c2fdcd45921429a65817e8a, type: 3}
       propertyPath: image
       value: 
@@ -2726,8 +2732,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1213554225}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 38.09, y: 3.673, z: -34.08}
+  m_LocalRotation: {x: 0.31595296, y: 0.42607024, z: -0.16208228, w: 0.8320861}
+  m_LocalPosition: {x: 25.669579, y: 13.823982, z: -40.347206}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2809,10 +2815,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 5843461860926076697, guid: 0eeaadcd97233a245a329ee1b7e8511b, type: 3}
-      propertyPath: player
-      value: 
-      objectReference: {fileID: 891850339}
     - target: {fileID: 5843461860970208192, guid: 0eeaadcd97233a245a329ee1b7e8511b, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -3209,6 +3211,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -4974313189766626956, guid: 2b32b98a57510234f912ae79f281f6a3, type: 3}
+      propertyPath: sceneId
+      value: 1410167159
+      objectReference: {fileID: 0}
     - target: {fileID: 8072255305044301912, guid: 2b32b98a57510234f912ae79f281f6a3, type: 3}
       propertyPath: m_RootOrder
       value: 5
@@ -3629,7 +3635,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -297, y: 26.72}
+  m_AnchoredPosition: {x: -297, y: 26.71997}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &2093521403

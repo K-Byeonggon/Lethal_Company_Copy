@@ -52,7 +52,7 @@ public class Inventory : NetworkBehaviour
             PickUp(item.GetComponent<NetworkIdentity>());
         }
     }
-    public void RemoveItem()
+    public void ThrowItem()
     {
         if (slots[currentItemSlot].isEmpty == false)
         {
@@ -62,6 +62,18 @@ public class Inventory : NetworkBehaviour
             slots[currentItemSlot].slotObjComponent = null;
         }
     }
+    [Command]
+    public void RemoveItem()
+    {
+        if (slots[currentItemSlot].isEmpty == false)
+        {
+            slots[currentItemSlot].isEmpty = true;
+            NetworkServer.Destroy(slots[currentItemSlot].slotObjComponent.gameObject);
+            slots[currentItemSlot].slotObjComponent = null;
+        }
+        
+    }
+
     public void ChangeItemSlot(int index)
     {
         if (IsOutRange(index)) return;
@@ -80,7 +92,7 @@ public class Inventory : NetworkBehaviour
     }
 
     #region Command Function
-    [Command] public void CmdSetCurrentItemActive(int itemSlotIndex, bool isActive)
+    [Command(requiresAuthority = false)] public void CmdSetCurrentItemActive(int itemSlotIndex, bool isActive)
     {
         Item item = slots[itemSlotIndex].slotObjComponent;
         if (item != null)

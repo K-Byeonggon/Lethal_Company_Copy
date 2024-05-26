@@ -1,6 +1,7 @@
 using Mirror;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using TreeEditor;
 using UnityEngine;
@@ -13,14 +14,37 @@ public class ShipController : NetworkBehaviour
     [SerializeField]
     Transform rightDoor;
 
+    [SerializeField]
+    List<GameObject> players = new List<GameObject>();
+    [SerializeField]
+    List<GameObject> items = new List<GameObject>();
+
     #region OnTrigger Function
     private void OnTriggerEnter(Collider other)
     {
         OnServerSetParent(other.transform);
+        if(other.TryGetComponent<PlayerController>(out PlayerController player))
+        {
+            players.Add(player.gameObject);
+        }
+        else if(other.TryGetComponent<Item>(out Item item))
+        {
+            items.Add(item.gameObject);
+            ItemReference.Instance.ExceptItemToList(item.gameObject);
+        }
     }
     private void OnTriggerExit(Collider other)
     {
         OnServerUnsetParent(other.transform);
+        if (players.Contains(other.gameObject))
+        {
+            players.Remove(other.gameObject);
+        }
+        else if (items.Contains(other.gameObject))
+        {
+            items.Remove(other.gameObject);
+            ItemReference.Instance.AddItemToList(other.gameObject);
+        }
     }
     #endregion
     #region Server Function
@@ -47,6 +71,34 @@ public class ShipController : NetworkBehaviour
                 GameManager.Instance.OnServerActiveLocalPlayerCamera();
                 GameManager.Instance.OnServerSetActivePlayer(true);
                 SetGameUI();
+                yield break;
+            }
+            //transform.rotation = Quaternion.Slerp(transform.rotation, lookAt, 0.01f);
+            OnServerChangePosition(Vector3.Slerp(transform.position, destination, 0.01f));
+            yield return null;
+        }
+    }
+    [Server]
+    public void StartEscape(Vector3 destination)
+    {
+        // 대상 위치에서 현재 위치를 빼서 방향 벡터 계산
+        Vector3 direction = destination - transform.position;
+
+        direction.y = 0;
+        if (direction != Vector3.zero)
+            OnServerChangeRotation(Quaternion.LookRotation(direction));
+        StartCoroutine(Escape(destination));
+    }
+    [Server]
+    IEnumerator Escape(Vector3 destination)
+    {
+        while (true)
+        {
+            if (Vector3.Distance(transform.position, destination) < 0.1f)
+            {
+                OnServerChangePosition(destination);
+                GameManager.Instance.OnServerSetActivePlayer(false);
+                SetSelecterUI();
                 yield break;
             }
             //transform.rotation = Quaternion.Slerp(transform.rotation, lookAt, 0.01f);
@@ -92,7 +144,11 @@ public class ShipController : NetworkBehaviour
     {
         UIController.Instance.SetActivateUI(typeof(UI_Setup));
     }
-
+    [ClientRpc]
+    public void SetSelecterUI()
+    {
+        UIController.Instance.SetActivateUI(typeof(UI_Selecter));
+    }
 
 
     [Command(requiresAuthority = false)]

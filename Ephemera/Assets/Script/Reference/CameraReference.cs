@@ -7,7 +7,7 @@ using static UnityEngine.Rendering.DebugUI;
 
 public class CameraReference : SingleTon<CameraReference>
 {
-    GameObject loaclPlayerCamera;
+    GameObject localPlayerCamera;
     Dictionary<uint, GameObject> playerVirtualCameraDic = new Dictionary<uint, GameObject>();
     Dictionary<VirtualCameraType, GameObject> objectVirtualCameraDic = new Dictionary<VirtualCameraType, GameObject>();
 
@@ -15,12 +15,12 @@ public class CameraReference : SingleTon<CameraReference>
     #region LocalPlayer
     public void RegistLocalPlayerVirtualCamera(GameObject cameraObject)
     {
-        loaclPlayerCamera = cameraObject;
+        localPlayerCamera = cameraObject;
     }
     //vCam해제
     public void DeregistLocalPlayerVirtualCamera()
     {
-        loaclPlayerCamera = null;
+        localPlayerCamera = null;
     }
     #endregion
     #region Other Player
@@ -59,7 +59,8 @@ public class CameraReference : SingleTon<CameraReference>
     // loacl Player Camera를 활성하고 나머지 비활성
     public void SetActiveLocalPlayerVirtualCamera()
     {
-        loaclPlayerCamera.SetActive(true);
+        Debug.Log("Local Player Virtual Camera");
+        localPlayerCamera.SetActive(true);
         foreach (var item in playerVirtualCameraDic)
         {
             item.Value.SetActive(false);
@@ -72,10 +73,11 @@ public class CameraReference : SingleTon<CameraReference>
     // other player 첫번째 VCam활성
     public void SetActiveFirstOtherPlayerVirtualCamera()
     {
+        Debug.Log("Other Player Virtual Camera");
         if (playerVirtualCameraDic.Count == 0)
             return;
-        playerVirtualCameraDic.Values.First().SetActive(false);
-        loaclPlayerCamera.SetActive(false);
+        playerVirtualCameraDic.Values.First().SetActive(true);
+        localPlayerCamera.SetActive(false);
     }
     // other player 다음 VCam활성
     public void SetActiveNextOtherPlayerVirtualCamera()
@@ -99,7 +101,7 @@ public class CameraReference : SingleTon<CameraReference>
             currentIndex += 1;
 
 
-        loaclPlayerCamera.SetActive(false);
+        localPlayerCamera.SetActive(false);
         foreach (var item in playerVirtualCameraDic)
         {
             item.Value.SetActive(false);
@@ -128,11 +130,13 @@ public class CameraReference : SingleTon<CameraReference>
         {
             virtualCamera.SetActive(false);
         }
-        loaclPlayerCamera.SetActive(false);
+        localPlayerCamera.SetActive(false);
     }
     //vCam활성
     public void SetActiveVirtualCamera(VirtualCameraType type)
     {
+
+        Debug.Log($"{type.ToString()} Virtual Camera");
         if (objectVirtualCameraDic.ContainsKey(type) == false)
             return;
 
@@ -144,7 +148,11 @@ public class CameraReference : SingleTon<CameraReference>
             else
                 virtualCamera.SetActive(false);
         }
-        loaclPlayerCamera.SetActive(false);
+        foreach (var virtualCamera in playerVirtualCameraDic.Values)
+        {
+            virtualCamera.SetActive(false);
+        }
+        localPlayerCamera.SetActive(false);
     }
     #endregion
 }

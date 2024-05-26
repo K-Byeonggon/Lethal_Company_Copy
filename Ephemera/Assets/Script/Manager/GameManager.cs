@@ -1,5 +1,6 @@
 using DunGen;
 using Mirror;
+using Mirror.Examples.CCU;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,7 +22,11 @@ public class GameManager : NetworkBehaviour
 
     public PlayerController localPlayerController;
 
-    ShipController shipController;
+    public ShipController shipController;
+    NavMeshGenerator navMeshGenerator;
+
+    [SyncVar]
+    public bool IsLand = false;
 
     private int SalePriceMagnification
     {
@@ -76,6 +81,7 @@ public class GameManager : NetworkBehaviour
     {
         //임시 주석
         rd = Instantiate(ResourceManager.Instance.GetPrefab("DungeonGenerator")).GetComponent<RuntimeDungeon>();
+        rd.Generator.ShouldRandomizeSeed = false;
         rd.Generator.Seed = seed;
         rd.Generate();
 
@@ -102,7 +108,7 @@ public class GameManager : NetworkBehaviour
     {
         if (isServer)
         {
-            NavMeshGenerator navMeshGenerator = Instantiate(ResourceManager.Instance.GetPrefab("NavMeshBake")).GetComponent<NavMeshGenerator>();
+            navMeshGenerator = Instantiate(ResourceManager.Instance.GetPrefab("NavMeshBake")).GetComponent<NavMeshGenerator>();
             navMeshGenerator.BakeNavMesh();
             //StartCoroutine(BakeNavMeshCoroutine());
             //NavMeshGenerator navMeshGenerator = rd.GetComponent<NavMeshGenerator>();
@@ -112,7 +118,7 @@ public class GameManager : NetworkBehaviour
     #endregion
     #region Action
     private event Action TotalRevenueDisplay;
-    private event Action CurrentMoneyDisplay;
+    private event Action<string> CurrentMoneyDisplay;
     private event Action<string> DeadLineDisplay;
     private event Action<string> TargetMoneyDisplay;
     private event Action PlayerStateDisplay;
@@ -125,7 +131,16 @@ public class GameManager : NetworkBehaviour
     }
     #endregion
     #region NetworkBehaviour Function
-    public override void OnStartClient()
+    /*public override void OnStartClient()
+    {
+        //모든 플레이어가 준비되었을 시
+        //OnServerChangeGameState(GameStateType.ResetState);
+        if (isServer == true)
+        {
+            OnServerGameReset();
+        }
+    }*/
+    public override void OnStartServer()
     {
         //모든 플레이어가 준비되었을 시
         //OnServerChangeGameState(GameStateType.ResetState);
@@ -148,13 +163,19 @@ public class GameManager : NetworkBehaviour
         OnServerTargetMoneyChanged(150);
         //데드라인 리셋
         OnServerDeadlineReset();
-        //카메라 리셋
-        OnClientGameStartInit();
         //플레이어 설정
         OnServerSetActivePlayer(true);
         //캐릭터 제어 비활성화
         OnServerSetActiveController(false);
+        //게임 초기화
+        Invoke("GameReset", 2f);
     }
+    [Server]
+    public void GameReset()
+    {
+        OnClientGameStartInit();
+    }
+
     /// <summary>
     /// 소지 금액 변경(서버에서만 호출)
     /// </summary>
@@ -188,7 +209,7 @@ public class GameManager : NetworkBehaviour
                 OnServerTargetMoneyChanged(newTargetMoney);
                 //데드라인 리셋
                 OnServerDeadlineReset();
-                //카메라 리셋
+                //게임 리셋
                 OnClientGameStartInit();
                 //플레이어 설정
                 OnServerSetActivePlayer(true);
@@ -255,6 +276,8 @@ public class GameManager : NetworkBehaviour
         timeCoroutine = StartCoroutine(IncrementTimeCounter());
         int seed = OnServerGetRandomSeed();
         OnClientEnterPlanet(seed);
+
+        IsLand = true;
     }
     /// <summary>
     /// 행성 탈출
@@ -262,22 +285,50 @@ public class GameManager : NetworkBehaviour
     [Server]
     public void OnServerEscapePlanet()
     {
+        Debug.Log("OnServerEscapePlanet");
         //우주선 옮기고
         if (shipController == null)
             shipController = FindObjectOfType<ShipController>();
 
+        //캐릭터컨트롤러 비활성화
+        OnClientSetCharacterController(false);
+
+        IsLand = false;
+
+
+        Invoke("EscapeSquance", 3f);
+    }
+    [Server]
+    public void EscapeSquance()
+    {
         //함선 출발
-        shipController.StartLanding(TerrainController.Instance.shipStartTransform.position);
+        shipController.StartEscape(TerrainController.Instance.shipStartTransform.position);
         //게임 시간 활성화
-        if(timeCoroutine != null)
+        if (timeCoroutine != null)
             StopCoroutine(timeCoroutine);
 
+        foreach (var monster in MonsterReference.Instance.monsterList)
+        {
+            //NetworkIdentity id = monster.GetComponent<NetworkIdentity>();
+            NetworkServer.Destroy(monster);
+        }
+        foreach (var item in ItemReference.Instance.itemList)
+        {
+            //NetworkIdentity id = item.GetComponent<NetworkIdentity>();
+            NetworkServer.Destroy(item);
+        }
 
         StartCoroutine(DestroyAllObjectsAfterDelay());
-        //MonsterReference.Instance.DestroyAll();
-        //ItemReference.Instance.DestroyAll();
-        //OnClientEscapePlanet();
     }
+    [ClientRpc]
+    public void OnClientSetCharacterController(bool isActive)
+    {
+        foreach (PlayerHealth player in PlayerReference.Instance.playerDic.Values)
+        {
+            player.SetActiveCharacterController(isActive);
+        }
+    }
+
     /// <summary>
     /// 랜덤 시드 생성
     /// </summary>
@@ -314,6 +365,7 @@ public class GameManager : NetworkBehaviour
     #region ClientRpc Function 서버가 원격 프로시저 호출(RPC)로 모든 클라이언트에서 실행되는 함수
     [ClientRpc] public void OnClientGameStartInit()
     {
+        PlayerReference.Instance.localPlayer.controller.PlayerRespawn();
         CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShipMiniature);
     }
     [ClientRpc] public void OnClientEnterPlanet(int seed)
@@ -334,11 +386,10 @@ public class GameManager : NetworkBehaviour
         //카메라 옮기고
         CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShip);
     }
+
     [ClientRpc]
     public void OnClientEscapePlanet()
     {
-        //UI 보여주고
-        UIController.Instance.SetActivateUI(typeof(UI_Selecter));
         //미니어쳐 Ship 보여주고
         ObjectReference.Instance.GetGameObject("ShipMiniature").SetActive(true);
         //spaceSystem 보여주고
@@ -349,8 +400,13 @@ public class GameManager : NetworkBehaviour
         DestoryRoom();
         MonsterReference.Instance.DestroyAll();
         ItemReference.Instance.DestroyAll();
+
+
+        Debug.Log("VirtualCameraType.SpaceShipMiniature");
         //카메라 옮기고
         CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShipMiniature);
+        //UI 보여주고
+        UIController.Instance.SetActivateUI(typeof(UI_Selecter));
     }
     [ClientRpc] public void OnClientStartHyperDrive()
     {
@@ -377,7 +433,7 @@ public class GameManager : NetworkBehaviour
     [ClientRpc] private void OnClientSetCurrentMoney(int money)
     {
         currentMoney = money;
-        CurrentMoneyDisplay?.Invoke();
+        CurrentMoneyDisplay?.Invoke(currentMoney.ToString());
     }
     /// <summary>
     /// 목표 금액 변경(모든 클라이언트)
@@ -424,7 +480,7 @@ public class GameManager : NetworkBehaviour
     /// <summary>
     /// 현재 소지금 UI갱신 이벤트 등록
     /// </summary>
-    public void RegistCurrentMoneyDisplayAction(Action action = null)
+    public void RegistCurrentMoneyDisplayAction(Action<string> action = null)
     {
         CurrentMoneyDisplay = action;
     }
@@ -578,7 +634,7 @@ public class GameManager : NetworkBehaviour
         MonsterReference monsterReference = MonsterReference.Instance;
         monsterReference.monsterList.Clear();
     }
-    [Command]
+    [Command(requiresAuthority = false)]
     public void DestroyObject(NetworkIdentity identity)
     {
         NetworkServer.Destroy(identity.gameObject);
@@ -596,8 +652,29 @@ public class GameManager : NetworkBehaviour
 
         MonsterReference.Instance.DestroyAll();
         ItemReference.Instance.DestroyAll();
+        if(navMeshGenerator != null)
+            Destroy(navMeshGenerator.gameObject);
         OnClientEscapePlanet();
         OnServerDayPasses();
+
+        Debug.Log("VirtualCameraType.SpaceShipMiniature");
+        CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShipMiniature);
+    }
+    [Server]
+    public void PlayerDieEvent()
+    {
+        Debug.Log("PlayerDieEvent");
+        bool allDead = true;
+        foreach (PlayerHealth player in PlayerReference.Instance.playerDic.Values)
+        {
+            if(player.dead == false)
+            {
+                allDead = false;
+                break;
+            }
+        }
+        if (allDead)
+            OnServerEscapePlanet();
     }
     
     /*[ClientRpc]

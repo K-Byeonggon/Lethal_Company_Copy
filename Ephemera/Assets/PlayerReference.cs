@@ -1,13 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PlayerReference : MonoBehaviour
 {
     public static PlayerReference Instance;
 
+    public PlayerHealth localPlayer;
+
     [SerializeField]
-    Dictionary<uint, PlayerHealth> playerDic = new Dictionary<uint, PlayerHealth>();
+    public Dictionary<uint, PlayerHealth> playerDic = new Dictionary<uint, PlayerHealth>();
 
     public int PlayerCount => playerDic.Count;
 
@@ -15,7 +18,10 @@ public class PlayerReference : MonoBehaviour
     {
         Instance = this;
     }
-
+    public void AddLocalPlayer(PlayerHealth player)
+    {
+        localPlayer = player;
+    }
     public void AddPlayerToDic(PlayerHealth player)
     {
         if (playerDic.ContainsValue(player) == false)
@@ -30,6 +36,17 @@ public class PlayerReference : MonoBehaviour
     {
         if (playerDic.ContainsKey(netId))
             Instance.playerDic.Remove(netId);
+    }
+    public int GetPlayerOrder(uint playerKey)
+    {
+        // Dictionary의 키를 정렬합니다.
+        var sortedKeys = playerDic.Keys.OrderBy(key => key).ToList();
+
+        // 자신의 키가 몇 번째에 있는지 찾습니다.
+        int index = sortedKeys.IndexOf(playerKey);
+
+        // 0부터 시작하는 인덱스를 1부터 시작하는 순서로 반환합니다.
+        return index;
     }
 
     public void ClearRoom()

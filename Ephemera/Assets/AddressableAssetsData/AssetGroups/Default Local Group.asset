@@ -145,6 +145,10 @@ MonoBehaviour:
     m_Address: Spore Lizard
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: 18d4940007efaa54b97f0d19d8a39e21
+    m_Address: PlayerRaGDoll
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: f53dd5718acd92348a91adf0d1df758a, type: 2}
   m_SchemaSet:
