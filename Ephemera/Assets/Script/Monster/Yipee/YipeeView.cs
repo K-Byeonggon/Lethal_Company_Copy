@@ -32,9 +32,21 @@ public class YipeeView : FieldOfView
                 if (!Physics.Raycast(transform.position, directionToTarget, distanceToTarget, obstacleMask))
                 {
                     //비축벌레가 아이템을 발견
+                    //아이템은 그냥 콜라이더로 감지하기로함.
 
                     //비축벌레가 플레이어를 보고 있을 때 둥지 근처의 수집아이템이 부모가 생기면? 플레이어 공격.
-                    Debug.Log("비축벌레가 " + targetTransform.name + " 보고 있음.");
+                    if(target.gameObject.layer == LayerMask.NameToLayer("Player"))
+                    {
+                        Debug.Log("비축벌레가 " + targetTransform.name + " 보고 있음.");
+                        yipee.sawPlayer = true;
+                        yipee.player = targetTransform;
+                    }
+
+                    if(target.gameObject.layer == LayerMask.NameToLayer("Item"))
+                    {
+                        Debug.Log("비축벌레가 " + targetTransform.name + "보고 있음.");
+                        yipee.item.Add(target.gameObject);
+                    }
 
                     currentlyVisibleTargets.Add(targetTransform.gameObject);
 
@@ -47,7 +59,16 @@ public class YipeeView : FieldOfView
         {
             if (!currentlyVisibleTargets.Contains(player))
             {
+                if(player.layer == LayerMask.NameToLayer("Player"))
+                {
+                    yipee.sawPlayer = false;
+                    yipee.player = null;
+                }
 
+                if(player.tag == "ObtainableItem")
+                {
+                    yipee.item.Remove(player);
+                }
             }
         }
 
