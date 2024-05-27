@@ -62,6 +62,20 @@ public class Inventory : NetworkBehaviour
             slots[currentItemSlot].slotObjComponent = null;
         }
     }
+    public void ThrowAllItem()
+    {
+        foreach (var slot in slots)
+        {
+            if (slot.isEmpty == false)
+            {
+                slot.isEmpty = true;
+                //PickDown(slots[currentItemSlot].slotObjComponent.transform);
+                PickDown(slot.slotObjComponent.GetComponent<NetworkIdentity>());
+                slot.slotObjComponent = null;
+            }
+        }
+        
+    }
     [Command]
     public void RemoveItem()
     {

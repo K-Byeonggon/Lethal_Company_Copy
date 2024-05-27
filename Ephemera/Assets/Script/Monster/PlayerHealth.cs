@@ -10,6 +10,7 @@ public class PlayerHealth : LivingEntity
     [SerializeField] public GameObject DeadBody;
     [SerializeField] public PlayerController controller;
     [SerializeField] public CharacterController characterController;
+    [SerializeField] public Inventory inventory;
     /*private void OnEnable()
     {
         maxHealth = 100f;
@@ -48,12 +49,14 @@ public class PlayerHealth : LivingEntity
 
     public override void Die()
     {
+        inventory.ThrowAllItem();
+
         dead = true;
         controller.PlayerDie();
         //CameraReference.Instance.SetActiveFirstOtherPlayerVirtualCamera();
         controller.CmdTeleport(new Vector3(0, 2000, 0));
         InstantiateDeadBody();
-        base.Die();
+        //base.Die();
         CmdPlayerDied();
         Debug.Log("플레이어 죽음");
     }

@@ -157,6 +157,13 @@ public class GameManager : NetworkBehaviour
     [Server] public void OnServerGameReset()
     {
         Debug.Log("GameReset");
+        
+        //게임 초기화
+        Invoke("GameReset", 2f);
+    }
+    [Server]
+    public void GameReset()
+    {
         //소지금 리셋
         OnClientSetCurrentMoney(0);
         //목표금액 리셋
@@ -167,12 +174,7 @@ public class GameManager : NetworkBehaviour
         OnServerSetActivePlayer(true);
         //캐릭터 제어 비활성화
         OnServerSetActiveController(false);
-        //게임 초기화
-        Invoke("GameReset", 2f);
-    }
-    [Server]
-    public void GameReset()
-    {
+
         OnClientGameStartInit();
     }
 
@@ -224,7 +226,9 @@ public class GameManager : NetworkBehaviour
         }
         else
         {
-            OnClientSetDeadLine(currentDeadline - 1);
+            int deadLine = currentDeadline - 1;
+            OnClientSetDeadLine(deadLine);
+            OnClientGameStartInit();
         }
     }
     /// <summary>

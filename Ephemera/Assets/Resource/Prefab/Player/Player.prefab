@@ -1236,6 +1236,7 @@ MonoBehaviour:
   DeadBody: {fileID: 1278589083176677876, guid: 18d4940007efaa54b97f0d19d8a39e21, type: 3}
   controller: {fileID: -8591675033052490884}
   characterController: {fileID: 3530072518083962692}
+  inventory: {fileID: 659450159180359110}
 --- !u!114 &-8591675033052490884
 MonoBehaviour:
   m_ObjectHideFlags: 0

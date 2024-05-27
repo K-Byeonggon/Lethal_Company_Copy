@@ -224,6 +224,11 @@ public class PlayerController : NetworkBehaviour
     }
     #endregion
     #region Network Command Function
+    [Server]
+    public void OnServerTeleport(Vector3 position)
+    {
+        OnClientTeleport(position);
+    }
     [Command(requiresAuthority = false)]
     public void CmdTeleport(Vector3 position)
     {
