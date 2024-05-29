@@ -4,10 +4,12 @@ using Mirror.Examples.CCU;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.InputSystem.Layouts;
-using static UnityEditor.Progress;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 
 public class GameManager : NetworkBehaviour
@@ -130,8 +132,77 @@ public class GameManager : NetworkBehaviour
         Instance = this;
     }
     #endregion
+    #region 비동기 로딩
+
+    [SyncVar] private int readyPlayerCount = 0;
+    private int totalPlayers;
+
+    public string addressablePrefabKey; // 어드레서블 키
+    private Dictionary<NetworkConnection, bool> playerReadyStates = new Dictionary<NetworkConnection, bool>();
+
+    public override void OnStartServer()
+    {
+        totalPlayers = NetworkServer.connections.Count;
+    }
+
+    [ServerCallback]
+    public void RegisterPlayer(NetworkConnection conn)
+    {
+        playerReadyStates[conn] = false;
+        totalPlayers = playerReadyStates.Count;
+        RpcLoadPrefab(conn);
+    }
+
+    [TargetRpc]
+    private void RpcLoadPrefab(NetworkConnection target)
+    {
+        LoadPrefabAsync(target);
+    }
+
+    private void LoadPrefabAsync(NetworkConnection conn)
+    {
+        Addressables.LoadAssetAsync<GameObject>(addressablePrefabKey).Completed += handle =>
+        {
+            if (handle.Status == AsyncOperationStatus.Succeeded)
+            {
+                GameObject prefab = handle.Result;
+                Instantiate(prefab, Vector3.zero, Quaternion.identity);
+                CmdPlayerReady(conn);
+            }
+            else
+            {
+                Debug.LogError("Failed to load prefab: " + addressablePrefabKey);
+            }
+        };
+    }
+
+    [Command]
+    private void CmdPlayerReady(NetworkConnection conn)
+    {
+        playerReadyStates[conn] = true;
+        readyPlayerCount = playerReadyStates.Values.Count(ready => ready);
+
+        if (readyPlayerCount == totalPlayers)
+        {
+            RpcProceedToNextStep();
+        }
+    }
+
+    [ClientRpc]
+    private void RpcProceedToNextStep()
+    {
+        // 모든 플레이어가 준비된 상태이면 다음 단계로 넘어갑니다.
+        Debug.Log("All players are ready. Proceeding to the next step...");
+        // 예를 들어, 게임 시작 UI 숨기기, 게임 오브젝트 활성화 등
+    }
+    #endregion
+
+
+
+
+
     #region NetworkBehaviour Function
-    /*public override void OnStartClient()
+    /*public override void OnStartServer()
     {
         //모든 플레이어가 준비되었을 시
         //OnServerChangeGameState(GameStateType.ResetState);
@@ -140,29 +211,19 @@ public class GameManager : NetworkBehaviour
             OnServerGameReset();
         }
     }*/
-    public override void OnStartServer()
-    {
-        //모든 플레이어가 준비되었을 시
-        //OnServerChangeGameState(GameStateType.ResetState);
-        if (isServer == true)
-        {
-            OnServerGameReset();
-        }
-    }
     #endregion
-    #region Server Function 서버에서 실행되는 함수
+    #region 게임 흐름 제어
     /// <summary>
     /// 게임 리셋(서버에서만 호출)
     /// </summary>
     [Server] public void OnServerGameReset()
     {
         Debug.Log("GameReset");
-        
+
         //게임 초기화
         Invoke("GameReset", 2f);
     }
-    [Server]
-    public void GameReset()
+    [Server] public void GameReset()
     {
         //소지금 리셋
         OnClientSetCurrentMoney(0);
@@ -170,14 +231,13 @@ public class GameManager : NetworkBehaviour
         OnServerTargetMoneyChanged(150);
         //데드라인 리셋
         OnServerDeadlineReset();
-        //플레이어 설정
-        OnServerSetActivePlayer(true);
         //캐릭터 제어 비활성화
-        OnServerSetActiveController(false);
+        OnServerSetActivePlayer(false);
 
         OnClientGameStartInit();
     }
-
+    #endregion
+    #region Server Function 서버에서 실행되는 함수
     /// <summary>
     /// 소지 금액 변경(서버에서만 호출)
     /// </summary>
@@ -213,10 +273,8 @@ public class GameManager : NetworkBehaviour
                 OnServerDeadlineReset();
                 //게임 리셋
                 OnClientGameStartInit();
-                //플레이어 설정
-                OnServerSetActivePlayer(true);
                 //캐릭터 제어 비활성화
-                OnServerSetActiveController(false);
+                OnServerSetActivePlayer(false);
             }
             //패배 이벤트
             else
@@ -286,8 +344,7 @@ public class GameManager : NetworkBehaviour
     /// <summary>
     /// 행성 탈출
     /// </summary>
-    [Server]
-    public void OnServerEscapePlanet()
+    [Server] public void OnServerEscapePlanet()
     {
         Debug.Log("OnServerEscapePlanet");
         //우주선 옮기고
@@ -302,8 +359,10 @@ public class GameManager : NetworkBehaviour
 
         Invoke("EscapeSquance", 3f);
     }
-    [Server]
-    public void EscapeSquance()
+    /// <summary>
+    /// 탈출 시퀸스
+    /// </summary>
+    [Server] public void EscapeSquance()
     {
         //함선 출발
         shipController.StartEscape(TerrainController.Instance.shipStartTransform.position);
@@ -324,15 +383,6 @@ public class GameManager : NetworkBehaviour
 
         StartCoroutine(DestroyAllObjectsAfterDelay());
     }
-    [ClientRpc]
-    public void OnClientSetCharacterController(bool isActive)
-    {
-        foreach (PlayerHealth player in PlayerReference.Instance.playerDic.Values)
-        {
-            player.SetActiveCharacterController(isActive);
-        }
-    }
-
     /// <summary>
     /// 랜덤 시드 생성
     /// </summary>
@@ -347,26 +397,153 @@ public class GameManager : NetworkBehaviour
     {
         OnCLientActiveLocalPlayerCamera();
     }
+    /// <summary>
+    /// 플레이어 활성화
+    /// </summary>
+    /// <param name="isActive"></param>
     [Server] public void OnServerSetActivePlayer(bool isActive)
     {
         OnCLientSetActivePlayer(isActive);
     }
-    [Server] public void OnServerSetActiveController(bool isActive)
+    /// <summary>
+    /// 문 연결 (서버)
+    /// </summary>
+    [Server] public void OnServerDoorLinkSequence()
     {
-        OnClientSetActiveController(isActive);
+        OnClientDoorLinkSequence();
+    }
+    /// <summary>
+    /// 몬스터 삭제 (서버)
+    /// </summary>
+    [Server] public void OnServerClearMonster()
+    {
+        MonsterReference monsterReference = MonsterReference.Instance;
+        foreach (GameObject monster in monsterReference.monsterList)
+        {
+            NetworkServer.Destroy(monster);
+        }
+        monsterReference.monsterList.Clear();
+        OnClientClearMonster();
+    }
+    /// <summary>
+    /// 플레이어 사망 이벤트
+    /// </summary>
+    [Server] public void PlayerDieEvent()
+    {
+        Debug.Log("PlayerDieEvent");
+        bool allDead = true;
+        foreach (PlayerHealth player in PlayerReference.Instance.playerDic.Values)
+        {
+            if (player.dead == false)
+            {
+                allDead = false;
+                break;
+            }
+        }
+        if (allDead)
+            OnServerEscapePlanet();
+    }
+    /// <summary>
+    /// 아이템 스폰
+    /// </summary>
+    [Server] public void SpawnItem()
+    {
+        int itemSpawnCount = UnityEngine.Random.Range(RoomReference.Instance.RoomCount / 2, RoomReference.Instance.RoomCount);
+
+        List<string> itemKey = new List<string>()
+        {
+            "asynchronous_motor",
+            "Barrel",
+            "Camera_on",
+            "circular_saw",
+            "Crowbar",
+            "duck",
+            "Laptop",
+            "Metal container",
+            "Mine",
+            "Phone_1",
+            "ProFlashlight_Low",
+            "Tablet_pc",
+        };
+
+        for (int i = 0; i < itemSpawnCount; i++)
+        {
+            Vector3 vec = RoomReference.Instance.GetRandomPosition();
+            int itemIndex = UnityEngine.Random.Range(0, itemKey.Count);
+            GameObject item = Instantiate(ResourceManager.Instance.GetPrefab(itemKey[itemIndex]));
+            item.transform.position = vec;
+            NetworkServer.Spawn(item);
+            ItemReference.Instance.AddItemToList(item);
+        }
+    }
+    /// <summary>
+    /// 일정 시간이 지난 후에 모든 몬스터와 아이템을 파괴
+    /// </summary>
+    [Server] private IEnumerator DestroyAllObjectsAfterDelay()
+    {
+        float delay = 5.0f;
+        yield return new WaitForSeconds(delay);
+
+
+        MonsterReference.Instance.DestroyAll();
+        ItemReference.Instance.DestroyAll();
+        if (navMeshGenerator != null)
+            Destroy(navMeshGenerator.gameObject);
+        OnClientEscapePlanet();
+        OnServerDayPasses();
+
+        Debug.Log("VirtualCameraType.SpaceShipMiniature");
+        CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShipMiniature);
+    }
+    /// <summary>
+    /// 몬스터 스폰
+    /// </summary>
+    [Server] public void SpawnMonster()
+    {
+        int monsterSpawnCount = UnityEngine.Random.Range(2, 4);
+
+        List<string> monsterKey = new List<string>()
+        {
+            "Coilhead",
+            "Snare Flea",
+            "Spore Lizard",
+            "Thumper",
+            "Yipee",
+        };
+
+        for (int i = 0; i < monsterSpawnCount; i++)
+        {
+            Vector3 vec = RoomReference.Instance.GetRandomPosition();
+            int itemIndex = UnityEngine.Random.Range(0, monsterKey.Count);
+            GameObject monster = Instantiate(ResourceManager.Instance.GetPrefab(monsterKey[itemIndex]));
+            monster.transform.position = vec;
+            NetworkServer.Spawn(monster);
+            MonsterReference.Instance.AddMonsterToList(monster);
+        }
     }
     #endregion
-    #region Command Function 클라이언트에서 호출하고 서버에서 실행되는 함수
-    //플레이어 상태 변화
-    /*[Command]
-    public void CmdPlayerStateChange(NetworkMessage message)
+    #region Command Function 클라이언트에서 호출해서 서버에서 실행하는 함수
+    /// <summary>
+    /// 오브젝트 파괴
+    /// </summary>
+    [Command(requiresAuthority = false)]
+    public void DestroyObject(NetworkIdentity identity)
     {
-    //myPlayerStatue.Hp -= message.damage;
-    //SetPlayerState(myPlayerStatue);
-    }*/
-    
+        NetworkServer.Destroy(identity.gameObject);
+    }
     #endregion
     #region ClientRpc Function 서버가 원격 프로시저 호출(RPC)로 모든 클라이언트에서 실행되는 함수
+    /// <summary>
+    /// 캐릭터 제어 활성화
+    /// </summary>
+    /// <param name="isActive"></param>
+    [ClientRpc] public void OnClientSetCharacterController(bool isActive)
+    {
+        foreach (PlayerHealth player in PlayerReference.Instance.playerDic.Values)
+        {
+            player.SetActiveCharacterController(isActive);
+        }
+    }
     [ClientRpc] public void OnClientGameStartInit()
     {
         PlayerReference.Instance.localPlayer.controller.PlayerRespawn();
@@ -391,8 +568,7 @@ public class GameManager : NetworkBehaviour
         CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShip);
     }
 
-    [ClientRpc]
-    public void OnClientEscapePlanet()
+    [ClientRpc] public void OnClientEscapePlanet()
     {
         //미니어쳐 Ship 보여주고
         ObjectReference.Instance.GetGameObject("ShipMiniature").SetActive(true);
@@ -412,22 +588,20 @@ public class GameManager : NetworkBehaviour
         //UI 보여주고
         UIController.Instance.SetActivateUI(typeof(UI_Selecter));
     }
+
     [ClientRpc] public void OnClientStartHyperDrive()
     {
         VolumeController.Instance.StartWarpGlitch();
     }
+
     [ClientRpc] public void OnCLientActiveLocalPlayerCamera()
     {
         CameraReference.Instance.SetActiveLocalPlayerVirtualCamera();
     }
+
     [ClientRpc] public void OnCLientSetActivePlayer(bool isActive)
     {
-        Debug.Log(localPlayerController);
         localPlayerController?.SetActivateLocalPlayer(isActive);
-    }
-    [ClientRpc] public void OnClientSetActiveController(bool isActive)
-    {
-        localPlayerController?.SetActivateLocalController(isActive);
     }
     #endregion
     #region ClientRpc Action 서버가 원격 프로시저 호출(RPC)로 모든 클라이언트에서 실행되는 Action
@@ -439,6 +613,7 @@ public class GameManager : NetworkBehaviour
         currentMoney = money;
         CurrentMoneyDisplay?.Invoke(currentMoney.ToString());
     }
+
     /// <summary>
     /// 목표 금액 변경(모든 클라이언트)
     /// </summary>
@@ -447,6 +622,7 @@ public class GameManager : NetworkBehaviour
         this.targetMoney = targetMoney;
         TargetMoneyDisplay?.Invoke(this.targetMoney.ToString());
     }
+
     /// <summary>
     /// 데드라인 변경(모든 클라이언트)
     /// </summary>
@@ -455,6 +631,7 @@ public class GameManager : NetworkBehaviour
         this.currentDeadline = deadLine;
         DeadLineDisplay?.Invoke(currentDeadline.ToString());
     }
+
     /// <summary>
     /// 캐릭터 상태 변경(모든 클라이언트)
     /// </summary>
@@ -463,6 +640,7 @@ public class GameManager : NetworkBehaviour
         this.targetMoney = targetMoney;
         PlayerStateDisplay?.Invoke();
     }
+
     /// <summary>
     /// 총 수익 UI 출력 (모든 클라이언트)
     /// </summary>
@@ -470,6 +648,7 @@ public class GameManager : NetworkBehaviour
     {
         TotalRevenueDisplay?.Invoke();
     }
+
     /// <summary>
     /// 총 수익 UI 출력 (모든 클라이언트)
     /// </summary>
@@ -478,6 +657,30 @@ public class GameManager : NetworkBehaviour
         GameTime time = GetCurrentTime();
         //Debug.Log($"{time.hour} : {time.minute.ToString("D2")}");
         TimeDisplay?.Invoke();
+    }
+
+    /// <summary>
+    /// 문 연결 (클라이언트)
+    /// </summary>
+    [ClientRpc] public void OnClientDoorLinkSequence()
+    {
+        Debug.Log(GameObject.Find("Entrance").transform.GetChild(0).name);
+        Debug.Log(TerrainController.Instance.GetFrontDoor(selectPlanet).name);
+
+        LinkDoor extFrontDoor = GameObject.Find("Entrance").transform.GetChild(0).GetComponent<LinkDoor>();
+        LinkDoor etrFrontDoor = TerrainController.Instance.GetFrontDoor(selectPlanet).GetComponent<LinkDoor>();
+
+        extFrontDoor.LinkTransform = etrFrontDoor.transform;
+        etrFrontDoor.LinkTransform = extFrontDoor.transform;
+    }
+
+    /// <summary>
+    /// 몬스터 삭제 (클라이언트)
+    /// </summary>
+    [ClientRpc] public void OnClientClearMonster()
+    {
+        MonsterReference monsterReference = MonsterReference.Instance;
+        monsterReference.monsterList.Clear();
     }
     #endregion
     #region ActionRegist Action등록
@@ -546,158 +749,6 @@ public class GameManager : NetworkBehaviour
         }
     }
     #endregion
-
-    [Server]
-    public void SpawnItem()
-    {
-        int itemSpawnCount = UnityEngine.Random.Range(RoomReference.Instance.RoomCount / 2, RoomReference.Instance.RoomCount);
-
-        List<string> itemKey = new List<string>()
-        {
-            "asynchronous_motor",
-            "Barrel",
-            "Camera_on",
-            "circular_saw",
-            "Crowbar",
-            "duck",
-            "Laptop",
-            "Metal container",
-            "Mine",
-            "Phone_1",
-            "ProFlashlight_Low",
-            "Tablet_pc",
-        };
-
-        for (int i = 0; i < itemSpawnCount; i++)
-        {
-            Vector3 vec = RoomReference.Instance.GetRandomPosition();
-            int itemIndex = UnityEngine.Random.Range(0, itemKey.Count);
-            GameObject item = Instantiate(ResourceManager.Instance.GetPrefab(itemKey[itemIndex]));
-            item.transform.position = vec;
-            NetworkServer.Spawn(item);
-            ItemReference.Instance.AddItemToList(item);
-        }
-    }
-    [Server]
-    public void SpawnMonster()
-    {
-        int monsterSpawnCount = UnityEngine.Random.Range(2, 4);
-
-        List<string> monsterKey = new List<string>()
-        {
-            "Coilhead",
-            "Snare Flea",
-            "Spore Lizard",
-            "Thumper",
-            "Yipee",
-        };
-
-        for (int i = 0; i < monsterSpawnCount; i++)
-        {
-            Vector3 vec = RoomReference.Instance.GetRandomPosition();
-            int itemIndex = UnityEngine.Random.Range(0, monsterKey.Count);
-            GameObject monster = Instantiate(ResourceManager.Instance.GetPrefab(monsterKey[itemIndex]));
-            monster.transform.position = vec;
-            NetworkServer.Spawn(monster);
-            MonsterReference.Instance.AddMonsterToList(monster);
-        }
-    }
-    [Server]
-    public void OnServerDoorLinkSequence()
-    {
-        OnClientDoorLinkSequence();
-    }
-    [ClientRpc]
-    public void OnClientDoorLinkSequence()
-    {
-        Debug.Log(GameObject.Find("Entrance").transform.GetChild(0).name);
-        Debug.Log(TerrainController.Instance.GetFrontDoor(selectPlanet).name);
-
-        LinkDoor extFrontDoor = GameObject.Find("Entrance").transform.GetChild(0).GetComponent<LinkDoor>();
-        LinkDoor etrFrontDoor = TerrainController.Instance.GetFrontDoor(selectPlanet).GetComponent<LinkDoor>();
-
-        extFrontDoor.LinkTransform = etrFrontDoor.transform;
-        etrFrontDoor.LinkTransform = extFrontDoor.transform;
-    }
-
-
-    [Server]
-    public void OnServerClearMonster()
-    {
-        MonsterReference monsterReference = MonsterReference.Instance;
-        foreach (GameObject monster in monsterReference.monsterList)
-        {
-            NetworkServer.Destroy(monster);
-        }
-        monsterReference.monsterList.Clear();
-        OnClientClearMonster();
-    }
-    [ClientRpc]
-    public void OnClientClearMonster()
-    {
-        MonsterReference monsterReference = MonsterReference.Instance;
-        monsterReference.monsterList.Clear();
-    }
-    [Command(requiresAuthority = false)]
-    public void DestroyObject(NetworkIdentity identity)
-    {
-        NetworkServer.Destroy(identity.gameObject);
-    }
-
-    /// <summary>
-    /// 일정 시간이 지난 후에 모든 몬스터와 아이템을 파괴
-    /// </summary>
-    [Server]
-    private IEnumerator DestroyAllObjectsAfterDelay()
-    {
-        float delay = 5.0f;
-        yield return new WaitForSeconds(delay);
-
-
-        MonsterReference.Instance.DestroyAll();
-        ItemReference.Instance.DestroyAll();
-        if(navMeshGenerator != null)
-            Destroy(navMeshGenerator.gameObject);
-        OnClientEscapePlanet();
-        OnServerDayPasses();
-
-        Debug.Log("VirtualCameraType.SpaceShipMiniature");
-        CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShipMiniature);
-    }
-    [Server]
-    public void PlayerDieEvent()
-    {
-        Debug.Log("PlayerDieEvent");
-        bool allDead = true;
-        foreach (PlayerHealth player in PlayerReference.Instance.playerDic.Values)
-        {
-            if(player.dead == false)
-            {
-                allDead = false;
-                break;
-            }
-        }
-        if (allDead)
-            OnServerEscapePlanet();
-    }
-    
-    /*[ClientRpc]
-    public void OnServerDisconnectProcessing(NetworkConnectionToClient conn)
-    {
-        DisconnectProcessing(conn);
-    }
-    [ClientRpc]
-    public void DisconnectProcessing(NetworkConnectionToClient conn)
-    {
-        if (PlayerReference.Instance != null)
-        {
-            PlayerReference.Instance.RemovePlayerToDic(conn.identity.netId);
-        }
-        if (CameraReference.Instance != null)
-        {
-            CameraReference.Instance.DeregistPlayerVirtualCamera(conn.identity.netId);
-        }
-    }*/
 }
 
 public struct GameTime

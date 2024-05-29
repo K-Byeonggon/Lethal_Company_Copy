@@ -60,7 +60,6 @@ public class PlayerController : NetworkBehaviour
         if(playerHealth.dead == false)
         {
             ApplyGravity();
-            //ApplyRotation();
             ApplyMovement();
             SetAnimator();
             Cursor.visible = false;
@@ -69,13 +68,17 @@ public class PlayerController : NetworkBehaviour
     }
     #endregion
     #region NetworkBehaviour Function
-    /*public override void OnStartLocalPlayer()
+    public override void OnStartLocalPlayer()
     {
-        characterController.enabled = true;
-        GetComponent<PlayerInput>().enabled = true;
-        GetComponent<Collider>().enabled = true;
-        this.enabled = true;
-    }*/
+        if (isServer)
+        {
+            GameManager.Instance.RegisterPlayer(connectionToClient);
+        }
+        else
+        {
+            CmdRegisterPlayer();
+        }
+    }
     public override void OnStartClient()
     {
         if (isLocalPlayer)
@@ -97,6 +100,8 @@ public class PlayerController : NetworkBehaviour
         else
             CameraReference.Instance.RegistPlayerVirtualCamera(netId, vCam.gameObject);
     }
+    
+
     #endregion
     #region Update Function
     void ApplyGravity()
@@ -223,11 +228,16 @@ public class PlayerController : NetworkBehaviour
         inventory.ThrowItem();
     }
     #endregion
-    #region Network Command Function
+    #region Network Function
     [Server]
     public void OnServerTeleport(Vector3 position)
     {
         OnClientTeleport(position);
+    }
+    [Command]
+    private void CmdRegisterPlayer()
+    {
+        GameManager.Instance.RegisterPlayer(connectionToClient);
     }
     [Command(requiresAuthority = false)]
     public void CmdTeleport(Vector3 position)

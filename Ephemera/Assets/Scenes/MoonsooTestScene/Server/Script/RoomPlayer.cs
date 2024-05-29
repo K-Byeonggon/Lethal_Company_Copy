@@ -9,15 +9,6 @@ public class RoomPlayer : NetworkRoomPlayer
 {
     GameObject roomCharacter;
 
-    //룸 입장시 호출
-    /*public override void OnClientEnterRoom() 
-    {
-        if(isOwned)
-        {
-            Debug.Log("OnClientEnterRoom");
-            CmdRoomInfoInit();
-        }
-    }*/
 
     #region Command, 클라이언트에서 이를 호출하면 서버에서 이 함수를 실행
     // 룸 캐릭터 정보 초기화 명령을 서버로 보냄
