@@ -10,6 +10,7 @@ public class OpenDoor : MonoBehaviour
 
     private bool _opening = false;
 
+    
     private void OnTriggerEnter(Collider other)
     {
         if(other.CompareTag("Door"))
