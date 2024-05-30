@@ -42,6 +42,7 @@ public class SnareFleaAI : MonsterAI
     }
     public override void OnStartServer()
     {
+        Debug.LogError("OnStartServer");
         enabled = true;
         navMeshAgent.enabled = true;
         MonsterReference.Instance.AddMonsterToList(gameObject);

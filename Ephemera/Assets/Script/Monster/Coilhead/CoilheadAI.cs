@@ -16,13 +16,18 @@ public class CoilheadAI : MonsterAI
     [SerializeField] float wanderRadius = 30f;
     public bool setDesti = false;
 
-
     void Start()
     {
+        
+    }
+    public override void OnStartServer()
+    {
+        enabled = true;
+        navMeshAgent.enabled = true;
+        MonsterReference.Instance.AddMonsterToList(gameObject);
+        
         openDoorDelay = 3f;
-
         ConstructBehaviorTree();
-
         damageMessage = new DamageMessage();
         damageMessage.damage = 90;
         damageMessage.damager = gameObject;
@@ -48,12 +53,7 @@ public class CoilheadAI : MonsterAI
         SequenceNode wanderSequence = new SequenceNode(new List<Node> { setDest, moveToDest });
         topNode = new SelectorNode(new List<Node> { stop, attackSequence, wanderSequence } );
     }
-    public override void OnStartServer()
-    {
-        enabled = true;
-        navMeshAgent.enabled = true;
-        MonsterReference.Instance.AddMonsterToList(gameObject);
-    }
+    
     void Update()
     {
         if (isServer)

@@ -177,8 +177,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3957379526496312935}
   - component: {fileID: 4440759354408764638}
-  - component: {fileID: -4411980619617487099}
-  - component: {fileID: -2067758411242439153}
   - component: {fileID: -2056017507561170654}
   - component: {fileID: -5549663608257410486}
   m_Layer: 0
@@ -226,60 +224,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &-4411980619617487099
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4440759354408764637}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ca1e08e1ef9b72c4a9d54b5dc8cda329, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  navMeshAgent: {fileID: 4440759354408764638}
-  attackCooltime: 1
-  threatDuration: 0
-  isThreatening: 0
-  threatDistance: 3.5
-  runDistance: 2
-  wanderRadius: 30
-  sporePercentage: 0.7
-  haveSpore: 1
-  runRadius: 30
-  runSpeed: 5
-  runAccel: 16
-  runAngle: 240
-  defaultSpeed: 3.5
-  defaultAccel: 8
-  defaultAngle: 120
-  setDesti: 0
-  bewareOf: {fileID: 0}
-  head: {fileID: 3558361349482716710}
-  pivot: {fileID: 3957379526496312935}
-  sporeParticle: {fileID: 6049267475415141862, guid: a70fe4512eed14b4e95e7077ad4fadd2, type: 3}
-  cornerRayCount: 8
-  cornerDetectionRadius: 5
-  attackDistance: 1
-  attackState: 0
-  currentState: 0
-  sawPlayer: 0
---- !u!114 &-2067758411242439153
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4440759354408764637}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70154e92a101d494899fb07141844b22, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &-2056017507561170654
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -426,7 +370,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6414842003054355559}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ca1e08e1ef9b72c4a9d54b5dc8cda329, type: 3}
   m_Name: 

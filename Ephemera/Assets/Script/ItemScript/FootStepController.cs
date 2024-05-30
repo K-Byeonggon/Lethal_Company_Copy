@@ -12,10 +12,10 @@ public class FootStepController : NetworkBehaviour
     public AudioClip metalFootstep;
     [SerializeField]
     PlayerController playerController;
-    private float rayDistance = 1.0f; // ·¹ÀÌÄ³½ºÆ® °Å¸®
+    private float rayDistance = 1.0f; // ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½Æ® ï¿½Å¸ï¿½
 
-    // ¾Ö´Ï¸ÞÀÌ¼Ç ÀÌº¥Æ®¿¡ ¿¬°áµÉ ÇÔ¼ö
-    [Command]
+    // ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½Ìºï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
+    [Command(requiresAuthority = false)]
     public void PlayFootstepSound()
     {
         if (playerController.IsWalking())

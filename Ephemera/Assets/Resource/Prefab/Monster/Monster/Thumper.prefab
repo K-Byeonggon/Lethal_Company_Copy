@@ -95,7 +95,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3979485540955211440}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3ca3670629bd21447af43ea021a84854, type: 3}
   m_Name: 
@@ -153,7 +153,7 @@ MonoBehaviour:
   maxHealth: 100
   health: 0
   dead: 0
-  thumper: {fileID: 0}
+  thumper: {fileID: 1910501027692173784}
 --- !u!1 &6679754982925823059
 GameObject:
   m_ObjectHideFlags: 0
@@ -381,6 +381,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61e05cf6e174ece43b3bf222a1a53534, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  thumper: {fileID: 1910501027692173784}
 --- !u!54 &3852190164576541367
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -33,19 +33,16 @@ public class YipeeAI : MonsterAI
     public bool sawPlayer = false;
     public List<GameObject> item = new List<GameObject>();
 
-    void Start()
-    {
-        ConstructBehaviorTree();
-
-        damageMessage = new DamageMessage();
-        damageMessage.damage = 30;
-        damageMessage.damager = gameObject;
-    }
     public override void OnStartServer()
     {
         enabled = true;
         navMeshAgent.enabled = true;
         MonsterReference.Instance.AddMonsterToList(gameObject);
+        
+        ConstructBehaviorTree();
+        damageMessage = new DamageMessage();
+        damageMessage.damage = 30;
+        damageMessage.damager = gameObject;
     }
     void Update()
     {
@@ -64,36 +61,36 @@ public class YipeeAI : MonsterAI
 
     private void ConstructBehaviorTree()
     {
-        //Á×À½ ½ÃÄö½ºÀÇ children Node
+        //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ children Node
         ActionNode dead = new ActionNode(Dead);
 
-        //°ø°Ý ½ÃÄö½ºÀÇ children Nodeµé
+        //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ children Nodeï¿½ï¿½
         ActionNode attackWill = new ActionNode(AttackWill);
         ActionNode moveToPlayer = new ActionNode(MoveToPlayer);
         ActionNode attackPlayer = new ActionNode(AttackPlayer);
 
-        //¹èÈ¸ ½ÃÄö½ºÀÇ children Nodeµé
+        //ï¿½ï¿½È¸ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ children Nodeï¿½ï¿½
         ActionNode setDest = new ActionNode(SetDest);
         ActionNode moveToDest = new ActionNode(MoveToDest);
 
-        //Å½»ö ½ÃÄö½ºÀÇ children Nodeµé
+        //Å½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ children Nodeï¿½ï¿½
         ActionNode setDestToScrap = new ActionNode(SetDestToScrap);
         ActionNode moveToScrap = new ActionNode(MoveToScrap);
         ActionNode getScrap = new ActionNode(GetScrap);
         ActionNode moveToNest = new ActionNode(MoveToNest);
         ActionNode setScrap = new ActionNode(SetScrap);
 
-        //À§Çù ½ÃÄö½ºÀÇ children Node
+        //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ children Node
         ActionNode threathen = new ActionNode(Threaten);
 
-        //¼¿·ºÅÍ ³ëµå¿¡ µé¾î°¥ ½ÃÄö½º ³ëµåµé
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½å¿¡ ï¿½ï¿½î°¥ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         SequenceNode attackSequence = new SequenceNode(new List<Node> { attackWill, moveToPlayer, attackPlayer });
         SequenceNode wanderSequence = new SequenceNode(new List<Node> { setDest, moveToDest });
         SequenceNode detectSequence = new SequenceNode(new List<Node> { setDestToScrap, moveToScrap, getScrap, moveToNest, setScrap });
         topNode = new SelectorNode(new List<Node> { dead, attackSequence, threathen, wanderSequence, detectSequence, });
     }
 
-    //Á×À½ ½ÃÄö½º ³ëµå
+    //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
     private Node.State Dead()
     {
         if (yipeeHealth.IsDead)
@@ -106,28 +103,28 @@ public class YipeeAI : MonsterAI
         else return Node.State.FAILURE;
     }
 
-    //°ø°ÝÀÇÁö È°¼ºÈ­(°ø°Ý ½ÃÄö½º)
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È°ï¿½ï¿½È­(ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
     private Node.State AttackWill()
     {
-        //1. ÇÃ·¹ÀÌ¾î¿¡°Ô °ø°Ý ¹Þ¾Ò´ÂÁö boolº¯¼ö È®ÀÎ(YipeeHealth¿¡¼­)
+        //1. ï¿½Ã·ï¿½ï¿½Ì¾î¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¾Ò´ï¿½ï¿½ï¿½ boolï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½(YipeeHealthï¿½ï¿½ï¿½ï¿½)
         if (isAttacked) 
         { 
-            //YipeeHealth¿¡¼­ ÇÃ·¹ÀÌ¾î °»½Å. 
+            //YipeeHealthï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½. 
             return Node.State.SUCCESS; 
         }
-        //2. ÇÃ·¹ÀÌ¾î°¡ ÀÚ½ÅÀ» 7ÃÊ ÀÌ»ó ÃÄ´ÙºÃ´ÂÁö È®ÀÎ
-        //ÀÌ°Å´Â Update¿¡¼­ CheckWatched¸¦ ÅëÇØ isAttacked¸¦ ¹Ù²ãÁØ´Ù. ±×·¯¸é 1¹ø °æ¿ì¿¡ °É·Á¼­ °ø°ÝÇÔ.
+        //2. ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½Ú½ï¿½ï¿½ï¿½ 7ï¿½ï¿½ ï¿½Ì»ï¿½ ï¿½Ä´ÙºÃ´ï¿½ï¿½ï¿½ È®ï¿½ï¿½
+        //ï¿½Ì°Å´ï¿½ Updateï¿½ï¿½ï¿½ï¿½ CheckWatchedï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ isAttackedï¿½ï¿½ ï¿½Ù²ï¿½ï¿½Ø´ï¿½. ï¿½×·ï¿½ï¿½ï¿½ 1ï¿½ï¿½ ï¿½ï¿½ì¿¡ ï¿½É·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
         
-        //3. ÇÃ·¹ÀÌ¾î°¡ µÕÁöÀÇ ÆóÇ° ÈÉÃÄ°£°ÍÀ» º½.
-        //ÀÌ°Åµµ Update¿¡¼­ StolenItemÀ¸·Î isAttacked¸¦ ¹Ù²ãÁÜ.
+        //3. ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç° ï¿½ï¿½ï¿½Ä°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½.
+        //ï¿½Ì°Åµï¿½ Updateï¿½ï¿½ï¿½ï¿½ StolenItemï¿½ï¿½ï¿½ï¿½ isAttackedï¿½ï¿½ ï¿½Ù²ï¿½ï¿½ï¿½.
 
         else return Node.State.FAILURE;
     }
 
-    //ÇÃ·¹ÀÌ¾î¿¡°Ô Á¢±Ù(°ø°Ý ½ÃÄö½º)
+    //ï¿½Ã·ï¿½ï¿½Ì¾î¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
     private Node.State MoveToPlayer()
     {
-        Debug.Log("Á¢±ÙÀº ÇÏ´Â °Í °°Àºµ¥");
+        Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
         float distance = Vector3.Distance(transform.position, player.position);
         Debug.Log(player.position + "," + transform.position + ", " + distance);
         if (distance > attackDistance)
@@ -143,13 +140,13 @@ public class YipeeAI : MonsterAI
         }
     }
 
-    //ÇÃ·¹ÀÌ¾î¸¦ °ø°Ý(°ø°Ý ½ÃÄö½º)
+    //ï¿½Ã·ï¿½ï¿½Ì¾î¸¦ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
     private Node.State AttackPlayer()
     {
-        Debug.Log("°ø°ÝÀ» ¾ÈÇÏ³ª?");
+        Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï³ï¿½?");
         if (Vector3.Distance(transform.position, player.position) <= attackDistance)
         {
-            // °ø°Ý ·ÎÁ÷ ¼öÇà
+            // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             if (Time.time - lastAttackTime >= attackCooltime)
             {
                 LivingEntity playerHealth = player.GetComponent<LivingEntity>();
@@ -163,7 +160,7 @@ public class YipeeAI : MonsterAI
         return Node.State.SUCCESS;
     }
 
-    //À§Çù ½ÃÄö½º ³ëµå
+    //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
     private Node.State Threaten()
     {
         if (bewareOf == null || itemHave) return Node.State.FAILURE;
@@ -174,7 +171,7 @@ public class YipeeAI : MonsterAI
                 navMeshAgent.SetDestination(transform.position);
                 Vector3 lookPosition = new Vector3(bewareOf.position.x, transform.position.y, bewareOf.position.z);
                 transform.LookAt(lookPosition);
-                Debug.Log("À§ÇùÇÏ´Â µ¿ÀÛ");
+                Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½");
                 return Node.State.SUCCESS;
             }
             else return Node.State.RUNNING;
@@ -182,12 +179,12 @@ public class YipeeAI : MonsterAI
         else return Node.State.RUNNING;
     }
 
-    //·£´ý ¸ñÀûÁö ¼³Á¤(ÇÑ¹ø¸¸ ½ÇÇà)(µ¹¾Æ´Ù´Ï±â ½ÃÄö½º)
+    //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½Ñ¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)(ï¿½ï¿½ï¿½Æ´Ù´Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
     private Node.State SetDest()
     {
         Debug.Log("SetDest");
-        if (itemFind) return Node.State.FAILURE;        //¾ÆÀÌÅÛÀ» Ã£¾Æ¼­ ¾ÆÀÌÅÛÀ» ÃßÀûÇÏ´Â »óÅÂ¸é,
-        else if (setDesti) return Node.State.SUCCESS;   //ÀÌ¹Ì ¸ñÀûÁö ¼³Á¤ÀÌ µÇ¾îÀÖÀ¸¸é,
+        if (itemFind) return Node.State.FAILURE;        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½Æ¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½Â¸ï¿½,
+        else if (setDesti) return Node.State.SUCCESS;   //ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,
         else
         {
             Vector3 newPos = RandomNavMeshMovement.RandomNavSphere(nest.position, wanderRadius, -1);
@@ -198,14 +195,14 @@ public class YipeeAI : MonsterAI
     }
 
 
-    //¸ñÀûÁö·Î ÀÌµ¿(µ¹¾Æ´Ù´Ï±â ½ÃÄö½º)
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½(ï¿½ï¿½ï¿½Æ´Ù´Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
     private Node.State MoveToDest()
     {
         Debug.Log("MoveToDest");
 
         if (itemFind) return Node.State.FAILURE;
 
-        //¸ñÀûÁö¿¡ µµ´ÞÇÔ.
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
         else if (Vector3.Distance(transform.position, navMeshAgent.destination) <= 1f)
         {
             setDesti = false;
@@ -214,7 +211,7 @@ public class YipeeAI : MonsterAI
         else return Node.State.RUNNING;
     }
 
-    //ÆóÇ°À¸·Î ¸ñÀûÁö ¼öÁ¤(Å½»ö ½ÃÄö½º)
+    //ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(Å½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
     private Node.State SetDestToScrap()
     {
         Debug.Log("SetDestToScrap");
@@ -226,13 +223,13 @@ public class YipeeAI : MonsterAI
         else return Node.State.FAILURE;
     }
 
-    //ÆóÇ°À¸·Î ÀÌµ¿(Å½»ö ½ÃÄö½º)
+    //ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½(Å½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
     private Node.State MoveToScrap()
     {
         Debug.Log("MoveToScrap");
         if (itemFind)
         {
-            //µµÁß¿¡ ¾ÆÀÌÅÛÀÌ ³»°¡ ¾Æ´Ñ ´©±º°¡¿¡°Ô ÁÖ¿öÁö¸é FAILURE.
+            //ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¿ï¿½ï¿½ï¿½ï¿½ï¿½ FAILURE.
             if (detectedItem.transform.parent != null && detectedItem.transform.parent != transform.GetChild(1)) return Node.State.FAILURE;
 
             if (Vector3.Distance(transform.position, navMeshAgent.destination) <= 0.5f)
@@ -241,7 +238,7 @@ public class YipeeAI : MonsterAI
             }
             else
             {
-                Debug.Log("RUNNINGÀÌ ÀÇ¹Ì°¡ ÀÖ³ª?");
+                Debug.Log("RUNNINGï¿½ï¿½ ï¿½Ç¹Ì°ï¿½ ï¿½Ö³ï¿½?");
                 return Node.State.RUNNING;
             }
         }
@@ -249,25 +246,25 @@ public class YipeeAI : MonsterAI
     }
 
 
-    //ÆóÇ° ¼öÁý(Å½»ö ½ÃÄö½º)
+    //ï¿½ï¿½Ç° ï¿½ï¿½ï¿½ï¿½(Å½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
     private Node.State GetScrap()
     {
         Debug.Log("GetScrap");
 
         if (!itemHave)
         {
-            //ÆäÇ° µé±â
+            //ï¿½ï¿½Ç° ï¿½ï¿½ï¿½
 
-            //µµÁß¿¡ ¾ÆÀÌÅÛÀÌ ³»°¡ ¾Æ´Ñ ´©±º°¡¿¡°Ô ÁÖ¿öÁö¸é FAILURE.
+            //ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¿ï¿½ï¿½ï¿½ï¿½ï¿½ FAILURE.
             if (detectedItem.transform.parent != null && detectedItem.transform.parent != transform) return Node.State.FAILURE;
 
-            Debug.Log("µé¾î¿Ã¸²");
+            Debug.Log("ï¿½ï¿½ï¿½Ã¸ï¿½");
             //detectedItem.transform.position = transform.GetChild(1).position;
             //detectedItem.transform.SetParent(transform.GetChild(1));
             OnServerSetItemParent(detectedItem.GetComponent<NetworkIdentity>(), true);
             itemHave = true;
 
-            //µÕÁö·Î ¸ñÀûÁö ¼³Á¤.
+            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
             navMeshAgent.SetDestination(nest.position);
             setDesti = true;
             return Node.State.SUCCESS;
@@ -277,7 +274,7 @@ public class YipeeAI : MonsterAI
 
     }
 
-    //ÆóÇ° µé°í µÕÁö·Î(Å½»ö ½ÃÄö½º)
+    //ï¿½ï¿½Ç° ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(Å½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
     private Node.State MoveToNest()
     {
         Debug.Log("MoveToNest");
@@ -288,12 +285,12 @@ public class YipeeAI : MonsterAI
         else { return Node.State.RUNNING; }
     }
 
-    //ÆäÇ° ³»·Á³õ±â(Å½»ö ½ÃÄö½º)
+    //ï¿½ï¿½Ç° ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(Å½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
     private Node.State SetScrap()
     {
         if(itemHave)
         {
-            Debug.Log("³»·Á³õÀ½");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
             //detectedItem.transform.parent = null;
             OnServerSetItemParent(detectedItem.GetComponent<NetworkIdentity>(), false);
             setDesti = false;
@@ -314,13 +311,13 @@ public class YipeeAI : MonsterAI
 
         if(!beWatched)
         {
-            Debug.Log("¾Èº¸°í ÀÖÀ½");
+            Debug.Log("ï¿½Èºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½");
             startBeWatched = false;
         }
 
         if (beWatched && Time.time - lastBeWatchedTime > 7f)
         {
-            Debug.Log("7ÃÊ ÃÄ´Ù ºÃÀ½");
+            Debug.Log("7ï¿½ï¿½ ï¿½Ä´ï¿½ ï¿½ï¿½ï¿½ï¿½");
             isAttacked = true;
             player = watchedBy.transform;
         }

@@ -11,7 +11,8 @@ public class NavMeshGenerator : MonoBehaviour
 
     public void BakeNavMesh()
     {
-        Invoke("StartBake", 5f);
+        //Invoke(nameof(StartBake), 5f);
+        StartBake();
     }
     public void StartBake()
     {
@@ -20,9 +21,9 @@ public class NavMeshGenerator : MonoBehaviour
     
     private IEnumerator BuildNavMesh(NavMeshSurface surface, Bounds bounds)
     {
-        // ³×ºñ¸Ş½¬ µ¥ÀÌÅÍ¸¦ ÃÊ±âÈ­ÇÕ´Ï´Ù.
+        // ë„¤ë¹„ë©”ì‰¬ ë°ì´í„°ë¥¼ ì´ˆê¸°í™”í•©ë‹ˆë‹¤.
         navMeshSurface.RemoveData();
-        yield return null;  // ´ÙÀ½ ÇÁ·¹ÀÓ±îÁö ´ë±â
+        yield return null;  // ë‹¤ìŒ í”„ë ˆì„ê¹Œì§€ ëŒ€ê¸°
         var data = NavMeshBuilder.BuildNavMeshData(surface.GetBuildSettings(), new List<NavMeshBuildSource>(), new Bounds(), surface.transform.position, surface.transform.rotation);
         List<NavMeshBuildSource> sources = new List<NavMeshBuildSource>();
         NavMeshBuilder.CollectSources(bounds, surface.layerMask, NavMeshCollectGeometry.PhysicsColliders, surface.defaultArea, new List<NavMeshBuildMarkup>(), sources);

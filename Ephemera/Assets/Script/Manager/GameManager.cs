@@ -17,19 +17,20 @@ public class GameManager : NetworkBehaviour
     #region Field
     public static GameManager Instance;
     //최대 마감일
-    private const int maxDeadline = 3;
-    //판매 배율
-    RuntimeDungeon rd;
-    Coroutine timeCoroutine;
-
-    public PlayerController localPlayerController;
+    
+    RuntimeDungeon _runtimeDungeon;
+    NavMeshGenerator _navMeshGenerator;
+    
+    Coroutine _timeCoroutine;
 
     public ShipController shipController;
-    NavMeshGenerator navMeshGenerator;
+    public PlayerController localPlayerController;
 
+    private const int MAX_DEADLINE = 3;
     [SyncVar]
     public bool IsLand = false;
 
+    //판매 배율
     private int SalePriceMagnification
     {
         get
@@ -67,54 +68,39 @@ public class GameManager : NetworkBehaviour
     #endregion
 
     #region Function
-    public GameTime GetCurrentTime()
+    private GameTime GetCurrentTime()
     {
         return new GameTime(currentTime);
     }
     ///<summary>
     ///terrain활성화
     ///</summary>
-    public void SetActivatePlanetTerrain(int index, bool isActive)
+    private void SetActivatePlanetTerrain(int index, bool isActive)
     {
         TerrainController.Instance.SetActivePlanetTerrain((Planet)index, isActive);
     }
 
-    public void CreateRoom(int seed)
+    private void CreateRoom(int seed)
     {
         //임시 주석
-        rd = Instantiate(ResourceManager.Instance.GetPrefab("DungeonGenerator")).GetComponent<RuntimeDungeon>();
-        rd.Generator.ShouldRandomizeSeed = false;
-        rd.Generator.Seed = seed;
-        rd.Generate();
-
-
-        //내부 첫 문과 마지막 문에 ExitDoor 추가
-
-        //위치에 문 오브젝트 추가
-        //rd.Generator.CurrentDungeon.MainPathTiles[0].Entrance.transform.position;
-
-        
-        /*GameObject go = Instantiate(ResourceManager.Instance.GetPrefab("duck"));
-        go.name = "duck";
-        go.transform.position = Vector3.up * 2;
-        NetworkServer.Spawn(go);*/
+        _runtimeDungeon = Instantiate(ResourceManager.Instance.GetPrefab("DungeonGenerator")).GetComponent<RuntimeDungeon>();
+        _runtimeDungeon.Generator.ShouldRandomizeSeed = false;
+        _runtimeDungeon.Generator.Seed = seed;
+        _runtimeDungeon.Generate();
     }
-    public void DestoryRoom()
+    private void OnDestoryRoom()
     {
-        if(rd != null)
-            Destroy(rd.gameObject);
+        if(_runtimeDungeon != null)
+            Destroy(_runtimeDungeon.gameObject);
         RoomReference.Instance.ClearRoom();
     }
     
-    public void GeneraterObject()
+    private void GenerationObject()
     {
         if (isServer)
         {
-            navMeshGenerator = Instantiate(ResourceManager.Instance.GetPrefab("NavMeshBake")).GetComponent<NavMeshGenerator>();
-            navMeshGenerator.BakeNavMesh();
-            //StartCoroutine(BakeNavMeshCoroutine());
-            //NavMeshGenerator navMeshGenerator = rd.GetComponent<NavMeshGenerator>();
-            //StartCoroutine(BuildNavMesh(navMeshGenerator.navMeshSurface, new Bounds(Vector3.zero, new Vector3(1000, 1000, 1000))));
+            _navMeshGenerator = Instantiate(ResourceManager.Instance.GetPrefab("NavMeshBake")).GetComponent<NavMeshGenerator>();
+            _navMeshGenerator.BakeNavMesh();
         }
     }
     #endregion
@@ -158,25 +144,6 @@ public class GameManager : NetworkBehaviour
         //LoadPrefabAsync(target);
     }
 
-    /*
-    private void LoadPrefabAsync(NetworkConnection conn)
-    {
-        Addressables.LoadAssetAsync<GameObject>(addressablePrefabKey).Completed += handle =>
-        {
-            if (handle.Status == AsyncOperationStatus.Succeeded)
-            {
-                GameObject prefab = handle.Result;
-                Instantiate(prefab, Vector3.zero, Quaternion.identity);
-                CmdPlayerReady(conn);
-            }
-            else
-            {
-                Debug.LogError("Failed to load prefab: " + addressablePrefabKey);
-            }
-        };
-    }
-    */
-
     [Command]
     private void CmdPlayerReady(NetworkConnectionToClient conn)
     {
@@ -216,9 +183,9 @@ public class GameManager : NetworkBehaviour
     [Server] public void OnServerGameReset()
     {
         Debug.Log("GameReset");
-
+        GameReset();
         //게임 초기화
-        Invoke("GameReset", 2f);
+        //Invoke("GameReset", 2f);
     }
     [Server] public void GameReset()
     {
@@ -246,9 +213,9 @@ public class GameManager : NetworkBehaviour
     /// <summary>
     /// 목표 금액 변경(서버에서만 호출)
     /// </summary>
-    [Server] public void OnServerTargetMoneyChanged(int targetMoney)
+    [Server] public void OnServerTargetMoneyChanged(int money)
     {
-        this.targetMoney = targetMoney;
+        this.targetMoney = money;
         OnClientSetTargetMoney(this.targetMoney);
     }
     /// <summary>
@@ -291,7 +258,7 @@ public class GameManager : NetworkBehaviour
     /// </summary>
     [Server] public void OnServerDeadlineReset()
     {
-        OnClientSetDeadLine(maxDeadline);
+        OnClientSetDeadLine(MAX_DEADLINE);
     }
     /// <summary>
     /// 아이템 판매
@@ -332,7 +299,7 @@ public class GameManager : NetworkBehaviour
         //함선 출발
         shipController.StartLanding(TerrainController.Instance.GetLandingZone(selectPlanet).position);
         //게임 시간 활성화
-        timeCoroutine = StartCoroutine(IncrementTimeCounter());
+        _timeCoroutine = StartCoroutine(IncrementTimeCounter());
         int seed = OnServerGetRandomSeed();
         OnClientEnterPlanet(seed);
 
@@ -364,8 +331,8 @@ public class GameManager : NetworkBehaviour
         //함선 출발
         shipController.StartEscape(TerrainController.Instance.shipStartTransform.position);
         //게임 시간 활성화
-        if (timeCoroutine != null)
-            StopCoroutine(timeCoroutine);
+        if (_timeCoroutine != null)
+            StopCoroutine(_timeCoroutine);
 
         foreach (var monster in MonsterReference.Instance.monsterList)
         {
@@ -484,8 +451,8 @@ public class GameManager : NetworkBehaviour
 
         MonsterReference.Instance.DestroyAll();
         ItemReference.Instance.DestroyAll();
-        if (navMeshGenerator != null)
-            Destroy(navMeshGenerator.gameObject);
+        if (_navMeshGenerator != null)
+            Destroy(_navMeshGenerator.gameObject);
         OnClientEscapePlanet();
         OnServerDayPasses();
 
@@ -560,7 +527,7 @@ public class GameManager : NetworkBehaviour
         //방 생성하고
         CreateRoom(seed);
         //몬스터, 아이템 생성하고
-        GeneraterObject();
+        GenerationObject();
         //카메라 옮기고
         CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShip);
     }
@@ -574,7 +541,7 @@ public class GameManager : NetworkBehaviour
         //terrain 비활성화하고
         SetActivatePlanetTerrain((int)selectPlanet, false);
         //방 삭제하고
-        DestoryRoom();
+        OnDestoryRoom();
         MonsterReference.Instance.DestroyAll();
         ItemReference.Instance.DestroyAll();
 

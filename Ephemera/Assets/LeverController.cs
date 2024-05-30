@@ -13,7 +13,7 @@ public class LeverController : NetworkBehaviour, IInteractive, IUIVisible
 
     Quaternion originRotation = Quaternion.Euler(-51.244f, 0f, 0f);
     Quaternion targetRotation = Quaternion.Euler(-151.897f, 0f, 0f);
-    float threshold = 1.0f; // °¢µµ Â÷ÀÌ ÀÓ°è°ª (ÇÊ¿ä¿¡ µû¶ó Á¶Á¤)
+    float threshold = 1.0f; // ê°ë„ ì°¨ì´ ì„ê³„ê°’ (í•„ìš”ì— ë”°ë¼ ì¡°ì •)
 
     [Command(requiresAuthority = false)]
     public void OnInteractive()
@@ -37,7 +37,7 @@ public class LeverController : NetworkBehaviour, IInteractive, IUIVisible
         while (true)
         {
             LeverObject.transform.localRotation = Quaternion.Lerp(LeverObject.transform.localRotation, targetRotation, Time.deltaTime * 5.0f);
-            if(Quaternion.Angle(LeverObject.transform.localRotation, targetRotation) < threshold)//Â÷ÀÌ°¡ Á¶±İ¹Û¿¡ ¾È³ª¸é 
+            if(Quaternion.Angle(LeverObject.transform.localRotation, targetRotation) < threshold)//ì°¨ì´ê°€ ì¡°ê¸ˆë°–ì— ì•ˆë‚˜ë©´ 
             {
                 LeverObject.transform.localRotation = targetRotation;
                 break;
@@ -51,7 +51,7 @@ public class LeverController : NetworkBehaviour, IInteractive, IUIVisible
         while (true)
         {
             LeverObject.transform.localRotation = Quaternion.Lerp(LeverObject.transform.localRotation, originRotation, Time.deltaTime * 5.0f);
-            if (Quaternion.Angle(LeverObject.transform.localRotation, originRotation) < threshold)//Â÷ÀÌ°¡ Á¶±İ¹Û¿¡ ¾È³ª¸é 
+            if (Quaternion.Angle(LeverObject.transform.localRotation, originRotation) < threshold)//ì°¨ì´ê°€ ì¡°ê¸ˆë°–ì— ì•ˆë‚˜ë©´ 
                 break;
             yield return null;
         }

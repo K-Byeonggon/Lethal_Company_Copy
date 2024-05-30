@@ -32,20 +32,19 @@ public class ThumperAI : MonsterAI
     [SerializeField] float rushAnglerSpeed = 10f;
 
 
-    void Start()
+    public override void OnStartServer()
     {
+        enabled = true;
+        navMeshAgent.enabled = true;
+        MonsterReference.Instance.AddMonsterToList(gameObject);
+        
         ConstructBehaviorTree();
 
         damageMessage = new DamageMessage();
         damageMessage.damage = 40;
         damageMessage.damager = gameObject;
     }
-    public override void OnStartServer()
-    {
-        enabled = true;
-        navMeshAgent.enabled = true;
-        MonsterReference.Instance.AddMonsterToList(gameObject);
-    }
+
     void Update()
     {
         if (isServer)
@@ -56,16 +55,16 @@ public class ThumperAI : MonsterAI
 
     private void ConstructBehaviorTree()
     {
-        //Á×À½ ½ÃÄö½ºÀÇ children Node
+        //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ children Node
         ActionNode dead = new ActionNode(Dead);
 
-        //°ø°Ý ½ÃÄö½º
+        //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         ActionNode attackWill = new ActionNode(AttackWill);
         ActionNode moveToPlayer = new ActionNode(MoveToPlayer);
         ActionNode attackPlayer = new ActionNode(AttackPlayer);
 
         
-        //¹èÈ¸ ½ÃÄö½ºÀÇ children Nodeµé
+        //ï¿½ï¿½È¸ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ children Nodeï¿½ï¿½
         ActionNode setDest = new ActionNode(SetDest);
         ActionNode moveToDest = new ActionNode(MoveToDest);
 
@@ -75,7 +74,7 @@ public class ThumperAI : MonsterAI
 
     }
 
-    //Á×À½ ½ÃÄö½º ³ëµå
+    //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
     private Node.State Dead()
     {
         if (thumperHealth.IsDead)
@@ -86,14 +85,14 @@ public class ThumperAI : MonsterAI
         else return Node.State.FAILURE;
     }
 
-    //[°ø°Ý ½ÃÄö½º] µ¹Áø ¸ñÀûÁö ¼³Á¤.
+    //[ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½] ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
     private Node.State AttackWill()
     {
-        //ÇÃ·¹ÀÌ¾î¸¦ ¹ß°ßÇßÀ¸¸é È¤Àº °ø°Ý¹Þ¾ÒÀ¸¸é, ±× À§Ä¡¸¦ ¸ñÇ¥·Î ÁöÁ¤.
+        //ï¿½Ã·ï¿½ï¿½Ì¾î¸¦ ï¿½ß°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È¤ï¿½ï¿½ ï¿½ï¿½ï¿½Ý¹Þ¾ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
         if (setDesti)
         {
-            //ÃÖ´ë ¼Óµµ°¡ Áõ°¡ÇÏ°í, °¢¼Óµµ°¡ ÁÙ¾îµç´Ù.
-            Debug.Log("ÇÃ·¹ÀÌ¾î ºÃ´Ù.");
+            //ï¿½Ö´ï¿½ ï¿½Óµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½, ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ ï¿½Ù¾ï¿½ï¿½ï¿½.
+            Debug.Log("ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½Ã´ï¿½.");
             //navMeshAgent.SetDestination(transform.position);
             navMeshAgent.speed = rushSpeed;
             //navMeshAgent.angularSpeed = rushAnglerSpeed;
@@ -110,38 +109,38 @@ public class ThumperAI : MonsterAI
         }
     }
 
-    //[°ø°Ý ½ÃÄö½º] ¸ñÀûÁö¸¦ ÇâÇØ ÀÌµ¿. 
+    //[ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½. 
     private Node.State MoveToPlayer()
     {
         //Debug.Log(Vector3.Distance(transform.position, target.position));
         //Debug.Log(transform.name + transform.position + ", " + target.name + target.position);
         if (Vector3.Distance(transform.position, destination) <= attackDistance)
         {
-            Debug.Log("´Ù°¡°¬´Ù.");
+            Debug.Log("ï¿½Ù°ï¿½ï¿½ï¿½ï¿½ï¿½.");
             return Node.State.SUCCESS;
         }
         else if (hitWall)
         {
-            //¾Æ¹«µ¥³ª ºÎ‹HÈ÷¸é °ø°Ý³ëµå·Î ³Ñ¾î°¨. °ø°Ý ½ÇÆÐ ¿©ºÎ´Â °ø°Ý ³ëµå¿¡¼­ °áÁ¤.
+            //ï¿½Æ¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Î‹Hï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½ ï¿½Ñ¾î°¨. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½å¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
             return Node.State.SUCCESS;
         }
         else return Node.State.RUNNING;
     }
 
-    //[°ø°Ý ½ÃÄö½º] ÇÃ·¹ÀÌ¾î °ø°Ý.
+    //[ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½] ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½.
     private Node.State AttackPlayer()
     {
         if (Vector3.Distance(transform.position, target.position) <= attackDistance)
         {
             if (Time.time - lastAttackTime >= attackCooltime)
             {
-                Debug.Log("°ø°ÝÇÑ´Ù.");
+                Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.");
                 LivingEntity playerHealth = target.GetComponent<LivingEntity>();
                 
-                //ÇÃ·¹ÀÌ¾î Á×¾úÀ¸¸é ¹èÈ¸ ½ÃÄö½º·Î
+                //ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½×¾ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¸ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 if(playerHealth.IsDead) { return Node.State.FAILURE; }
 
-                //¾Æ´Ï¸é µ¥¹ÌÁö Àû¿ë.
+                //ï¿½Æ´Ï¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
                 playerHealth.ApplyDamage(damageMessage);
                 lastAttackTime = Time.time;
 
@@ -151,10 +150,10 @@ public class ThumperAI : MonsterAI
         return Node.State.FAILURE;
     }
 
-    //[¹èÈ¸ ½ÃÄö½º] ¸ñÀûÁö ¼³Á¤
+    //[ï¿½ï¿½È¸ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     private Node.State SetDest()
     {
-        //Debug.Log("¹èÈ¸ ½ÃÄö½º");
+        //Debug.Log("ï¿½ï¿½È¸ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
 
         if (!wandering)
         {
@@ -166,10 +165,10 @@ public class ThumperAI : MonsterAI
         return Node.State.SUCCESS;
     }
 
-    //[¹èÈ¸ ½ÃÄö½º] ¸ñÀûÁö ÀÌµ¿
+    //[ï¿½ï¿½È¸ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½
     private Node.State MoveToDest()
     {
-        //¸ñÀûÁö¿¡ µµ´ÞÇÔ.
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
         if (Vector3.Distance(transform.position, navMeshAgent.destination) <= .5f)
         {
             wandering = false;

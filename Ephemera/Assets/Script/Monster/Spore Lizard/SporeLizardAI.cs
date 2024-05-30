@@ -38,8 +38,8 @@ public class SporeLizardAI : MonsterAI
     [SerializeField] bool attackState = false;
 
 
-    //»õ·Î¿î ¹öÀüÀÇ AI
-    //À¯È¿ÇÏÁö ¾ÊÀº ¸ñÀûÁö
+    //ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ AI
+    //ï¿½ï¿½È¿ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     public enum State
     {
         Wander,
@@ -53,22 +53,18 @@ public class SporeLizardAI : MonsterAI
     private Vector3[] rayDirections;
 
 
-    void Start()
-    {
-        openDoorDelay = 1f;
-        currentState = State.Wander;
-        rayDirections = new Vector3[cornerRayCount];
-        ConstructBehaviorTree();
-
-        damageMessage = new DamageMessage();
-        damageMessage.damage = 20;
-        damageMessage.damager = gameObject;
-    }
     public override void OnStartServer()
     {
         enabled = true;
         navMeshAgent.enabled = true;
         MonsterReference.Instance.AddMonsterToList(gameObject);
+        
+        openDoorDelay = 1f;
+        currentState = State.Wander;
+        rayDirections = new Vector3[cornerRayCount];
+        ConstructBehaviorTree();
+
+        damageMessage = new DamageMessage() { damage = 20, damager = gameObject };
     }
     void Update()
     {
@@ -81,26 +77,26 @@ public class SporeLizardAI : MonsterAI
     private void ConstructBehaviorTree()
     {
 
-        //À§Çù ½ÃÄö½ºÀÇ children Node
+        //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ children Node
         ActionNode threaten = new ActionNode(Threaten);
         ActionNode explodeSpore = new ActionNode(ExplodeSpore);
 
-        //µµ¸Á
+        //ï¿½ï¿½ï¿½ï¿½
         ActionNode run = new ActionNode(Run);
 
-        //°ø°Ý ½ÃÄö½ºÀÇ children Nodeµé
+        //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ children Nodeï¿½ï¿½
         ActionNode moveToPlayer = new ActionNode(MoveToPlayer);
         ActionNode attackPlayer = new ActionNode(AttackPlayer);
 
-        //¹èÈ¸ ½ÃÄö½ºÀÇ children Nodeµé
+        //ï¿½ï¿½È¸ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ children Nodeï¿½ï¿½
         ActionNode wander = new ActionNode(Wander);
 
-        //¼¿·ºÅÍ ³ëµå¿¡ µé¾î°¥ ½ÃÄö½º ³ëµåµé
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½å¿¡ ï¿½ï¿½î°¥ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         SequenceNode attackSequence = new SequenceNode(new List<Node> { moveToPlayer, attackPlayer });
         topNode = new SelectorNode(new List<Node> { wander, threaten, explodeSpore, run, attackSequence });
     }
 
-    //[¹èÈ¸ ½ÃÄö½º] ¸ñÀûÁö ¼³Á¤ ¹× ÀÌµ¿
+    //[ï¿½ï¿½È¸ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ìµï¿½
     private Node.State Wander()
     {
         if (currentState != State.Wander) return Node.State.FAILURE;
@@ -117,7 +113,7 @@ public class SporeLizardAI : MonsterAI
 
         if (!setDesti)
         {
-            Debug.Log("¸ñÀûÁö ¼³Á¤");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½");
             Vector3 newDest = RandomNavMeshMovement.RandomNavSphere(transform.position, wanderRadius, -1);
             setDesti = true;
             navMeshAgent.SetDestination(newDest);
@@ -125,18 +121,18 @@ public class SporeLizardAI : MonsterAI
 
         if (Vector3.Distance(head.position, navMeshAgent.destination) <= 1f)
         {
-            Debug.Log("¸ñÀûÁö µµÂø");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½");
             setDesti = false;
             return Node.State.SUCCESS;
         }
         else return Node.State.RUNNING;
     }
 
-    //[À§Çù ½ÃÄö½º] ÇÃ·¹ÀÌ¾î ÀÀ½Ã
+    //[ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½] ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½
     private Node.State Threaten()
     {
-        //À§Çù ´ë±â½Ã°£ 3~5ÃÊ µ¿¾È À§Çù
-        //¶Ç´Â ÇÃ·¹ÀÌ¾î ÁøÂ¥ °¡±îÀÌ ´Ù°¡¿À¸é µµ¸Á°¨.
+        //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ã°ï¿½ 3~5ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        //ï¿½Ç´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½Â¥ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
         if (currentState != State.Threaten) return Node.State.FAILURE;
 
         if (Vector3.Distance(transform.position, bewareOf.position) < threatDistance)
@@ -148,7 +144,7 @@ public class SporeLizardAI : MonsterAI
                 threatDuration = Random.Range(3f, 5f);
             }
 
-            //À§ÇùÇÏ±â
+            //ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½
             if (Time.time - threatTime < threatDuration)
             {
                 //rigidbody.velocity = Vector3.zero;
@@ -156,7 +152,7 @@ public class SporeLizardAI : MonsterAI
                 navMeshAgent.isStopped = true;
                 Vector3 lookPosition = new Vector3(bewareOf.position.x, 0, bewareOf.position.z);
                 pivot.LookAt(lookPosition);
-                Debug.Log("À§Çù Áß");
+                Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½");
 
                 return Node.State.RUNNING;
             }
@@ -164,7 +160,7 @@ public class SporeLizardAI : MonsterAI
             {
                 //rigidbody.isKinematic = false;
                 navMeshAgent.isStopped = false;
-                Debug.Log("À§Çù ³¡");
+                Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½");
                 isThreatening = false;
                 currentState = State.Explode;
                 return Node.State.FAILURE;
@@ -174,14 +170,14 @@ public class SporeLizardAI : MonsterAI
         {
             //rigidbody.isKinematic = false;
             navMeshAgent.isStopped = false;
-            Debug.Log("À§Çù µµÁß Á¾·á");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½");
             currentState = State.Wander;
             isThreatening = false;
             return Node.State.FAILURE;
         }
     }
 
-    //[Æ÷ÀÚ ½ÃÄö½º] Æ÷ÀÚ ¹ß»ç
+    //[ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½] ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½
     private Node.State ExplodeSpore()
     {
         if (currentState != State.Explode) return Node.State.FAILURE;
@@ -190,14 +186,14 @@ public class SporeLizardAI : MonsterAI
         {
             if (haveSpore)
             {
-                Debug.Log("Æ÷ÀÚ ¹ß»ç");
+                Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½");
                 haveSpore = false;
                 //Instantiate(sporeParticle, transform.position, Quaternion.identity);
                 OnServerInstantiateParticle();
             }
         }
 
-        //±¸¼®ÀÌ¾úÀ¸¸é °ø°Ý½ÃÄö½º·Î
+        //ï¿½ï¿½ï¿½ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ý½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (IsInCorner()) { haveSpore = true; currentState = State.Attack; return Node.State.FAILURE; }
         else { haveSpore = true; currentState = State.Run; return Node.State.FAILURE; }
     }
@@ -212,14 +208,14 @@ public class SporeLizardAI : MonsterAI
         Instantiate(sporeParticle, transform.position, Quaternion.identity);
     }
 
-    //[µµ¸Á ½ÃÄö½º] µµ¸Á¸ñÀûÁö ¼³Á¤ ¹× µµ¸Á
+    //[ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     private Node.State Run()
     {
         if(currentState != State.Run) return Node.State.FAILURE;
 
         if (!setDesti)
         {
-            Debug.Log("µµ¸Á ¸ñÀûÁö ¼³Á¤");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½");
             wanderDest = RandomNavMeshMovement.NavAwayFromPlayer(transform.position, bewareOf.position, runRadius);
             navMeshAgent.SetDestination(wanderDest);
             setDesti = true;
@@ -230,7 +226,7 @@ public class SporeLizardAI : MonsterAI
 
         if (Vector3.Distance(head.transform.position, wanderDest) <= 1f)
         {
-            Debug.Log("µµ¸Á ¸ñÀûÁö µµÂø");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½");
             setDesti = false;
             navMeshAgent.speed = defaultSpeed;
             navMeshAgent.acceleration = defaultAccel;
@@ -243,37 +239,37 @@ public class SporeLizardAI : MonsterAI
         else return Node.State.RUNNING;
     }
 
-    //[°ø°Ý ½ÃÄö½º] ÇÃ·¹ÀÌ¾î¿¡°Ô Á¢±Ù
+    //[ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½] ï¿½Ã·ï¿½ï¿½Ì¾î¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     private Node.State MoveToPlayer()
     {
         if (currentState != State.Attack) return Node.State.FAILURE;
 
         float distance = Vector3.Distance(head.transform.position, bewareOf.position);
-        Debug.Log("°ø°ÝÇÏ·¯ ÀÌµ¿" + head.transform.position + ", " + bewareOf.position + ", " + Vector3.Distance(head.transform.position, bewareOf.position));
+        Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ ï¿½Ìµï¿½" + head.transform.position + ", " + bewareOf.position + ", " + Vector3.Distance(head.transform.position, bewareOf.position));
         if (distance > attackDistance)
         {
-            Debug.Log("¾ÆÁ÷ µµ´ÞÇÏÁö ¸øÇß´Ù.");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ß´ï¿½.");
             navMeshAgent.SetDestination(bewareOf.position);
             return Node.State.RUNNING;
         }
         else
         {
-            Debug.Log("µµ´ÞÇß´Ù");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½ß´ï¿½");
             return Node.State.SUCCESS;
         }
     }
 
-    //[°ø°Ý ½ÃÄö½º] ÇÃ·¹ÀÌ¾î¸¦ °ø°Ý
+    //[ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½] ï¿½Ã·ï¿½ï¿½Ì¾î¸¦ ï¿½ï¿½ï¿½ï¿½
     private Node.State AttackPlayer()
     {
-        Debug.Log("ÇÃ·¹ÀÌ¾î °ø°Ý ³ëµå");
+        Debug.Log("ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½");
         //Debug.Log(head.position + ", " + bewareOf.position + ", " + Vector3.Distance(head.position, bewareOf.position));
 
         if (Vector3.Distance(head.transform.position, bewareOf.position) <= attackDistance)
         {
             if (Time.time - lastAttackTime >= attackCooltime)
             {
-                Debug.Log("°ø°Ý¼º°ø");
+                Debug.Log("ï¿½ï¿½ï¿½Ý¼ï¿½ï¿½ï¿½");
                 LivingEntity playerHealth = bewareOf.GetComponent<LivingEntity>();
                 playerHealth.ApplyDamage(damageMessage);
                 lastAttackTime = Time.time;
@@ -295,7 +291,7 @@ public class SporeLizardAI : MonsterAI
 
 
 
-    //±¸¼®¿¡ ¸ô·ÁÀÖ´ÂÁö È®ÀÎÇÔ. (À§Çù -> °ø°ÝÀ¸·Î ³Ñ¾î°¡±â À§ÇÑ º¯¼ö)
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ È®ï¿½ï¿½ï¿½ï¿½. (ï¿½ï¿½ï¿½ï¿½ -> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ¾î°¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
     bool IsInCorner()
     {
         int blockedRayCount = 0;
@@ -303,7 +299,7 @@ public class SporeLizardAI : MonsterAI
         {
             float angle = i * (360f / cornerRayCount);
             Vector3 direction = Quaternion.Euler(0, angle, 0) * transform.forward;
-            rayDirections[i] = direction;  // Ray ¹æÇâ ÀúÀå
+            rayDirections[i] = direction;  // Ray ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
             NavMeshHit hit;
             if (NavMesh.Raycast(transform.position, transform.position + direction * cornerDetectionRadius, out hit, NavMesh.AllAreas))
@@ -311,7 +307,7 @@ public class SporeLizardAI : MonsterAI
                 blockedRayCount++;
             }
         }
-        return blockedRayCount > cornerRayCount / 2; // Àý¹Ý ÀÌ»óÀÇ ¹æÇâÀÌ ¸·Çô ÀÖÀ¸¸é ±¸¼®À¸·Î ÆÇ´Ü
+        return blockedRayCount > cornerRayCount / 2; // ï¿½ï¿½ï¿½ï¿½ ï¿½Ì»ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ç´ï¿½
     }
 
     void OnDrawGizmos()

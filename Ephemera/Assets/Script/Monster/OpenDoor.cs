@@ -1,3 +1,4 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,32 +8,32 @@ public class OpenDoor : MonoBehaviour
     [SerializeField] MonsterAI monster;
     [SerializeField] UnityEngine.AI.NavMeshAgent navMeshAgent;
 
-    bool opening = false;
+    private bool _opening = false;
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.tag == "Door")
+        if(other.CompareTag("Door"))
         {
             Door door = other.GetComponent<Door>();
             if(door.IsOpen) { return; }
 
-            if (!opening)
+            if (!_opening)
             {
-                opening = true;
+                _opening = true;
                 StartCoroutine(OpenCoroutine(door));
             }
         }
     }
-
+    
     private void OnTriggerExit(Collider other)
     {
-        if (other.tag == "Door")
+        if (other.CompareTag("Door"))
         {
             Door door = other.GetComponent<Door>();
 
             if (door.IsOpen)
             {
-                opening = false;
+                _opening = false;
             }
         }
     }
@@ -43,7 +44,7 @@ public class OpenDoor : MonoBehaviour
         navMeshAgent.isStopped = true;
         yield return new WaitForSeconds(monster.OpenDoorDelay);
         door.OpenDoor();
-        yield return new WaitForSeconds(0.6f);//¹®¿­¸®´Â ½Ã°£
+        yield return new WaitForSeconds(0.6f);//ë¬¸ì—´ë¦¬ëŠ” ì‹œê°„
         navMeshAgent.isStopped = false;
     }
     /*

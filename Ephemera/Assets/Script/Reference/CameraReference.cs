@@ -11,25 +11,24 @@ public class CameraReference : SingleTon<CameraReference>
     Dictionary<uint, GameObject> playerVirtualCameraDic = new Dictionary<uint, GameObject>();
     Dictionary<VirtualCameraType, GameObject> objectVirtualCameraDic = new Dictionary<VirtualCameraType, GameObject>();
 
-
     #region LocalPlayer
     public void RegistLocalPlayerVirtualCamera(GameObject cameraObject)
     {
         localPlayerCamera = cameraObject;
     }
-    //vCamÇØÁ¦
+    //vCamï¿½ï¿½ï¿½ï¿½
     public void DeregistLocalPlayerVirtualCamera()
     {
         localPlayerCamera = null;
     }
     #endregion
     #region Other Player
-    //vCamµî·Ï
+    //vCamï¿½ï¿½ï¿½
     public void RegistPlayerVirtualCamera(uint netId, GameObject cameraObject)
     {
         playerVirtualCameraDic.TryAdd(netId, cameraObject);
     }
-    //vCamÇØÁ¦
+    //vCamï¿½ï¿½ï¿½ï¿½
     public void DeregistPlayerVirtualCamera(uint netId)
     {
         if (playerVirtualCameraDic.ContainsKey(netId))
@@ -38,14 +37,13 @@ public class CameraReference : SingleTon<CameraReference>
         }
     }
     #endregion
-
     #region Object VCam
-    //vCamµî·Ï
+    //vCamï¿½ï¿½ï¿½
     public void RegistVirtualCamera(VirtualCameraType type, GameObject cameraObject)
     {
         objectVirtualCameraDic.TryAdd(type, cameraObject);
     }
-    //vCamÇØÁ¦
+    //vCamï¿½ï¿½ï¿½ï¿½
     public void DeregistVirtualCamera(VirtualCameraType type)
     {
         if(objectVirtualCameraDic.ContainsKey(type))
@@ -54,9 +52,8 @@ public class CameraReference : SingleTon<CameraReference>
         }
     }
     #endregion
-
     #region Active Vcam
-    // loacl Player Camera¸¦ È°¼ºÇÏ°í ³ª¸ÓÁö ºñÈ°¼º
+    // loacl Player Cameraï¿½ï¿½ È°ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È°ï¿½ï¿½
     public void SetActiveLocalPlayerVirtualCamera()
     {
         Debug.Log("Local Player Virtual Camera");
@@ -70,7 +67,7 @@ public class CameraReference : SingleTon<CameraReference>
             item.Value.SetActive(false);
         }
     }
-    // other player Ã¹¹øÂ° VCamÈ°¼º
+    // other player Ã¹ï¿½ï¿½Â° VCamÈ°ï¿½ï¿½
     public void SetActiveFirstOtherPlayerVirtualCamera()
     {
         Debug.Log("Other Player Virtual Camera");
@@ -79,7 +76,7 @@ public class CameraReference : SingleTon<CameraReference>
         playerVirtualCameraDic.Values.First().SetActive(true);
         localPlayerCamera.SetActive(false);
     }
-    // other player ´ÙÀ½ VCamÈ°¼º
+    // other player ï¿½ï¿½ï¿½ï¿½ VCamÈ°ï¿½ï¿½
     public void SetActiveNextOtherPlayerVirtualCamera()
     {
         if (playerVirtualCameraDic.Count == 0)
@@ -93,7 +90,7 @@ public class CameraReference : SingleTon<CameraReference>
         }
         if (activeCam == null)
             return;
-        //È°¼ºÈ­µÈ Ä«¸Þ¶óÀÇ ¹øÈ£
+        //È°ï¿½ï¿½È­ï¿½ï¿½ Ä«ï¿½Þ¶ï¿½ï¿½ï¿½ ï¿½ï¿½È£
         int currentIndex = values.IndexOf(activeCam);
         if (currentIndex == values.Count - 1)
             currentIndex = 0;
@@ -113,7 +110,7 @@ public class CameraReference : SingleTon<CameraReference>
         values[currentIndex].SetActive(true);
     }
     
-    // other player VCamÈ°¼º
+    // other player VCamÈ°ï¿½ï¿½
     public void SetActivePlayerVirtualCamera(uint netId)
     {
         if (playerVirtualCameraDic.ContainsKey(netId) == false)
@@ -132,7 +129,7 @@ public class CameraReference : SingleTon<CameraReference>
         }
         localPlayerCamera.SetActive(false);
     }
-    //vCamÈ°¼º
+    //vCamÈ°ï¿½ï¿½
     public void SetActiveVirtualCamera(VirtualCameraType type)
     {
 

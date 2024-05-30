@@ -1,25 +1,24 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ThumperHitWall : MonoBehaviour
+public class ThumperHitWall : NetworkBehaviour
 {
+    [SerializeField]
     ThumperAI thumper;
-    // Start is called before the first frame update
-    void Start()
-    {
-        thumper = transform.parent.GetComponent<ThumperAI>();
-    }
-
+    
+    [ServerCallback]
     private void OnTriggerEnter(Collider other)
     {
-        //Debug.Log("ºÎ‹HÇû¾î¿ä");
+        //Debug.Log("ë¶€ë”«í˜”ì–´ìš”");
         thumper.hitWall = true;
     }
 
+    [ServerCallback]
     private void OnTriggerExit(Collider other)
     {
-        //Debug.Log("hitWall °»½ÅÇØ¿ë");
+        //Debug.Log("hitWall ê°±ì‹ í•´ìš©");
         thumper.hitWall = false;
     }
 }
