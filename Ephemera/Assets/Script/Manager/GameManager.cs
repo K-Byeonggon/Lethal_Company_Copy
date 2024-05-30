@@ -16,9 +16,9 @@ public class GameManager : NetworkBehaviour
 {
     #region Field
     public static GameManager Instance;
-    //ÃÖ´ë ¸¶°¨ÀÏ
+    //ìµœëŒ€ ë§ˆê°ì¼
     private const int maxDeadline = 3;
-    //ÆÇ¸Å ¹èÀ²
+    //íŒë§¤ ë°°ìœ¨
     RuntimeDungeon rd;
     Coroutine timeCoroutine;
 
@@ -51,15 +51,15 @@ public class GameManager : NetworkBehaviour
     }
     #endregion
     #region Sync Field
-    //¼ÒÁö±İ
+    //ì†Œì§€ê¸ˆ
     [SyncVar] private int currentMoney;
-    //¸ñÇ¥ ±İ¾×
+    //ëª©í‘œ ê¸ˆì•¡
     [SyncVar] private int targetMoney;
-    //³²Àº ¸¶°¨ÀÏ
+    //ë‚¨ì€ ë§ˆê°ì¼
     [SyncVar] private int currentDeadline;
-    //ÇöÀç ½Ã°£
+    //í˜„ì¬ ì‹œê°„
     [SyncVar] private int currentTime = 0;
-    //¼±ÅÃ Çà¼º
+    //ì„ íƒ í–‰ì„±
     [SyncVar] private Planet selectPlanet;
     #endregion
     #region Property
@@ -72,7 +72,7 @@ public class GameManager : NetworkBehaviour
         return new GameTime(currentTime);
     }
     ///<summary>
-    ///terrainÈ°¼ºÈ­
+    ///terrainí™œì„±í™”
     ///</summary>
     public void SetActivatePlanetTerrain(int index, bool isActive)
     {
@@ -81,16 +81,16 @@ public class GameManager : NetworkBehaviour
 
     public void CreateRoom(int seed)
     {
-        //ÀÓ½Ã ÁÖ¼®
+        //ì„ì‹œ ì£¼ì„
         rd = Instantiate(ResourceManager.Instance.GetPrefab("DungeonGenerator")).GetComponent<RuntimeDungeon>();
         rd.Generator.ShouldRandomizeSeed = false;
         rd.Generator.Seed = seed;
         rd.Generate();
 
 
-        //³»ºÎ Ã¹ ¹®°ú ¸¶Áö¸· ¹®¿¡ ExitDoor Ãß°¡
+        //ë‚´ë¶€ ì²« ë¬¸ê³¼ ë§ˆì§€ë§‰ ë¬¸ì— ExitDoor ì¶”ê°€
 
-        //À§Ä¡¿¡ ¹® ¿ÀºêÁ§Æ® Ãß°¡
+        //ìœ„ì¹˜ì— ë¬¸ ì˜¤ë¸Œì íŠ¸ ì¶”ê°€
         //rd.Generator.CurrentDungeon.MainPathTiles[0].Entrance.transform.position;
 
         
@@ -132,12 +132,11 @@ public class GameManager : NetworkBehaviour
         Instance = this;
     }
     #endregion
-    #region ºñµ¿±â ·Îµù
-
+    #region ë¹„ë™ê¸° ë¡œë”©
     [SyncVar] private int readyPlayerCount = 0;
     private int totalPlayers;
 
-    public string addressablePrefabKey; // ¾îµå·¹¼­ºí Å°
+    public string addressablePrefabKey; // ì–´ë“œë ˆì„œë¸” í‚¤
     private Dictionary<NetworkConnection, bool> playerReadyStates = new Dictionary<NetworkConnection, bool>();
 
     public override void OnStartServer()
@@ -156,9 +155,10 @@ public class GameManager : NetworkBehaviour
     [TargetRpc]
     private void RpcLoadPrefab(NetworkConnection target)
     {
-        LoadPrefabAsync(target);
+        //LoadPrefabAsync(target);
     }
 
+    /*
     private void LoadPrefabAsync(NetworkConnection conn)
     {
         Addressables.LoadAssetAsync<GameObject>(addressablePrefabKey).Completed += handle =>
@@ -175,9 +175,10 @@ public class GameManager : NetworkBehaviour
             }
         };
     }
+    */
 
     [Command]
-    private void CmdPlayerReady(NetworkConnection conn)
+    private void CmdPlayerReady(NetworkConnectionToClient conn)
     {
         playerReadyStates[conn] = true;
         readyPlayerCount = playerReadyStates.Values.Count(ready => ready);
@@ -191,20 +192,16 @@ public class GameManager : NetworkBehaviour
     [ClientRpc]
     private void RpcProceedToNextStep()
     {
-        // ¸ğµç ÇÃ·¹ÀÌ¾î°¡ ÁØºñµÈ »óÅÂÀÌ¸é ´ÙÀ½ ´Ü°è·Î ³Ñ¾î°©´Ï´Ù.
+        // ëª¨ë“  í”Œë ˆì´ì–´ê°€ ì¤€ë¹„ëœ ìƒíƒœì´ë©´ ë‹¤ìŒ ë‹¨ê³„ë¡œ ë„˜ì–´ê°‘ë‹ˆë‹¤.
         Debug.Log("All players are ready. Proceeding to the next step...");
-        // ¿¹¸¦ µé¾î, °ÔÀÓ ½ÃÀÛ UI ¼û±â±â, °ÔÀÓ ¿ÀºêÁ§Æ® È°¼ºÈ­ µî
+        // ì˜ˆë¥¼ ë“¤ì–´, ê²Œì„ ì‹œì‘ UI ìˆ¨ê¸°ê¸°, ê²Œì„ ì˜¤ë¸Œì íŠ¸ í™œì„±í™” ë“±
     }
     #endregion
-
-
-
-
 
     #region NetworkBehaviour Function
     /*public override void OnStartServer()
     {
-        //¸ğµç ÇÃ·¹ÀÌ¾î°¡ ÁØºñµÇ¾úÀ» ½Ã
+        //ëª¨ë“  í”Œë ˆì´ì–´ê°€ ì¤€ë¹„ë˜ì—ˆì„ ì‹œ
         //OnServerChangeGameState(GameStateType.ResetState);
         if (isServer == true)
         {
@@ -212,34 +209,34 @@ public class GameManager : NetworkBehaviour
         }
     }*/
     #endregion
-    #region °ÔÀÓ Èå¸§ Á¦¾î
+    #region ê²Œì„ íë¦„ ì œì–´
     /// <summary>
-    /// °ÔÀÓ ¸®¼Â(¼­¹ö¿¡¼­¸¸ È£Ãâ)
+    /// ê²Œì„ ë¦¬ì…‹(ì„œë²„ì—ì„œë§Œ í˜¸ì¶œ)
     /// </summary>
     [Server] public void OnServerGameReset()
     {
         Debug.Log("GameReset");
 
-        //°ÔÀÓ ÃÊ±âÈ­
+        //ê²Œì„ ì´ˆê¸°í™”
         Invoke("GameReset", 2f);
     }
     [Server] public void GameReset()
     {
-        //¼ÒÁö±İ ¸®¼Â
+        //ì†Œì§€ê¸ˆ ë¦¬ì…‹
         OnClientSetCurrentMoney(0);
-        //¸ñÇ¥±İ¾× ¸®¼Â
+        //ëª©í‘œê¸ˆì•¡ ë¦¬ì…‹
         OnServerTargetMoneyChanged(150);
-        //µ¥µå¶óÀÎ ¸®¼Â
+        //ë°ë“œë¼ì¸ ë¦¬ì…‹
         OnServerDeadlineReset();
-        //Ä³¸¯ÅÍ Á¦¾î ºñÈ°¼ºÈ­
+        //ìºë¦­í„° ì œì–´ ë¹„í™œì„±í™”
         OnServerSetActivePlayer(false);
 
         OnClientGameStartInit();
     }
     #endregion
-    #region Server Function ¼­¹ö¿¡¼­ ½ÇÇàµÇ´Â ÇÔ¼ö
+    #region Server Function ì„œë²„ì—ì„œ ì‹¤í–‰ë˜ëŠ” í•¨ìˆ˜
     /// <summary>
-    /// ¼ÒÁö ±İ¾× º¯°æ(¼­¹ö¿¡¼­¸¸ È£Ãâ)
+    /// ì†Œì§€ ê¸ˆì•¡ ë³€ê²½(ì„œë²„ì—ì„œë§Œ í˜¸ì¶œ)
     /// </summary>
     [Server] public void OnServerCurrentMoneyChanged(int money)
     {
@@ -247,7 +244,7 @@ public class GameManager : NetworkBehaviour
         OnClientSetCurrentMoney(currentMoney);
     }
     /// <summary>
-    /// ¸ñÇ¥ ±İ¾× º¯°æ(¼­¹ö¿¡¼­¸¸ È£Ãâ)
+    /// ëª©í‘œ ê¸ˆì•¡ ë³€ê²½(ì„œë²„ì—ì„œë§Œ í˜¸ì¶œ)
     /// </summary>
     [Server] public void OnServerTargetMoneyChanged(int targetMoney)
     {
@@ -255,28 +252,28 @@ public class GameManager : NetworkBehaviour
         OnClientSetTargetMoney(this.targetMoney);
     }
     /// <summary>
-    /// µ¥µå¶óÀÎ 1 Â÷°¨
+    /// ë°ë“œë¼ì¸ 1 ì°¨ê°
     /// </summary>
     [Server] public void OnServerDayPasses()
     {
         if(currentDeadline - 1 < 0)
         {
-            //´ÙÀ½ ÀÌº¥Æ®
+            //ë‹¤ìŒ ì´ë²¤íŠ¸
             if(currentMoney > targetMoney)
             {
-                //¼ÒÁö±İ ¸®¼Â
+                //ì†Œì§€ê¸ˆ ë¦¬ì…‹
                 //OnClientSetCurrentMoney(0);
-                //¸ñÇ¥±İ¾× ¸®¼Â
+                //ëª©í‘œê¸ˆì•¡ ë¦¬ì…‹
                 int newTargetMoney = targetMoney * 2;
                 OnServerTargetMoneyChanged(newTargetMoney);
-                //µ¥µå¶óÀÎ ¸®¼Â
+                //ë°ë“œë¼ì¸ ë¦¬ì…‹
                 OnServerDeadlineReset();
-                //°ÔÀÓ ¸®¼Â
+                //ê²Œì„ ë¦¬ì…‹
                 OnClientGameStartInit();
-                //Ä³¸¯ÅÍ Á¦¾î ºñÈ°¼ºÈ­
+                //ìºë¦­í„° ì œì–´ ë¹„í™œì„±í™”
                 OnServerSetActivePlayer(false);
             }
-            //ÆĞ¹è ÀÌº¥Æ®
+            //íŒ¨ë°° ì´ë²¤íŠ¸
             else
             {
                 OnServerGameReset();
@@ -290,14 +287,14 @@ public class GameManager : NetworkBehaviour
         }
     }
     /// <summary>
-    /// µ¥µå¶óÀÎ ¸®¼Â
+    /// ë°ë“œë¼ì¸ ë¦¬ì…‹
     /// </summary>
     [Server] public void OnServerDeadlineReset()
     {
         OnClientSetDeadLine(maxDeadline);
     }
     /// <summary>
-    /// ¾ÆÀÌÅÛ ÆÇ¸Å
+    /// ì•„ì´í…œ íŒë§¤
     /// </summary>
     [Server] public void OnServerSellItem(Item[] items)
     {
@@ -311,7 +308,7 @@ public class GameManager : NetworkBehaviour
         OnClientDisplayTotalRevenue();
     }
     /// <summary>
-    /// ¼º°£ÀÌµ¿
+    /// ì„±ê°„ì´ë™
     /// </summary>
     [Server] public void OnServerStartHyperDrive(int index)
     {
@@ -322,19 +319,19 @@ public class GameManager : NetworkBehaviour
         }
     }
     /// <summary>
-    /// Çà¼º ÁøÀÔ
+    /// í–‰ì„± ì§„ì…
     /// </summary>
     [Server] public void OnServerEnterPlanet()
     {
         if (TerrainController.Instance.GetTerrainCount() <= (int)selectPlanet)
             return;
-        //¿ìÁÖ¼± ¿Å±â°í
+        //ìš°ì£¼ì„  ì˜®ê¸°ê³ 
         if(shipController == null)
             shipController = FindObjectOfType<ShipController>();
         shipController.OnServerChangePosition(TerrainController.Instance.shipStartTransform.position);
-        //ÇÔ¼± Ãâ¹ß
+        //í•¨ì„  ì¶œë°œ
         shipController.StartLanding(TerrainController.Instance.GetLandingZone(selectPlanet).position);
-        //°ÔÀÓ ½Ã°£ È°¼ºÈ­
+        //ê²Œì„ ì‹œê°„ í™œì„±í™”
         timeCoroutine = StartCoroutine(IncrementTimeCounter());
         int seed = OnServerGetRandomSeed();
         OnClientEnterPlanet(seed);
@@ -342,16 +339,16 @@ public class GameManager : NetworkBehaviour
         IsLand = true;
     }
     /// <summary>
-    /// Çà¼º Å»Ãâ
+    /// í–‰ì„± íƒˆì¶œ
     /// </summary>
     [Server] public void OnServerEscapePlanet()
     {
         Debug.Log("OnServerEscapePlanet");
-        //¿ìÁÖ¼± ¿Å±â°í
+        //ìš°ì£¼ì„  ì˜®ê¸°ê³ 
         if (shipController == null)
             shipController = FindObjectOfType<ShipController>();
 
-        //Ä³¸¯ÅÍÄÁÆ®·Ñ·¯ ºñÈ°¼ºÈ­
+        //ìºë¦­í„°ì»¨íŠ¸ë¡¤ëŸ¬ ë¹„í™œì„±í™”
         OnClientSetCharacterController(false);
 
         IsLand = false;
@@ -360,13 +357,13 @@ public class GameManager : NetworkBehaviour
         Invoke("EscapeSquance", 3f);
     }
     /// <summary>
-    /// Å»Ãâ ½ÃÄı½º
+    /// íƒˆì¶œ ì‹œí€¸ìŠ¤
     /// </summary>
     [Server] public void EscapeSquance()
     {
-        //ÇÔ¼± Ãâ¹ß
+        //í•¨ì„  ì¶œë°œ
         shipController.StartEscape(TerrainController.Instance.shipStartTransform.position);
-        //°ÔÀÓ ½Ã°£ È°¼ºÈ­
+        //ê²Œì„ ì‹œê°„ í™œì„±í™”
         if (timeCoroutine != null)
             StopCoroutine(timeCoroutine);
 
@@ -384,21 +381,21 @@ public class GameManager : NetworkBehaviour
         StartCoroutine(DestroyAllObjectsAfterDelay());
     }
     /// <summary>
-    /// ·£´ı ½Ãµå »ı¼º
+    /// ëœë¤ ì‹œë“œ ìƒì„±
     /// </summary>
     [Server] public int OnServerGetRandomSeed()
     {
         return Environment.TickCount;
     }
     /// <summary>
-    /// ¸ğµç ÇÃ·¹ÀÌ¾î Ä«¸Ş¶ó ¼ÂÆÃ
+    /// ëª¨ë“  í”Œë ˆì´ì–´ ì¹´ë©”ë¼ ì…‹íŒ…
     /// </summary>
     [Server] public void OnServerActiveLocalPlayerCamera()
     {
         OnCLientActiveLocalPlayerCamera();
     }
     /// <summary>
-    /// ÇÃ·¹ÀÌ¾î È°¼ºÈ­
+    /// í”Œë ˆì´ì–´ í™œì„±í™”
     /// </summary>
     /// <param name="isActive"></param>
     [Server] public void OnServerSetActivePlayer(bool isActive)
@@ -406,14 +403,14 @@ public class GameManager : NetworkBehaviour
         OnCLientSetActivePlayer(isActive);
     }
     /// <summary>
-    /// ¹® ¿¬°á (¼­¹ö)
+    /// ë¬¸ ì—°ê²° (ì„œë²„)
     /// </summary>
     [Server] public void OnServerDoorLinkSequence()
     {
         OnClientDoorLinkSequence();
     }
     /// <summary>
-    /// ¸ó½ºÅÍ »èÁ¦ (¼­¹ö)
+    /// ëª¬ìŠ¤í„° ì‚­ì œ (ì„œë²„)
     /// </summary>
     [Server] public void OnServerClearMonster()
     {
@@ -426,7 +423,7 @@ public class GameManager : NetworkBehaviour
         OnClientClearMonster();
     }
     /// <summary>
-    /// ÇÃ·¹ÀÌ¾î »ç¸Á ÀÌº¥Æ®
+    /// í”Œë ˆì´ì–´ ì‚¬ë§ ì´ë²¤íŠ¸
     /// </summary>
     [Server] public void PlayerDieEvent()
     {
@@ -444,7 +441,7 @@ public class GameManager : NetworkBehaviour
             OnServerEscapePlanet();
     }
     /// <summary>
-    /// ¾ÆÀÌÅÛ ½ºÆù
+    /// ì•„ì´í…œ ìŠ¤í°
     /// </summary>
     [Server] public void SpawnItem()
     {
@@ -477,7 +474,7 @@ public class GameManager : NetworkBehaviour
         }
     }
     /// <summary>
-    /// ÀÏÁ¤ ½Ã°£ÀÌ Áö³­ ÈÄ¿¡ ¸ğµç ¸ó½ºÅÍ¿Í ¾ÆÀÌÅÛÀ» ÆÄ±«
+    /// ì¼ì • ì‹œê°„ì´ ì§€ë‚œ í›„ì— ëª¨ë“  ëª¬ìŠ¤í„°ì™€ ì•„ì´í…œì„ íŒŒê´´
     /// </summary>
     [Server] private IEnumerator DestroyAllObjectsAfterDelay()
     {
@@ -496,7 +493,7 @@ public class GameManager : NetworkBehaviour
         CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShipMiniature);
     }
     /// <summary>
-    /// ¸ó½ºÅÍ ½ºÆù
+    /// ëª¬ìŠ¤í„° ìŠ¤í°
     /// </summary>
     [Server] public void SpawnMonster()
     {
@@ -522,9 +519,9 @@ public class GameManager : NetworkBehaviour
         }
     }
     #endregion
-    #region Command Function Å¬¶óÀÌ¾ğÆ®¿¡¼­ È£ÃâÇØ¼­ ¼­¹ö¿¡¼­ ½ÇÇàÇÏ´Â ÇÔ¼ö
+    #region Command Function í´ë¼ì´ì–¸íŠ¸ì—ì„œ í˜¸ì¶œí•´ì„œ ì„œë²„ì—ì„œ ì‹¤í–‰í•˜ëŠ” í•¨ìˆ˜
     /// <summary>
-    /// ¿ÀºêÁ§Æ® ÆÄ±«
+    /// ì˜¤ë¸Œì íŠ¸ íŒŒê´´
     /// </summary>
     [Command(requiresAuthority = false)]
     public void DestroyObject(NetworkIdentity identity)
@@ -532,9 +529,9 @@ public class GameManager : NetworkBehaviour
         NetworkServer.Destroy(identity.gameObject);
     }
     #endregion
-    #region ClientRpc Function ¼­¹ö°¡ ¿ø°İ ÇÁ·Î½ÃÀú È£Ãâ(RPC)·Î ¸ğµç Å¬¶óÀÌ¾ğÆ®¿¡¼­ ½ÇÇàµÇ´Â ÇÔ¼ö
+    #region ClientRpc Function ì„œë²„ê°€ ì›ê²© í”„ë¡œì‹œì € í˜¸ì¶œ(RPC)ë¡œ ëª¨ë“  í´ë¼ì´ì–¸íŠ¸ì—ì„œ ì‹¤í–‰ë˜ëŠ” í•¨ìˆ˜
     /// <summary>
-    /// Ä³¸¯ÅÍ Á¦¾î È°¼ºÈ­
+    /// ìºë¦­í„° ì œì–´ í™œì„±í™”
     /// </summary>
     /// <param name="isActive"></param>
     [ClientRpc] public void OnClientSetCharacterController(bool isActive)
@@ -552,40 +549,40 @@ public class GameManager : NetworkBehaviour
     [ClientRpc] public void OnClientEnterPlanet(int seed)
     {
         Debug.Log($"seed : {seed}");
-        //UI ¼û±â°í
+        //UI ìˆ¨ê¸°ê³ 
         UIController.Instance.SetActivateUI(null);
-        //¹Ì´Ï¾îÃÄ Ship ¼û±â°í
+        //ë¯¸ë‹ˆì–´ì³ Ship ìˆ¨ê¸°ê³ 
         ObjectReference.Instance.GetGameObject("ShipMiniature").SetActive(false);
-        //spaceSystem ¼û±â°í
+        //spaceSystem ìˆ¨ê¸°ê³ 
         SpaceSystem.Instance.SetActivateSpaceSystem(false);
-        //terrain È°¼ºÈ­ÇÏ°í
+        //terrain í™œì„±í™”í•˜ê³ 
         SetActivatePlanetTerrain((int)selectPlanet, true);
-        //¹æ »ı¼ºÇÏ°í
+        //ë°© ìƒì„±í•˜ê³ 
         CreateRoom(seed);
-        //¸ó½ºÅÍ, ¾ÆÀÌÅÛ »ı¼ºÇÏ°í
+        //ëª¬ìŠ¤í„°, ì•„ì´í…œ ìƒì„±í•˜ê³ 
         GeneraterObject();
-        //Ä«¸Ş¶ó ¿Å±â°í
+        //ì¹´ë©”ë¼ ì˜®ê¸°ê³ 
         CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShip);
     }
 
     [ClientRpc] public void OnClientEscapePlanet()
     {
-        //¹Ì´Ï¾îÃÄ Ship º¸¿©ÁÖ°í
+        //ë¯¸ë‹ˆì–´ì³ Ship ë³´ì—¬ì£¼ê³ 
         ObjectReference.Instance.GetGameObject("ShipMiniature").SetActive(true);
-        //spaceSystem º¸¿©ÁÖ°í
+        //spaceSystem ë³´ì—¬ì£¼ê³ 
         SpaceSystem.Instance.SetActivateSpaceSystem(true);
-        //terrain ºñÈ°¼ºÈ­ÇÏ°í
+        //terrain ë¹„í™œì„±í™”í•˜ê³ 
         SetActivatePlanetTerrain((int)selectPlanet, false);
-        //¹æ »èÁ¦ÇÏ°í
+        //ë°© ì‚­ì œí•˜ê³ 
         DestoryRoom();
         MonsterReference.Instance.DestroyAll();
         ItemReference.Instance.DestroyAll();
 
 
         Debug.Log("VirtualCameraType.SpaceShipMiniature");
-        //Ä«¸Ş¶ó ¿Å±â°í
+        //ì¹´ë©”ë¼ ì˜®ê¸°ê³ 
         CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShipMiniature);
-        //UI º¸¿©ÁÖ°í
+        //UI ë³´ì—¬ì£¼ê³ 
         UIController.Instance.SetActivateUI(typeof(UI_Selecter));
     }
 
@@ -604,9 +601,9 @@ public class GameManager : NetworkBehaviour
         localPlayerController?.SetActivateLocalPlayer(isActive);
     }
     #endregion
-    #region ClientRpc Action ¼­¹ö°¡ ¿ø°İ ÇÁ·Î½ÃÀú È£Ãâ(RPC)·Î ¸ğµç Å¬¶óÀÌ¾ğÆ®¿¡¼­ ½ÇÇàµÇ´Â Action
+    #region ClientRpc Action ì„œë²„ê°€ ì›ê²© í”„ë¡œì‹œì € í˜¸ì¶œ(RPC)ë¡œ ëª¨ë“  í´ë¼ì´ì–¸íŠ¸ì—ì„œ ì‹¤í–‰ë˜ëŠ” Action
     /// <summary>
-    /// ÇöÀç ¼ÒÁö±İ º¯°æ(¸ğµç Å¬¶óÀÌ¾ğÆ®)
+    /// í˜„ì¬ ì†Œì§€ê¸ˆ ë³€ê²½(ëª¨ë“  í´ë¼ì´ì–¸íŠ¸)
     /// </summary>
     [ClientRpc] private void OnClientSetCurrentMoney(int money)
     {
@@ -615,7 +612,7 @@ public class GameManager : NetworkBehaviour
     }
 
     /// <summary>
-    /// ¸ñÇ¥ ±İ¾× º¯°æ(¸ğµç Å¬¶óÀÌ¾ğÆ®)
+    /// ëª©í‘œ ê¸ˆì•¡ ë³€ê²½(ëª¨ë“  í´ë¼ì´ì–¸íŠ¸)
     /// </summary>
     [ClientRpc] private void OnClientSetTargetMoney(int targetMoney)
     {
@@ -624,7 +621,7 @@ public class GameManager : NetworkBehaviour
     }
 
     /// <summary>
-    /// µ¥µå¶óÀÎ º¯°æ(¸ğµç Å¬¶óÀÌ¾ğÆ®)
+    /// ë°ë“œë¼ì¸ ë³€ê²½(ëª¨ë“  í´ë¼ì´ì–¸íŠ¸)
     /// </summary>
     [ClientRpc] private void OnClientSetDeadLine(int deadLine)
     {
@@ -633,7 +630,7 @@ public class GameManager : NetworkBehaviour
     }
 
     /// <summary>
-    /// Ä³¸¯ÅÍ »óÅÂ º¯°æ(¸ğµç Å¬¶óÀÌ¾ğÆ®)
+    /// ìºë¦­í„° ìƒíƒœ ë³€ê²½(ëª¨ë“  í´ë¼ì´ì–¸íŠ¸)
     /// </summary>
     [ClientRpc] private void OnClientSetPlayerState(int targetMoney)
     {
@@ -642,7 +639,7 @@ public class GameManager : NetworkBehaviour
     }
 
     /// <summary>
-    /// ÃÑ ¼öÀÍ UI Ãâ·Â (¸ğµç Å¬¶óÀÌ¾ğÆ®)
+    /// ì´ ìˆ˜ìµ UI ì¶œë ¥ (ëª¨ë“  í´ë¼ì´ì–¸íŠ¸)
     /// </summary>
     [ClientRpc] private void OnClientDisplayTotalRevenue()
     {
@@ -650,7 +647,7 @@ public class GameManager : NetworkBehaviour
     }
 
     /// <summary>
-    /// ÃÑ ¼öÀÍ UI Ãâ·Â (¸ğµç Å¬¶óÀÌ¾ğÆ®)
+    /// ì´ ìˆ˜ìµ UI ì¶œë ¥ (ëª¨ë“  í´ë¼ì´ì–¸íŠ¸)
     /// </summary>
     [ClientRpc] private void OnClientDisplayTime()
     {
@@ -660,7 +657,7 @@ public class GameManager : NetworkBehaviour
     }
 
     /// <summary>
-    /// ¹® ¿¬°á (Å¬¶óÀÌ¾ğÆ®)
+    /// ë¬¸ ì—°ê²° (í´ë¼ì´ì–¸íŠ¸)
     /// </summary>
     [ClientRpc] public void OnClientDoorLinkSequence()
     {
@@ -675,7 +672,7 @@ public class GameManager : NetworkBehaviour
     }
 
     /// <summary>
-    /// ¸ó½ºÅÍ »èÁ¦ (Å¬¶óÀÌ¾ğÆ®)
+    /// ëª¬ìŠ¤í„° ì‚­ì œ (í´ë¼ì´ì–¸íŠ¸)
     /// </summary>
     [ClientRpc] public void OnClientClearMonster()
     {
@@ -683,44 +680,44 @@ public class GameManager : NetworkBehaviour
         monsterReference.monsterList.Clear();
     }
     #endregion
-    #region ActionRegist Actionµî·Ï
+    #region ActionRegist Actionë“±ë¡
     /// <summary>
-    /// ÇöÀç ¼ÒÁö±İ UI°»½Å ÀÌº¥Æ® µî·Ï
+    /// í˜„ì¬ ì†Œì§€ê¸ˆ UIê°±ì‹  ì´ë²¤íŠ¸ ë“±ë¡
     /// </summary>
     public void RegistCurrentMoneyDisplayAction(Action<string> action = null)
     {
         CurrentMoneyDisplay = action;
     }
     /// <summary>
-    /// ¸ñÇ¥ ±İ¾× UI°»½Å ÀÌº¥Æ® µî·Ï
+    /// ëª©í‘œ ê¸ˆì•¡ UIê°±ì‹  ì´ë²¤íŠ¸ ë“±ë¡
     /// </summary>
     public void RegistTargetMoneyDisplayAction(Action<string> action = null)
     {
         TargetMoneyDisplay = action;
     }
     /// <summary>
-    /// ÇÃ·¹ÀÌ¾î »óÅÂ º¯°æ Ãâ·Â ÀÌº¥Æ® µî·Ï
+    /// í”Œë ˆì´ì–´ ìƒíƒœ ë³€ê²½ ì¶œë ¥ ì´ë²¤íŠ¸ ë“±ë¡
     /// </summary>
     public void RegistDeadLineDisplayAction(Action<string> action = null)
     {
         DeadLineDisplay = action;
     }
     /// <summary>
-    /// ÇÃ·¹ÀÌ¾î »óÅÂ º¯°æ Ãâ·Â ÀÌº¥Æ® µî·Ï
+    /// í”Œë ˆì´ì–´ ìƒíƒœ ë³€ê²½ ì¶œë ¥ ì´ë²¤íŠ¸ ë“±ë¡
     /// </summary>
     public void RegistPlayerStateDisplayAction(Action action = null)
     {
         PlayerStateDisplay = action;
     }
     /// <summary>
-    /// ÃÑ ¼öÀÍ UI Ãâ·Â ÀÌº¥Æ® µî·Ï
+    /// ì´ ìˆ˜ìµ UI ì¶œë ¥ ì´ë²¤íŠ¸ ë“±ë¡
     /// </summary>
     public void RegistTotalRevenueDisplayAction(Action action = null)
     {
         PlayerStateDisplay = action;
     }
     /// <summary>
-    /// ½Ã°£ UI Ãâ·Â ÀÌº¥Æ® µî·Ï
+    /// ì‹œê°„ UI ì¶œë ¥ ì´ë²¤íŠ¸ ë“±ë¡
     /// </summary>
     public void RegistTimeDisplayAction(Action action = null)
     {
@@ -734,16 +731,16 @@ public class GameManager : NetworkBehaviour
         currentTime = 0;
         while (true)
         {
-            // 1ÃÊ ´ë±â
+            // 1ì´ˆ ëŒ€ê¸°
             yield return new WaitForSeconds(1.0f);
-            // º¯¼ö Áõ°¡
+            // ë³€ìˆ˜ ì¦ê°€
             currentTime++;
-            // Áõ°¡ÇÑ °ª Ãâ·Â (µğ¹ö±×¿ë)
+            // ì¦ê°€í•œ ê°’ ì¶œë ¥ (ë””ë²„ê·¸ìš©)
             //GameTime time = GetCurrentTime();
             OnClientDisplayTime();
             if (currentTime >= 960)
             {
-                //ÇÔ¼± º¹±Í ÀÌº¥Æ®
+                //í•¨ì„  ë³µê·€ ì´ë²¤íŠ¸
                 yield break;
             }
         }

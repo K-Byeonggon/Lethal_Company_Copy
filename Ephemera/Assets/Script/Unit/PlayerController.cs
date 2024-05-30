@@ -68,16 +68,10 @@ public class PlayerController : NetworkBehaviour
     }
     #endregion
     #region NetworkBehaviour Function
-    public override void OnStartLocalPlayer()
+
+    public override void OnStartServer()
     {
-        if (isServer)
-        {
-            GameManager.Instance.RegisterPlayer(connectionToClient);
-        }
-        else
-        {
-            CmdRegisterPlayer();
-        }
+        GameManager.Instance.RegisterPlayer(connectionToClient);
     }
     public override void OnStartClient()
     {
@@ -173,18 +167,18 @@ public class PlayerController : NetworkBehaviour
         {
             if (playerRaycast.HitObject == null)
                 return;
-            //»óÈ£ÀÛ¿ë ¿ÀºêÁ§Æ®ÀÏ °æ¿ì
+            //ï¿½ï¿½È£ï¿½Û¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½
             if (playerRaycast.HitObject.TryGetComponent<Item>(out Item item))
             {
                 inventory.AddItem(playerRaycast.HitObject);
                 Debug.Log("Item obtained: " + playerRaycast.HitObject.name);
             }
-            //¹®ÀÏ °æ¿ì
+            //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
             else if (playerRaycast.HitObject.TryGetComponent<LinkDoor>(out LinkDoor door))
             {
                 CmdTeleport(door.GetTeleportionPosition());
             }
-            //»óÁ¡ÀÏ °æ¿ì
+            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
             else if (playerRaycast.HitObject.TryGetComponent<SellItem>(out SellItem sellItem))
             {
                 if (inventory.GetCurrentItemComponent != null)
@@ -194,7 +188,7 @@ public class PlayerController : NetworkBehaviour
                     inventory.RemoveItem();
                 }
             }
-            //±× ¿ÜÀÇ »óÈ£ÀÛ¿ë ¹°Ç°ÀÏ °æ¿ì
+            //ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È£ï¿½Û¿ï¿½ ï¿½ï¿½Ç°ï¿½ï¿½ ï¿½ï¿½ï¿½
             else if (playerRaycast.HitObject.TryGetComponent<IInteractive>(out IInteractive InteractiveObject))
             {
                 InteractiveObject.OnInteractive();
@@ -233,11 +227,6 @@ public class PlayerController : NetworkBehaviour
     public void OnServerTeleport(Vector3 position)
     {
         OnClientTeleport(position);
-    }
-    [Command]
-    private void CmdRegisterPlayer()
-    {
-        GameManager.Instance.RegisterPlayer(connectionToClient);
     }
     [Command(requiresAuthority = false)]
     public void CmdTeleport(Vector3 position)

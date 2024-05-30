@@ -22,12 +22,12 @@ public class SnareFleaHealth : LivingEntity
 
     public override bool ApplyDamage(DamageMessage damageMessage)
     {
-        //µ¥¹ÌÁö ÁÖ´Â °ÍÀÌ ÀÚ±â ÀÚ½ÅÀÌ°Å³ª, ÀÚ½ÅÀÌ Á×¾úÀ¸¸é ½ÇÆĞ.
+        //ë°ë¯¸ì§€ ì£¼ëŠ” ê²ƒì´ ìê¸° ìì‹ ì´ê±°ë‚˜, ìì‹ ì´ ì£½ì—ˆìœ¼ë©´ ì‹¤íŒ¨.
         if (!base.ApplyDamage(damageMessage)) return false;
 
-        Debug.Log("¿Ã°¡¹Ì¹ú·¹" + damageMessage.damage + " ÇÇÇØÀÔÀ½");
+        Debug.Log("ì˜¬ê°€ë¯¸ë²Œë ˆ" + damageMessage.damage + " í”¼í•´ì…ìŒ");
 
-        //¿Ã°¡¹Ì¹ú·¹´Â °ø°İ¹ŞÀ¸¸é µµ¸ÁÄ¡´Ù°¡ ÃµÀå¿¡ ºÙ´Â´Ù.
+        //ì˜¬ê°€ë¯¸ë²Œë ˆëŠ” ê³µê²©ë°›ìœ¼ë©´ ë„ë§ì¹˜ë‹¤ê°€ ì²œì¥ì— ë¶™ëŠ”ë‹¤.
         snare.isAttacked = true;
 
         return true;
@@ -36,6 +36,6 @@ public class SnareFleaHealth : LivingEntity
     public override void Die()
     {
         base.Die();
-        Debug.Log("¿Ã°¡¹Ì¹ú·¹ Á×À½");
+        Debug.Log("ì˜¬ê°€ë¯¸ë²Œë ˆ ì£½ìŒ");
     }
 }

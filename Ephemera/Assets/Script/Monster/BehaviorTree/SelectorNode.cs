@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-//childrenÀÇ NodeÁß ÇÏ³ª¸¸ ½ÇÇàÇØ¾ß ÇÒ¶§ »ç¿ë
+//childrenì˜ Nodeì¤‘ í•˜ë‚˜ë§Œ ì‹¤í–‰í•´ì•¼ í• ë•Œ ì‚¬ìš©
 public class SelectorNode : CompositeNode
 {
     public SelectorNode(List<Node> children) : base(children) { }

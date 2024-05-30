@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-//childrenÀÇ Node¸¦ ¼ø¼­´ë·Î ½ÇÇàÇØ¾ß ÇÒ¶§ »ç¿ë
+//childrenì˜ Nodeë¥¼ ìˆœì„œëŒ€ë¡œ ì‹¤í–‰í•´ì•¼ í• ë•Œ ì‚¬ìš©
 public class SequenceNode : CompositeNode
 {
     public SequenceNode(List<Node> children) : base(children) { }

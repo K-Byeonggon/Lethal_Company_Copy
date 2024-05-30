@@ -30,17 +30,17 @@ public class CoilheadAI : MonsterAI
     
     private void ConstructBehaviorTree()
     {
-        //ÄÚÀÏÇìµå´Â Ã³Ä¡ ºÒ°¡´É ¸ó½ºÅÍ. Ã¼·Âµµ Á×À½µµ ¾øÀ½.
+        //ì½”ì¼í—¤ë“œëŠ” ì²˜ì¹˜ ë¶ˆê°€ëŠ¥ ëª¬ìŠ¤í„°. ì²´ë ¥ë„ ì£½ìŒë„ ì—†ìŒ.
 
-        //Á¤Áö ½ÃÄö½º
+        //ì •ì§€ ì‹œí€€ìŠ¤
         ActionNode stop = new ActionNode(Stop);
 
-        //°ø°İ ½ÃÄö½ºÀÇ children Nodeµé
+        //ê³µê²© ì‹œí€€ìŠ¤ì˜ children Nodeë“¤
         ActionNode attackWill = new ActionNode(AttackWill);
         ActionNode moveToPlayer = new ActionNode(MoveToPlayer);
         ActionNode attackPlayer = new ActionNode(AttackPlayer);
 
-        //¹èÈ¸ ½ÃÄö½ºÀÇ children Nodeµé
+        //ë°°íšŒ ì‹œí€€ìŠ¤ì˜ children Nodeë“¤
         ActionNode setDest = new ActionNode(SetDest);
         ActionNode moveToDest = new ActionNode(MoveToDest);
 
@@ -62,33 +62,33 @@ public class CoilheadAI : MonsterAI
         }
     }
 
-    //[Á¤Áö ½ÃÄö½º] Á¤Áö
+    //[ì •ì§€ ì‹œí€€ìŠ¤] ì •ì§€
     private Node.State Stop()
     {
-        //ÇÃ·¹ÀÌ¾î°¡ º¸°í ÀÖÀ¸¸é SUCCESS·Î Á¤Áö.
+        //í”Œë ˆì´ì–´ê°€ ë³´ê³  ìˆìœ¼ë©´ SUCCESSë¡œ ì •ì§€.
         if(beWatched)
         {
             navMeshAgent.SetDestination(transform.position);
             return Node.State.SUCCESS;
         }
         else { return Node.State.FAILURE; }
-        //¾Æ´Ï¸é FAILURE
+        //ì•„ë‹ˆë©´ FAILURE
     }
 
-    //[°ø°İ ½ÃÄö½º] °ø°İ ÀÇÁö
+    //[ê³µê²© ì‹œí€€ìŠ¤] ê³µê²© ì˜ì§€
     private Node.State AttackWill()
     {
-        //ÇÃ·¹ÀÌ¾î¸¦ ¹ß°ßÇßÀ¸¸é ¼Óµµ°¡ »¡¶óÁö°í ´ë»ó ÇÃ·¹ÀÌ¾î¸¦ ¸ñÇ¥·Î ÁöÁ¤.
+        //í”Œë ˆì´ì–´ë¥¼ ë°œê²¬í–ˆìœ¼ë©´ ì†ë„ê°€ ë¹¨ë¼ì§€ê³  ëŒ€ìƒ í”Œë ˆì´ì–´ë¥¼ ëª©í‘œë¡œ ì§€ì •.
         if(sawPlayer)
         {
-            Debug.Log("ÇÃ·¹ÀÌ¾î ºÃ´Ù.");
+            Debug.Log("í”Œë ˆì´ì–´ ë´¤ë‹¤.");
             navMeshAgent.SetDestination(target.position);
             return Node.State.SUCCESS;
         }
         else return Node.State.FAILURE;
     }
 
-    //[°ø°İ ½ÃÄö½º] ÇÃ·¹ÀÌ¾î¸¦ ÇâÇØ ÀÌµ¿
+    //[ê³µê²© ì‹œí€€ìŠ¤] í”Œë ˆì´ì–´ë¥¼ í–¥í•´ ì´ë™
     private Node.State MoveToPlayer()
     {
         Debug.Log("MoveToPlayer");
@@ -96,20 +96,20 @@ public class CoilheadAI : MonsterAI
         //Debug.Log(Vector3.Distance(transform.position, target.position));
         if(Vector3.Distance(transform.position, target.position) <= attackDistance)
         {
-            Debug.Log("´Ù°¡°¬´Ù.");
+            Debug.Log("ë‹¤ê°€ê°”ë‹¤.");
             return Node.State.SUCCESS;
         }
         else return Node.State.RUNNING;
     }
 
-    //[°ø°İ ½ÃÄö½º] ÇÃ·¹ÀÌ¾î °ø°İ.
+    //[ê³µê²© ì‹œí€€ìŠ¤] í”Œë ˆì´ì–´ ê³µê²©.
     private Node.State AttackPlayer()
     {
         if (Vector3.Distance(transform.position, target.position) <= attackDistance)
         {
             if (Time.time - lastAttackTime >= attackCooltime)
             {
-                Debug.Log("°ø°İÇÑ´Ù.");
+                Debug.Log("ê³µê²©í•œë‹¤.");
                 LivingEntity playerHealth = target.GetComponent<LivingEntity>();
                 playerHealth.ApplyDamage(damageMessage);
                 lastAttackTime = Time.time;
@@ -121,11 +121,11 @@ public class CoilheadAI : MonsterAI
     }
     
 
-    //[¹èÈ¸ ½ÃÄö½º] ¸ñÀûÁö ¼³Á¤
+    //[ë°°íšŒ ì‹œí€€ìŠ¤] ëª©ì ì§€ ì„¤ì •
     private Node.State SetDest()
     {
-        if (sawPlayer) return Node.State.FAILURE;        //ÇÃ·¹ÀÌ¾î ÃßÀûÇÏ´Â »óÅÂ¸é,
-        else if (setDesti) return Node.State.SUCCESS;   //ÀÌ¹Ì ¸ñÀûÁö ¼³Á¤ÀÌ µÇ¾îÀÖÀ¸¸é,
+        if (sawPlayer) return Node.State.FAILURE;        //í”Œë ˆì´ì–´ ì¶”ì í•˜ëŠ” ìƒíƒœë©´,
+        else if (setDesti) return Node.State.SUCCESS;   //ì´ë¯¸ ëª©ì ì§€ ì„¤ì •ì´ ë˜ì–´ìˆìœ¼ë©´,
         else
         {
             Vector3 newPos = RandomNavMeshMovement.RandomNavSphere(transform.position, wanderRadius, -1);
@@ -135,12 +135,12 @@ public class CoilheadAI : MonsterAI
         }
     }
 
-    //[¹èÈ¸ ½ÃÄö½º] ¸ñÀûÁö ÀÌµ¿
+    //[ë°°íšŒ ì‹œí€€ìŠ¤] ëª©ì ì§€ ì´ë™
     private Node.State MoveToDest()
     {
         if (sawPlayer) return Node.State.FAILURE;
 
-        //¸ñÀûÁö¿¡ µµ´ŞÇÔ.
+        //ëª©ì ì§€ì— ë„ë‹¬í•¨.
         else if (Vector3.Distance(transform.position, navMeshAgent.destination) <= .5f)
         {
             setDesti = false;

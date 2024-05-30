@@ -17,9 +17,9 @@ public class SnareFleaAI : MonsterAI
     public bool sawPlayer = false;
     public bool atCeiling = false;
     public bool isGrounded;
-    public float checkDistance = 1.0f; // ¶¥À» Ã¼Å©ÇÒ ÃÖ´ë °Å¸®
-    public LayerMask groundLayer; // ¶¥ ·¹ÀÌ¾î ¼³Á¤
-    public LayerMask ceilingLayer; // ÃµÀå ·¹ÀÌ¾î ¼³Á¤
+    public float checkDistance = 1.0f; // ë•…ì„ ì²´í¬í•  ìµœëŒ€ ê±°ë¦¬
+    public LayerMask groundLayer; // ë•… ë ˆì´ì–´ ì„¤ì •
+    public LayerMask ceilingLayer; // ì²œì¥ ë ˆì´ì–´ ì„¤ì •
     [SerializeField] private Rigidbody rigidbody;
     [SerializeField] float bindDistance = 1f;
     [SerializeField] float attackDistance = 1.5f;
@@ -58,25 +58,25 @@ public class SnareFleaAI : MonsterAI
 
     private void ConstructBehaviorTree()
     {
-        //Á×À½ ½ÃÄö½ºÀÇ children Node
+        //ì£½ìŒ ì‹œí€€ìŠ¤ì˜ children Node
         ActionNode dead = new ActionNode(Dead);
 
-        //½ºÆù ½ÃÄö½º
+        //ìŠ¤í° ì‹œí€€ìŠ¤
         ActionNode spawned = new ActionNode(Spawned);
 
-        //Å½»ö ½ÃÄö½º
+        //íƒìƒ‰ ì‹œí€€ìŠ¤
         ActionNode detect = new ActionNode(Detect);
 
-        //°ø°İ ½ÃÄö½º
+        //ê³µê²© ì‹œí€€ìŠ¤
         ActionNode bind = new ActionNode(Bind);
         ActionNode attackPlayer = new ActionNode(AttackPlayer);
 
-        //Áö»ó °ø°İ ½ÃÄö½º
+        //ì§€ìƒ ê³µê²© ì‹œí€€ìŠ¤
         ActionNode moveToPlayer = new ActionNode(MoveToPlayer);
         ActionNode bindFromGround = new ActionNode(BindFromGround);
         //ActionNode attackPlayer
 
-        //µµ¸Á ½ÃÄö½º
+        //ë„ë§ ì‹œí€€ìŠ¤
         ActionNode runFromPlayer = new ActionNode(RunFromPlayer);
         ActionNode toCeiling = new ActionNode(ToCeiling);
         ActionNode hangOn = new ActionNode(HangOn);
@@ -104,7 +104,7 @@ public class SnareFleaAI : MonsterAI
     {
         if(!sawPlayer && isGrounded && !jumped)
         {
-            Debug.Log("Á¡ÇÁ");
+            Debug.Log("ì í”„");
             jumped = true;
             navMeshAgent.enabled = false;
             rigidbody.useGravity = false;
@@ -114,7 +114,7 @@ public class SnareFleaAI : MonsterAI
         return Node.State.FAILURE;
     }
 
-    //[Å½»ö ½ÃÄö½º] ÇÃ·¹ÀÌ¾î Å½ÁöÇØ¼­ ¶³¾îÁö±â
+    //[íƒìƒ‰ ì‹œí€€ìŠ¤] í”Œë ˆì´ì–´ íƒì§€í•´ì„œ ë–¨ì–´ì§€ê¸°
     private Node.State Detect()
     {
         if (sawPlayer)
@@ -129,13 +129,13 @@ public class SnareFleaAI : MonsterAI
     }
 
 
-    //[°ø°İ ½ÃÄö½º] ÇÃ·¹ÀÌ¾î°¡ °¡±î¿ì¸é ´Ş¶óºÙ±â. ÇÃ·¹ÀÌ¾î°¡ °¡Áø ¸ğµç ¾ÆÀÌÅÛÀ» ¶³¾î¶ß·Á¾ßÇÑ´Ù.
+    //[ê³µê²© ì‹œí€€ìŠ¤] í”Œë ˆì´ì–´ê°€ ê°€ê¹Œìš°ë©´ ë‹¬ë¼ë¶™ê¸°. í”Œë ˆì´ì–´ê°€ ê°€ì§„ ëª¨ë“  ì•„ì´í…œì„ ë–¨ì–´ëœ¨ë ¤ì•¼í•œë‹¤.
     private Node.State Bind()
     {
-        //player.GetChild(0): ÇÃ·¹ÀÌ¾îÀÇ ¸Ó¸®ºÎºĞÀÇ ºó ¿ÀºêÁ§Æ®
+        //player.GetChild(0): í”Œë ˆì´ì–´ì˜ ë¨¸ë¦¬ë¶€ë¶„ì˜ ë¹ˆ ì˜¤ë¸Œì íŠ¸
         if(Vector3.Distance(transform.position, player.GetChild(0).position) <= bindDistance)
         {
-            Debug.Log("´Ş¶óºÙÀ½");
+            Debug.Log("ë‹¬ë¼ë¶™ìŒ");
             transform.position = player.GetChild(0).position;
             rigidbody.useGravity = false;
             return Node.State.SUCCESS;
@@ -144,34 +144,34 @@ public class SnareFleaAI : MonsterAI
         {
             if (isGrounded)
             {
-                Debug.Log("´Ş¶óºÙ±â ½ÇÆĞ");
+                Debug.Log("ë‹¬ë¼ë¶™ê¸° ì‹¤íŒ¨");
                 return Node.State.FAILURE;
             }
             else
             {
-                Debug.Log("¶³¾îÁö´Â Áß");
+                Debug.Log("ë–¨ì–´ì§€ëŠ” ì¤‘");
                 return Node.State.RUNNING;
             }
         }
     }
 
-    //[°ø°İ ½ÃÄö½º, Áö»ó °ø°İ ½ÃÄö½º] ´Ş¶óºÙ¾î ÀÖÀ¸¸é, ÀÏÁ¤½Ã°£¸¶´Ù µ¥¹ÌÁö¸¦ ÁØ´Ù. ÇÃ·¹ÀÌ¾î Á×À¸¸é ¶³¾îÁö±â.
+    //[ê³µê²© ì‹œí€€ìŠ¤, ì§€ìƒ ê³µê²© ì‹œí€€ìŠ¤] ë‹¬ë¼ë¶™ì–´ ìˆìœ¼ë©´, ì¼ì •ì‹œê°„ë§ˆë‹¤ ë°ë¯¸ì§€ë¥¼ ì¤€ë‹¤. í”Œë ˆì´ì–´ ì£½ìœ¼ë©´ ë–¨ì–´ì§€ê¸°.
     private Node.State AttackPlayer()
     {
-        //°ø°İ ¹ŞÀ¸¸é ´ÙÀ½ ½ÃÄö½º·Î(°ø°İ -> Áö»ó°ø°İ -> µµ¸Á, Áö»ó°ø°İ->µµ¸Á)
+        //ê³µê²© ë°›ìœ¼ë©´ ë‹¤ìŒ ì‹œí€€ìŠ¤ë¡œ(ê³µê²© -> ì§€ìƒê³µê²© -> ë„ë§, ì§€ìƒê³µê²©->ë„ë§)
         if (isAttacked) { rigidbody.useGravity = true; return Node.State.FAILURE; }
 
         if (Vector3.Distance(transform.position, player.GetChild(0).position) <= bindDistance)
         {   
             if (Time.time - lastAttackTime >= attackCooltime)
             {
-                Debug.Log("°ø°İÇÑ´Ù.");
+                Debug.Log("ê³µê²©í•œë‹¤.");
                 LivingEntity playerHealth = player.GetComponent<LivingEntity>();
 
-                //ÇÃ·¹ÀÌ¾î Á×¾úÀ¸¸é ´ÙÀ½ ½ÃÄö½º·Î
+                //í”Œë ˆì´ì–´ ì£½ì—ˆìœ¼ë©´ ë‹¤ìŒ ì‹œí€€ìŠ¤ë¡œ
                 if (playerHealth.IsDead) { rigidbody.useGravity = true; return Node.State.FAILURE; }
 
-                //¾Æ´Ï¸é µ¥¹ÌÁö Àû¿ë.
+                //ì•„ë‹ˆë©´ ë°ë¯¸ì§€ ì ìš©.
                 playerHealth.ApplyDamage(damageMessage);
                 lastAttackTime = Time.time;
 
@@ -182,13 +182,13 @@ public class SnareFleaAI : MonsterAI
         else { return Node.State.FAILURE; }
     }
 
-    //[Áö»ó °ø°İ ½ÃÄö½º] ÇÃ·¹ÀÌ¾î¸¦ ÇâÇØ ´Ù°¡¿È
+    //[ì§€ìƒ ê³µê²© ì‹œí€€ìŠ¤] í”Œë ˆì´ì–´ë¥¼ í–¥í•´ ë‹¤ê°€ì˜´
     private Node.State MoveToPlayer()
     {
-        //°ø°İ´çÇÏ¸é/ÇÃ·¹ÀÌ¾î Á×¾úÀ¸¸é ´ÙÀ½ ½ÃÄö½ºÀÎ µµ¸Á ½ÃÄö½º·Î
+        //ê³µê²©ë‹¹í•˜ë©´/í”Œë ˆì´ì–´ ì£½ì—ˆìœ¼ë©´ ë‹¤ìŒ ì‹œí€€ìŠ¤ì¸ ë„ë§ ì‹œí€€ìŠ¤ë¡œ
         if (isAttacked || player.GetComponent<LivingEntity>().IsDead) { return Node.State.FAILURE; }
 
-        //³»ºñ¸Ş½¬ ÄÑÁØ´Ù.
+        //ë‚´ë¹„ë©”ì‰¬ ì¼œì¤€ë‹¤.
         navMeshAgent.enabled = true;
         navMeshAgent.SetDestination(player.position);
 
@@ -199,13 +199,13 @@ public class SnareFleaAI : MonsterAI
         else return Node.State.RUNNING;
     }
 
-    //[Áö»ó °ø°İ ½ÃÄö½º] Áö»ó¿¡¼­ ÇÃ·¹ÀÌ¾î¿¡ ´Ş¶óºÙ±â
+    //[ì§€ìƒ ê³µê²© ì‹œí€€ìŠ¤] ì§€ìƒì—ì„œ í”Œë ˆì´ì–´ì— ë‹¬ë¼ë¶™ê¸°
     private Node.State BindFromGround()
     {
-        //Áö»ó °ø°İÀº ÇÃ·¹ÀÌ¾î º»Ã¼¿ÍÀÇ °Å¸®·Î °è»ê
+        //ì§€ìƒ ê³µê²©ì€ í”Œë ˆì´ì–´ ë³¸ì²´ì™€ì˜ ê±°ë¦¬ë¡œ ê³„ì‚°
         if (Vector3.Distance(transform.position, player.position) <= attackDistance)
         {
-            Debug.Log("´Ş¶óºÙÀ½");
+            Debug.Log("ë‹¬ë¼ë¶™ìŒ");
             navMeshAgent.enabled = false;
             transform.position = player.GetChild(0).position;
             rigidbody.useGravity = false;
@@ -213,22 +213,22 @@ public class SnareFleaAI : MonsterAI
         }
         else
         {
-            Debug.Log("´Ş¶óºÙ±â ½ÇÆĞ");
+            Debug.Log("ë‹¬ë¼ë¶™ê¸° ì‹¤íŒ¨");
             return Node.State.FAILURE;
         }
     }
 
-    //[µµ¸Á ½ÃÄö½º] ÇÃ·¹ÀÌ¾î·Î ºÎÅÍ ¸Ö¾îÁü
+    //[ë„ë§ ì‹œí€€ìŠ¤] í”Œë ˆì´ì–´ë¡œ ë¶€í„° ë©€ì–´ì§
     private Node.State RunFromPlayer()
     {
-        Debug.Log("µµ¸Á ½ÃÄö½º");
+        Debug.Log("ë„ë§ ì‹œí€€ìŠ¤");
 
 
             if (!isRunning)
             {
                 navMeshAgent.enabled = true;
                 Vector3 newPos = RandomNavMeshMovement.RandomNavSphere(transform.position, runDistance, -1);
-                Debug.Log("¸ñÀûÁö ¼³Á¤: " + newPos);
+                Debug.Log("ëª©ì ì§€ ì„¤ì •: " + newPos);
                 navMeshAgent.SetDestination(newPos);
                 isRunning = true;
             }
@@ -237,15 +237,15 @@ public class SnareFleaAI : MonsterAI
         //else { return Node.State.FAILURE; }
     }
 
-    //[µµ¸Á ½ÃÄö½º] µµ¸Á¸ñÀûÁö¿¡ µµÂøÇßÀ¸¸é Á¡ÇÁ.
+    //[ë„ë§ ì‹œí€€ìŠ¤] ë„ë§ëª©ì ì§€ì— ë„ì°©í–ˆìœ¼ë©´ ì í”„.
     private Node.State ToCeiling()
     {
         if (Vector3.Distance(navMeshAgent.destination, transform.position) < 0.5f)
         {
-            Debug.Log("¸ñÀûÁö µµÂø");
+            Debug.Log("ëª©ì ì§€ ë„ì°©");
             if (isGrounded && !jumped)
             {
-                Debug.Log("Á¡ÇÁ");
+                Debug.Log("ì í”„");
                 jumped = true;
                 navMeshAgent.enabled = false;
                 rigidbody.useGravity = false;
@@ -260,15 +260,15 @@ public class SnareFleaAI : MonsterAI
         return Node.State.SUCCESS;
     }
     
-    //[µµ¸Á ½ÃÄö½º] ÃµÀå¿¡ ºÙ±â. ±âÅ¸ bool ÃÊ±âÈ­.
+    //[ë„ë§ ì‹œí€€ìŠ¤] ì²œì¥ì— ë¶™ê¸°. ê¸°íƒ€ bool ì´ˆê¸°í™”.
     private Node.State HangOn()
     {
-        Debug.Log("ÃµÀå ºÙ±â!!" + atCeiling);
+        Debug.Log("ì²œì¥ ë¶™ê¸°!!" + atCeiling);
         //Debug.Log(transform.position.y);
-        Debug.Log("½Ã°£: " + Time.time + " Á¡ÇÁ: " + jumpedTime);
+        Debug.Log("ì‹œê°„: " + Time.time + " ì í”„: " + jumpedTime);
         if (atCeiling)
         {
-            Debug.Log("ÃµÀå °íÁ¤");
+            Debug.Log("ì²œì¥ ê³ ì •");
             isAttacked = false;
             rigidbody.useGravity = false;
             sawPlayer = false;
@@ -279,7 +279,7 @@ public class SnareFleaAI : MonsterAI
         }
         else
         {
-            Debug.Log("ÃµÀå °íÁ¤ÀÌ ¾ÈµÇ~");
+            Debug.Log("ì²œì¥ ê³ ì •ì´ ì•ˆë˜~");
             return Node.State.RUNNING;
         }
     }
