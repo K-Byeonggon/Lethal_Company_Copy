@@ -775,10 +775,78 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8656737712047177322, guid: c6a292f9f90f74d498a42949daab125f, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7649701991780831628, guid: c6a292f9f90f74d498a42949daab125f, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -6423996112067832313, guid: c6a292f9f90f74d498a42949daab125f, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -6423996112067832313, guid: c6a292f9f90f74d498a42949daab125f, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 58eb48e12ba50504983da63dc807ac02, type: 2}
+    - target: {fileID: -3948403357122085611, guid: c6a292f9f90f74d498a42949daab125f, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -3948403357122085611, guid: c6a292f9f90f74d498a42949daab125f, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 6f5f846952434cc42a03b4d952efb99e, type: 2}
+    - target: {fileID: -3948403357122085611, guid: c6a292f9f90f74d498a42949daab125f, type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 6f5f846952434cc42a03b4d952efb99e, type: 2}
+    - target: {fileID: -3948087112784264617, guid: c6a292f9f90f74d498a42949daab125f, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -3948087112784264617, guid: c6a292f9f90f74d498a42949daab125f, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 58eb48e12ba50504983da63dc807ac02, type: 2}
+    - target: {fileID: -2818872663950933449, guid: c6a292f9f90f74d498a42949daab125f, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -2818872663950933449, guid: c6a292f9f90f74d498a42949daab125f, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 58eb48e12ba50504983da63dc807ac02, type: 2}
+    - target: {fileID: -2818872663950933449, guid: c6a292f9f90f74d498a42949daab125f, type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 58eb48e12ba50504983da63dc807ac02, type: 2}
+    - target: {fileID: -219379418855417152, guid: c6a292f9f90f74d498a42949daab125f, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: c6a292f9f90f74d498a42949daab125f, type: 3}
       propertyPath: m_Name
       value: CatwalkStairs
       objectReference: {fileID: 0}
+    - target: {fileID: 2293325371885076751, guid: c6a292f9f90f74d498a42949daab125f, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6421834826693727195, guid: c6a292f9f90f74d498a42949daab125f, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7855395812723897635, guid: c6a292f9f90f74d498a42949daab125f, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7855395812723897635, guid: c6a292f9f90f74d498a42949daab125f, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 58eb48e12ba50504983da63dc807ac02, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c6a292f9f90f74d498a42949daab125f, type: 3}
 --- !u!1 &47751966593012884 stripped

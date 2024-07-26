@@ -71,7 +71,7 @@ public class PlayerController : NetworkBehaviour
 
     public override void OnStartServer()
     {
-        GameManager.Instance.RegisterPlayer(connectionToClient);
+        //GameManager.Instance.RegisterPlayer(connectionToClient);
     }
     public override void OnStartClient()
     {
@@ -89,10 +89,10 @@ public class PlayerController : NetworkBehaviour
         if (isLocalPlayer)
         {
             GameManager.Instance.localPlayerController = null;
-            CameraReference.Instance.RegistLocalPlayerVirtualCamera(vCam.gameObject);
+            CameraReference.Instance.DeregistLocalPlayerVirtualCamera();
         }
         else
-            CameraReference.Instance.RegistPlayerVirtualCamera(netId, vCam.gameObject);
+            CameraReference.Instance.DeregistPlayerVirtualCamera(netId);
     }
     
 

@@ -2,8 +2,8 @@ using Mirror;
 using System;
 using UnityEngine;
 
-//µ¥¹ÌÁö ÁÖ´Â ¿ÀºêÁ§Æ®ÀÇ ½ºÅ©¸³Æ®¿¡¼­ LivingEntity ÄÄÆ÷³ÍÆ® °¡Á®¿Í¼­ ApplyDamage()½ÇÇà.
-//½ÇÇàÀü DamageMessage »õ·Î ¸¸µé¾î¼­ .damage ÆíÁı
+//ë°ë¯¸ì§€ ì£¼ëŠ” ì˜¤ë¸Œì íŠ¸ì˜ ìŠ¤í¬ë¦½íŠ¸ì—ì„œ LivingEntity ì»´í¬ë„ŒíŠ¸ ê°€ì ¸ì™€ì„œ ApplyDamage()ì‹¤í–‰.
+//ì‹¤í–‰ì „ DamageMessage ìƒˆë¡œ ë§Œë“¤ì–´ì„œ .damage í¸ì§‘
 public class LivingEntity : NetworkBehaviour, IDamageable
 {
     public float maxHealth = 100f;

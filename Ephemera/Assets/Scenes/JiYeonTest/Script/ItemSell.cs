@@ -23,11 +23,11 @@ public class ItemSell : MonoBehaviour
             return;
         }
 
-        // Ãæµ¹ÇÑ ¿ÀºêÁ§Æ®ÀÇ Item ÄÄÆ÷³ÍÆ® °¡Á®¿À±â
+        // ï¿½æµ¹ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ Item ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         Item collidedItem = collision.gameObject.GetComponent<Item>();
         if (collidedItem != null && !collidedObjects.Contains(collision.gameObject))
         {
-            // Ãæµ¹ÇÑ ¾ÆÀÌÅÛ°ú ¿ÀºêÁ§Æ®¸¦ ¸®½ºÆ®¿¡ Ãß°¡
+            // ï¿½æµ¹ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Û°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ß°ï¿½
             collidedItems.Add(collidedItem);
             collidedObjects.Add(collision.gameObject);
 
@@ -41,25 +41,24 @@ public class ItemSell : MonoBehaviour
         {
             int totalPrice = 0;
 
-            // ¸ðµç Ãæµ¹ÇÑ ¾ÆÀÌÅÛÀÇ price ÇÕ»ê
+            // ï¿½ï¿½ï¿½ ï¿½æµ¹ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ price ï¿½Õ»ï¿½
             foreach (var item in collidedItems)
             {
                 totalPrice += item.ItemPrice;
             }
 
-            // PlayerÀÇ coin µ¥ÀÌÅÍ¿¡ ÃÑ price¸¦ ´õÇÏ±â
-            int currentMoney = GameManager.Instance.CurrentMoney;
-            GameManager.Instance.OnServerCurrentMoneyChanged(currentMoney + totalPrice);
+            // Playerï¿½ï¿½ coin ï¿½ï¿½ï¿½ï¿½ï¿½Í¿ï¿½ ï¿½ï¿½ priceï¿½ï¿½ ï¿½ï¿½ï¿½Ï±ï¿½
+            GameManager.Instance.CurrentMoney += totalPrice;
 
             Debug.Log("Added " + totalPrice + " coins to player. Total coins: " + GameManager.Instance.CurrentMoney);
 
-            // ¸ðµç Ãæµ¹ÇÑ ¿ÀºêÁ§Æ® Á¦°Å
+            // ï¿½ï¿½ï¿½ ï¿½æµ¹ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
             foreach (var obj in collidedObjects)
             {
                 Destroy(obj);
             }
 
-            // ¸®½ºÆ® ÃÊ±âÈ­
+            // ï¿½ï¿½ï¿½ï¿½Æ® ï¿½Ê±ï¿½È­
             collidedItems.Clear();
             collidedObjects.Clear();
         }

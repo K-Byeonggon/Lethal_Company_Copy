@@ -549,10 +549,62 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -4445622344144913380, guid: fb1d4dd9ca8b93a4ea8364a96724a1cf, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -2078175569106616585, guid: fb1d4dd9ca8b93a4ea8364a96724a1cf, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 139599139643423444, guid: fb1d4dd9ca8b93a4ea8364a96724a1cf, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 139599139643423444, guid: fb1d4dd9ca8b93a4ea8364a96724a1cf, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 58eb48e12ba50504983da63dc807ac02, type: 2}
+    - target: {fileID: 139599139643423444, guid: fb1d4dd9ca8b93a4ea8364a96724a1cf, type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 58eb48e12ba50504983da63dc807ac02, type: 2}
     - target: {fileID: 919132149155446097, guid: fb1d4dd9ca8b93a4ea8364a96724a1cf, type: 3}
       propertyPath: m_Name
       value: CatwalkStairs.002
       objectReference: {fileID: 0}
+    - target: {fileID: 1296277583833292117, guid: fb1d4dd9ca8b93a4ea8364a96724a1cf, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3464779554476151998, guid: fb1d4dd9ca8b93a4ea8364a96724a1cf, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5551129419253262547, guid: fb1d4dd9ca8b93a4ea8364a96724a1cf, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5551129419253262547, guid: fb1d4dd9ca8b93a4ea8364a96724a1cf, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 58eb48e12ba50504983da63dc807ac02, type: 2}
+    - target: {fileID: 5551129419253262547, guid: fb1d4dd9ca8b93a4ea8364a96724a1cf, type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 58eb48e12ba50504983da63dc807ac02, type: 2}
+    - target: {fileID: 6983280556742611690, guid: fb1d4dd9ca8b93a4ea8364a96724a1cf, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6983280556742611690, guid: fb1d4dd9ca8b93a4ea8364a96724a1cf, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 6f5f846952434cc42a03b4d952efb99e, type: 2}
+    - target: {fileID: 6983280556742611690, guid: fb1d4dd9ca8b93a4ea8364a96724a1cf, type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 6f5f846952434cc42a03b4d952efb99e, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fb1d4dd9ca8b93a4ea8364a96724a1cf, type: 3}
 --- !u!1 &1995093994232814888 stripped

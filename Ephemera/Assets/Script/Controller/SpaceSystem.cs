@@ -7,29 +7,27 @@ using UnityEngine;
 
 public class SpaceSystem : NetworkBehaviour
 {
-    public static SpaceSystem Instance;
-
-    //ÇÔ¼±
+    //í•¨ì„ 
     [SerializeField]
     GameObject ship;
 
-    //Çà¼º
+    //í–‰ì„±
     [SerializeField]
     GameObject Mars;
 
-    //À§¼º
+    //ìœ„ì„±
     [SerializeField]
     GameObject Mercury;
 
-    //À§¼º
+    //ìœ„ì„±
     [SerializeField]
     GameObject Moon;
 
-    //À§¼º
+    //ìœ„ì„±
     [SerializeField]
     GameObject Pluto;
 
-    //À§¼º
+    //ìœ„ì„±
     [SerializeField]
     GameObject Venus;
 
@@ -42,30 +40,14 @@ public class SpaceSystem : NetworkBehaviour
 
     Quaternion TargetQuaternion;
 
-    private void Awake()
-    {
-        Instance = this;
-    }
-
     private void FixedUpdate()
     {
-        //Debug.Log(isDrive);
-        /*if (isSetDirection)
-        {
-            SlerpShipRotation();
-        }*/
         if(isDrive)
         {
             SlerpPlanetDistance();
         }
     }
-
-    public override void OnStartClient()
-    {
-        Instance = this;
-        //NetworkServer.RegisterHandler<PlanetActivateMessage>(PlanetSetActivate);
-    }
-
+    
     [Server]
     public bool StartWarpDrive(int planet)
     {
@@ -76,7 +58,7 @@ public class SpaceSystem : NetworkBehaviour
         return true;
     }
 
-    //Çà¼º ¹æÇâ È¸Àü
+    //í–‰ì„± ë°©í–¥ íšŒì „
     [Server]
     public void SetDirection()
     {
@@ -84,23 +66,7 @@ public class SpaceSystem : NetworkBehaviour
         isSetDirection = true;
     }
 
-    /*//ÇÔ¼± È¸Àü ±¸Çüº¸°£
-    [Server]
-    public void SlerpShipRotation()
-    {
-        currentPlanet.transform.rotation = Quaternion.Slerp(currentPlanet.transform.rotation, TargetQuaternion, 0.1f);
-
-        if (targetPlanet.transform.position.z < 0.1f)
-        {
-            Debug.Log("Rotation_End");
-            targetPlanet.transform.position = Vector3.zero;
-            isDrive = false;
-            //PlanetDeactivate();
-            currentPlanet = targetPlanet;
-        }
-    }*/
-
-    //Çà¼º È°¼ºÈ­
+    //í–‰ì„± í™œì„±í™”
     [Server]
     public void SelectPlanet(Planet planet)
     {
@@ -129,10 +95,9 @@ public class SpaceSystem : NetworkBehaviour
 
         targetPlanet.transform.position = new Vector3(0, 0, 5000);
 
-        PlanetActivate(PlanetToEnum(targetPlanet));// targetPlanet);// targetPlanet.SetActive(true);
-        //NetworkClient.Send(new PlanetActivateMessage { planet = planet, isActive = true });
+        PlanetActivate(PlanetToEnum(targetPlanet));
     }
-    //Çà¼º °Å¸® ±¸Çüº¸°£
+    //í–‰ì„± ê±°ë¦¬ êµ¬í˜•ë³´ê°„
     [Server]
     public void SlerpPlanetDistance()
     {
@@ -147,38 +112,25 @@ public class SpaceSystem : NetworkBehaviour
             PlanetDeactivate(PlanetToEnum(targetPlanet));
         }
     }
-    //Çà¼º È°¼ºÈ­
+    //í–‰ì„± í™œì„±í™”
     [ClientRpc]
     public void PlanetActivate(Planet targetPlanet)
     {
         Debug.Log("PlanetActivate");
         EnumToPlanet(targetPlanet).SetActive(true);
-        //targetPlanet.SetActive(true);
     }
-    //Çà¼º ºñÈ°¼ºÈ­
+    //í–‰ì„± ë¹„í™œì„±í™”
     [ClientRpc]
     public void PlanetDeactivate(Planet targetPlanet)
     {
         currentPlanet?.SetActive(false);
         currentPlanet = EnumToPlanet(targetPlanet);
-        //currentPlanet = targetPlanet;
     }
 
     public void SetActivateSpaceSystem(bool isActive)
     {
         this.gameObject.SetActive(isActive);
     }
-
-    /*void PlanetSetActivate(NetworkConnectionToClient conn, PlanetActivateMessage message)
-    {
-        //message.planet
-        EnumToPlanet(message.planet).SetActive(message.isActive);
-    }*/
-    /*void PlanetDeactivate(NetworkConnectionToClient conn, PlanetActivateMessage message)
-    {
-        message.targetPlanet.SetActive(message.isActive);
-    }*/
-
 
     private GameObject EnumToPlanet(Planet planet)
     {

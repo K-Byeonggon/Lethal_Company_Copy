@@ -109,7 +109,6 @@ public class CameraReference : SingleTon<CameraReference>
         }
         values[currentIndex].SetActive(true);
     }
-    
     // other player 플레이어 카메라 활성화
     public void SetActivePlayerVirtualCamera(uint netId)
     {
@@ -129,27 +128,29 @@ public class CameraReference : SingleTon<CameraReference>
         }
         _localPlayerCamera.SetActive(false);
     }
+    
     //vCam 오브젝트 카메라 활성화
     public void SetActiveVirtualCamera(VirtualCameraType type)
     {
-
-        Debug.Log($"{type.ToString()} Virtual Camera");
         if (_objectVirtualCameraDic.ContainsKey(type) == false)
+        {
+            Debug.Log("Don't have a virtual camera");
             return;
+        }
 
-        GameObject camera = _objectVirtualCameraDic[type];
         foreach (var virtualCamera in _objectVirtualCameraDic.Values)
         {
-            if (virtualCamera == camera)
-                virtualCamera.SetActive(true);
-            else
-                virtualCamera.SetActive(false);
+            virtualCamera.SetActive(false);
         }
         foreach (var virtualCamera in _playerVirtualCameraDic.Values)
         {
             virtualCamera.SetActive(false);
         }
+        
         _localPlayerCamera.SetActive(false);
+        
+        GameObject camera = _objectVirtualCameraDic[type];
+        camera.SetActive(true);
     }
     #endregion
 }

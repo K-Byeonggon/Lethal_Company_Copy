@@ -50,7 +50,7 @@ public class ShipController : NetworkBehaviour
     [Server]
     public void StartLanding(Vector3 destination)
     {
-        // ´ë»ó À§Ä¡¿¡¼­ ÇöÀç À§Ä¡¸¦ »©¼­ ¹æÇâ º¤ÅÍ °è»ê
+        // ëŒ€ìƒ ìœ„ì¹˜ì—ì„œ í˜„ì¬ ìœ„ì¹˜ë¥¼ ë¹¼ì„œ ë°©í–¥ ë²¡í„° ê³„ì‚°
         Vector3 direction = destination - transform.position;
 
         direction.y = 0;
@@ -80,7 +80,7 @@ public class ShipController : NetworkBehaviour
     [Server]
     public void StartEscape(Vector3 destination)
     {
-        // ´ë»ó À§Ä¡¿¡¼­ ÇöÀç À§Ä¡¸¦ »©¼­ ¹æÇâ º¤ÅÍ °è»ê
+        // ëŒ€ìƒ ìœ„ì¹˜ì—ì„œ í˜„ì¬ ìœ„ì¹˜ë¥¼ ë¹¼ì„œ ë°©í–¥ ë²¡í„° ê³„ì‚°
         Vector3 direction = destination - transform.position;
 
         direction.y = 0;
@@ -148,7 +148,6 @@ public class ShipController : NetworkBehaviour
     {
         UIController.Instance.SetActivateUI(typeof(UI_Selecter));
     }
-
 
     [Command(requiresAuthority = false)]
     public void OpenDoor()

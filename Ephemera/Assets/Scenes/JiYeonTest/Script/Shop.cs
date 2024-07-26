@@ -49,7 +49,7 @@ public class Shop : NetworkBehaviour
         if (currentMonny < buyItem.ItemPrice)
             return;
 
-        GameManager.Instance.OnServerCurrentMoneyChanged(currentMonny - buyItem.ItemPrice);
+        GameManager.Instance.CurrentMoney -= buyItem.ItemPrice;
 
         if (buyItem == null)
             return;
@@ -58,9 +58,9 @@ public class Shop : NetworkBehaviour
 
         
 
-        //¼ÒÁö±Ý ºÎÁ·½Ã ±¸¸Å ºÒ°¡ Á¶°Ç Ãß°¡
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ò°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
 
-        //Shop ui°¡ ½ÇÇàµÇ°íÀÖÀ»¶§
-        //±¸¸Å ¹öÆ°À» ´©¸£¸é ½ºÆùÆ÷ÀÎÆ®·Î ±¸¸ÅÇÑ ¾ÆÀÌÅÛ ¼ÒÈ¯
+        //Shop uiï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
     }
 }

@@ -65,7 +65,7 @@ public enum UIType
     MenuFront,
 }
 
-#region ¸ó½ºÅÍ
+#region ëª¬ìŠ¤í„°
 public enum MonsterType
 {
     FlyingEye,
@@ -84,56 +84,56 @@ public enum BossType
 }
 #endregion
 
-#region Äù½ºÆ® º¸»ó
+#region í€˜ìŠ¤íŠ¸ ë³´ìƒ
 public enum RewardType
 {
-    //µ·
+    //ëˆ
     Gold,
-    //Àåºñ
+    //ì¥ë¹„
     Equipment,
-    //°æÇèÄ¡
+    //ê²½í—˜ì¹˜
     Exp,
-    //½ºÅ³ Æ÷ÀÎÆ®
+    //ìŠ¤í‚¬ í¬ì¸íŠ¸
     SkillPoint,
 }
 #endregion
 
-#region »óÅÂÀÌ»ó
-//¹öÇÁÀÇ Á¾·ù
+#region ìƒíƒœì´ìƒ
+//ë²„í”„ì˜ ì¢…ë¥˜
 public enum SkillBuffType
 {
-    //¾øÀ½
+    //ì—†ìŒ
     None,
-    //°ø°İ·Â Áõ°¡
+    //ê³µê²©ë ¥ ì¦ê°€
     IncreaseAttack,
-    //ÀÌµ¿¼Óµµ Áõ°¡
+    //ì´ë™ì†ë„ ì¦ê°€
     IncreaseMoveSpeed,
-    //°æÁ÷ ¸é¿ª
+    //ê²½ì§ ë©´ì—­
     StiffImmunity,
-    //Ã¼·Â È¸º¹
+    //ì²´ë ¥ íšŒë³µ
     StaminaRecovery,
 }
-//µğ¹öÇÁÀÇ Á¾·ù
+//ë””ë²„í”„ì˜ ì¢…ë¥˜
 public enum SkillDebuffType
 {
-    //¾øÀ½
+    //ì—†ìŒ
     None,
-    //µĞÈ­
+    //ë‘”í™”
     Slowdown,
-    //Ãë¾à
+    //ì·¨ì•½
     Weak,
-    //ºù°á
+    //ë¹™ê²°
     Freezing,
-    //°¨Àü
+    //ê°ì „
     Shock,
-    //±âÀı
+    //ê¸°ì ˆ
     Stun,
-    //ÃâÇ÷
+    //ì¶œí˜ˆ
     Bleeding,
 }
 #endregion
 
-#region ½ºÅ³Å¸ÀÔ
+#region ìŠ¤í‚¬íƒ€ì…
 public enum SkillEquipmentType
 {
     Attack,
@@ -165,11 +165,11 @@ public enum SkillDirectionType
 }
 public enum SkillTargetMovementType
 {
-    //¾øÀ½
+    //ì—†ìŒ
     None,
-    //´ç±â´Ù
+    //ë‹¹ê¸°ë‹¤
     Grab,
-    //¹ĞÄ¡´Ù
+    //ë°€ì¹˜ë‹¤
     Thrust,
 }
 public enum SkillSlotType
@@ -185,7 +185,7 @@ public enum SkillTreeType
 }
 #endregion
 
-#region ¾ÆÀÌÅÛ
+#region ì•„ì´í…œ
 public enum ItemSlotType
 {
     Equipment,

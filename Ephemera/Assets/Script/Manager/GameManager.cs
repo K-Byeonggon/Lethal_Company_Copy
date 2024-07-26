@@ -17,6 +17,7 @@ public class GameManager : NetworkBehaviour
     #region Field
     public static GameManager Instance;
     //최대 마감일
+    private const int MAX_DEADLINE = 3;
     
     RuntimeDungeon _runtimeDungeon;
     NavMeshGenerator _navMeshGenerator;
@@ -26,11 +27,16 @@ public class GameManager : NetworkBehaviour
     public ShipController shipController;
     public PlayerController localPlayerController;
 
-    private const int MAX_DEADLINE = 3;
-    [SyncVar]
-    public bool IsLand = false;
+    [SerializeField] private SpaceSystem spaceSystem;
+    
+    [SerializeField] private Transform MonsterParent;
+    [SerializeField] private Transform ItemParent;
+    
+    
 
-    //판매 배율
+    /// <summary>
+    /// 판매 배율
+    /// </summary>
     private int SalePriceMagnification
     {
         get
@@ -53,25 +59,50 @@ public class GameManager : NetworkBehaviour
     #endregion
     #region Sync Field
     //소지금
-    [SyncVar] private int currentMoney;
+    [SyncVar(hook = nameof(OnClientSetCurrentMoney))] private int currentMoney;
     //목표 금액
-    [SyncVar] private int targetMoney;
+    [SyncVar(hook = nameof(OnClientSetTargetMoney))] private int targetMoney;
     //남은 마감일
-    [SyncVar] private int currentDeadline;
+    [SyncVar(hook = nameof(OnClientSetDeadLine))] private int currentDeadline;
     //현재 시간
-    [SyncVar] private int currentTime = 0;
+    [SyncVar(hook = nameof(OnClientDisplayTime))] private int currentTime;
     //선택 행성
     [SyncVar] private Planet selectPlanet;
+    //착륙여부
+    [SyncVar] public bool IsLand = false;
     #endregion
     #region Property
-    public int CurrentMoney => currentMoney;
+    public int CurrentMoney
+    {
+        get => currentMoney;
+        set => currentMoney = value;
+    }
+    public int TargetMoney
+    {
+        get => targetMoney;
+        set => targetMoney = value;
+    }
+    public int CurrentDeadline
+    {
+        get => currentDeadline;
+        set => currentDeadline = value;
+    }
+    public int CurrentTime
+    {
+        get => currentTime;
+        set => currentTime = value;
+    }
     #endregion
 
+    #region Action
+    private event Action TotalRevenueDisplay;
+    private event Action<string> CurrentMoneyDisplay;
+    private event Action<string> DeadLineDisplay;
+    private event Action<string> TargetMoneyDisplay;
+    private event Action PlayerStateDisplay;
+    private event Action<int> TimeDisplay;
+    #endregion
     #region Function
-    private GameTime GetCurrentTime()
-    {
-        return new GameTime(currentTime);
-    }
     ///<summary>
     ///terrain활성화
     ///</summary>
@@ -79,7 +110,6 @@ public class GameManager : NetworkBehaviour
     {
         TerrainController.Instance.SetActivePlanetTerrain((Planet)index, isActive);
     }
-
     private void CreateRoom(int seed)
     {
         //임시 주석
@@ -94,7 +124,6 @@ public class GameManager : NetworkBehaviour
             Destroy(_runtimeDungeon.gameObject);
         RoomReference.Instance.ClearRoom();
     }
-    
     private void GenerationObject()
     {
         if (isServer)
@@ -104,77 +133,28 @@ public class GameManager : NetworkBehaviour
         }
     }
     #endregion
-    #region Action
-    private event Action TotalRevenueDisplay;
-    private event Action<string> CurrentMoneyDisplay;
-    private event Action<string> DeadLineDisplay;
-    private event Action<string> TargetMoneyDisplay;
-    private event Action PlayerStateDisplay;
-    private event Action TimeDisplay;
-    #endregion
     #region MonoBehaviour Function
     private void Awake()
     {
         Instance = this;
     }
     #endregion
-    #region 비동기 로딩
-    [SyncVar] private int readyPlayerCount = 0;
-    private int totalPlayers;
-
-    public string addressablePrefabKey; // 어드레서블 키
-    private Dictionary<NetworkConnection, bool> playerReadyStates = new Dictionary<NetworkConnection, bool>();
-
+    
+    #region NetworkBehaviour Function
     public override void OnStartServer()
     {
-        totalPlayers = NetworkServer.connections.Count;
-    }
-
-    [ServerCallback]
-    public void RegisterPlayer(NetworkConnection conn)
-    {
-        playerReadyStates[conn] = false;
-        totalPlayers = playerReadyStates.Count;
-        RpcLoadPrefab(conn);
-    }
-
-    [TargetRpc]
-    private void RpcLoadPrefab(NetworkConnection target)
-    {
-        //LoadPrefabAsync(target);
-    }
-
-    [Command]
-    private void CmdPlayerReady(NetworkConnectionToClient conn)
-    {
-        playerReadyStates[conn] = true;
-        readyPlayerCount = playerReadyStates.Values.Count(ready => ready);
-
-        if (readyPlayerCount == totalPlayers)
-        {
-            RpcProceedToNextStep();
-        }
-    }
-
-    [ClientRpc]
-    private void RpcProceedToNextStep()
-    {
-        // 모든 플레이어가 준비된 상태이면 다음 단계로 넘어갑니다.
-        Debug.Log("All players are ready. Proceeding to the next step...");
-        // 예를 들어, 게임 시작 UI 숨기기, 게임 오브젝트 활성화 등
-    }
-    #endregion
-
-    #region NetworkBehaviour Function
-    /*public override void OnStartServer()
-    {
         //모든 플레이어가 준비되었을 시
-        //OnServerChangeGameState(GameStateType.ResetState);
-        if (isServer == true)
-        {
-            OnServerGameReset();
-        }
-    }*/
+        OnServerGameReset();
+    }
+
+    public override void OnStartClient()
+    {
+        //캐릭터 제어 비활성화
+        localPlayerController?.SetActivateLocalPlayer(false);
+        //클라이언트 초기화
+        PlayerReference.Instance.localPlayer.controller.PlayerRespawn();
+        CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShipMiniature);
+    }
     #endregion
     #region 게임 흐름 제어
     /// <summary>
@@ -183,82 +163,48 @@ public class GameManager : NetworkBehaviour
     [Server] public void OnServerGameReset()
     {
         Debug.Log("GameReset");
-        GameReset();
-        //게임 초기화
-        //Invoke("GameReset", 2f);
-    }
-    [Server] public void GameReset()
-    {
-        //소지금 리셋
-        OnClientSetCurrentMoney(0);
-        //목표금액 리셋
-        OnServerTargetMoneyChanged(150);
-        //데드라인 리셋
-        OnServerDeadlineReset();
+        currentMoney = 0;
+        TargetMoney = 150;
+        CurrentDeadline = MAX_DEADLINE;
+        
         //캐릭터 제어 비활성화
         OnServerSetActivePlayer(false);
-
+        //클라이언트 초기화
         OnClientGameStartInit();
     }
     #endregion
     #region Server Function 서버에서 실행되는 함수
     /// <summary>
-    /// 소지 금액 변경(서버에서만 호출)
-    /// </summary>
-    [Server] public void OnServerCurrentMoneyChanged(int money)
-    {
-        currentMoney += money;
-        OnClientSetCurrentMoney(currentMoney);
-    }
-    /// <summary>
-    /// 목표 금액 변경(서버에서만 호출)
-    /// </summary>
-    [Server] public void OnServerTargetMoneyChanged(int money)
-    {
-        this.targetMoney = money;
-        OnClientSetTargetMoney(this.targetMoney);
-    }
-    /// <summary>
-    /// 데드라인 1 차감
+    /// 데드라인 차감 함수
     /// </summary>
     [Server] public void OnServerDayPasses()
     {
-        if(currentDeadline - 1 < 0)
+        if(CurrentDeadline - 1 < 0)
         {
             //다음 이벤트
-            if(currentMoney > targetMoney)
+            if(CurrentMoney > TargetMoney)
             {
-                //소지금 리셋
-                //OnClientSetCurrentMoney(0);
-                //목표금액 리셋
-                int newTargetMoney = targetMoney * 2;
-                OnServerTargetMoneyChanged(newTargetMoney);
-                //데드라인 리셋
-                OnServerDeadlineReset();
-                //게임 리셋
-                OnClientGameStartInit();
-                //캐릭터 제어 비활성화
-                OnServerSetActivePlayer(false);
+                CurrentMoney = 0;
+                TargetMoney = targetMoney * 2;
+                CurrentDeadline = MAX_DEADLINE;
             }
             //패배 이벤트
             else
             {
-                OnServerGameReset();
+                currentMoney = 0;
+                TargetMoney = 150;
+                CurrentDeadline = MAX_DEADLINE;
             }
+            //캐릭터 제어 비활성화
+            OnServerSetActivePlayer(false);
+            //클라이언트 초기화
+            OnClientGameStartInit();
         }
         else
         {
-            int deadLine = currentDeadline - 1;
-            OnClientSetDeadLine(deadLine);
+            CurrentDeadline -= 1;
             OnClientGameStartInit();
         }
-    }
-    /// <summary>
-    /// 데드라인 리셋
-    /// </summary>
-    [Server] public void OnServerDeadlineReset()
-    {
-        OnClientSetDeadLine(MAX_DEADLINE);
     }
     /// <summary>
     /// 아이템 판매
@@ -271,7 +217,7 @@ public class GameManager : NetworkBehaviour
             totalPrice += item.ItemPrice;
         }
 
-        OnServerCurrentMoneyChanged(totalPrice);
+        CurrentMoney += totalPrice;
         OnClientDisplayTotalRevenue();
     }
     /// <summary>
@@ -279,7 +225,7 @@ public class GameManager : NetworkBehaviour
     /// </summary>
     [Server] public void OnServerStartHyperDrive(int index)
     {
-        if (SpaceSystem.Instance.StartWarpDrive(index))
+        if (spaceSystem.StartWarpDrive(index))
         {
             OnClientStartHyperDrive();
             selectPlanet = (Planet)index;
@@ -292,15 +238,14 @@ public class GameManager : NetworkBehaviour
     {
         if (TerrainController.Instance.GetTerrainCount() <= (int)selectPlanet)
             return;
-        //우주선 옮기고
+        
         if(shipController == null)
             shipController = FindObjectOfType<ShipController>();
+        
         shipController.OnServerChangePosition(TerrainController.Instance.shipStartTransform.position);
-        //함선 출발
         shipController.StartLanding(TerrainController.Instance.GetLandingZone(selectPlanet).position);
-        //게임 시간 활성화
         _timeCoroutine = StartCoroutine(IncrementTimeCounter());
-        int seed = OnServerGetRandomSeed();
+        int seed = Environment.TickCount;
         OnClientEnterPlanet(seed);
 
         IsLand = true;
@@ -310,18 +255,14 @@ public class GameManager : NetworkBehaviour
     /// </summary>
     [Server] public void OnServerEscapePlanet()
     {
-        Debug.Log("OnServerEscapePlanet");
-        //우주선 옮기고
         if (shipController == null)
             shipController = FindObjectOfType<ShipController>();
 
-        //캐릭터컨트롤러 비활성화
         OnClientSetCharacterController(false);
-
         IsLand = false;
 
-
-        Invoke("EscapeSquance", 3f);
+        EscapeSquance();
+        //Invoke("EscapeSquance", 3f);
     }
     /// <summary>
     /// 탈출 시퀸스
@@ -330,29 +271,20 @@ public class GameManager : NetworkBehaviour
     {
         //함선 출발
         shipController.StartEscape(TerrainController.Instance.shipStartTransform.position);
-        //게임 시간 활성화
+        //게임 시간 비활성화
         if (_timeCoroutine != null)
             StopCoroutine(_timeCoroutine);
 
-        foreach (var monster in MonsterReference.Instance.monsterList)
+        /*foreach (var monster in MonsterReference.Instance.monsterList)
         {
-            //NetworkIdentity id = monster.GetComponent<NetworkIdentity>();
             NetworkServer.Destroy(monster);
         }
         foreach (var item in ItemReference.Instance.itemList)
         {
-            //NetworkIdentity id = item.GetComponent<NetworkIdentity>();
             NetworkServer.Destroy(item);
-        }
+        }*/
 
         StartCoroutine(DestroyAllObjectsAfterDelay());
-    }
-    /// <summary>
-    /// 랜덤 시드 생성
-    /// </summary>
-    [Server] public int OnServerGetRandomSeed()
-    {
-        return Environment.TickCount;
     }
     /// <summary>
     /// 모든 플레이어 카메라 셋팅
@@ -394,7 +326,6 @@ public class GameManager : NetworkBehaviour
     /// </summary>
     [Server] public void PlayerDieEvent()
     {
-        Debug.Log("PlayerDieEvent");
         bool allDead = true;
         foreach (PlayerHealth player in PlayerReference.Instance.playerDic.Values)
         {
@@ -404,8 +335,12 @@ public class GameManager : NetworkBehaviour
                 break;
             }
         }
+
         if (allDead)
+        {
+            Debug.Log("All Player Die");
             OnServerEscapePlanet();
+        }
     }
     /// <summary>
     /// 아이템 스폰
@@ -434,7 +369,7 @@ public class GameManager : NetworkBehaviour
         {
             Vector3 vec = RoomReference.Instance.GetRandomPosition();
             int itemIndex = UnityEngine.Random.Range(0, itemKey.Count);
-            GameObject item = Instantiate(ResourceManager.Instance.GetPrefab(itemKey[itemIndex]));
+            GameObject item = Instantiate(ResourceManager.Instance.GetPrefab(itemKey[itemIndex]), ItemParent);
             item.transform.position = vec;
             NetworkServer.Spawn(item);
             ItemReference.Instance.AddItemToList(item);
@@ -447,7 +382,6 @@ public class GameManager : NetworkBehaviour
     {
         float delay = 5.0f;
         yield return new WaitForSeconds(delay);
-
 
         MonsterReference.Instance.DestroyAll();
         ItemReference.Instance.DestroyAll();
@@ -479,7 +413,7 @@ public class GameManager : NetworkBehaviour
         {
             Vector3 vec = RoomReference.Instance.GetRandomPosition();
             int itemIndex = UnityEngine.Random.Range(0, monsterKey.Count);
-            GameObject monster = Instantiate(ResourceManager.Instance.GetPrefab(monsterKey[itemIndex]));
+            GameObject monster = Instantiate(ResourceManager.Instance.GetPrefab(monsterKey[itemIndex]), MonsterParent);
             monster.transform.position = vec;
             NetworkServer.Spawn(monster);
             MonsterReference.Instance.AddMonsterToList(monster);
@@ -515,114 +449,44 @@ public class GameManager : NetworkBehaviour
     }
     [ClientRpc] public void OnClientEnterPlanet(int seed)
     {
-        Debug.Log($"seed : {seed}");
-        //UI 숨기고
-        UIController.Instance.SetActivateUI(null);
-        //미니어쳐 Ship 숨기고
-        ObjectReference.Instance.GetGameObject("ShipMiniature").SetActive(false);
-        //spaceSystem 숨기고
-        SpaceSystem.Instance.SetActivateSpaceSystem(false);
-        //terrain 활성화하고
-        SetActivatePlanetTerrain((int)selectPlanet, true);
-        //방 생성하고
         CreateRoom(seed);
-        //몬스터, 아이템 생성하고
         GenerationObject();
-        //카메라 옮기고
+        
+        UIController.Instance.SetActivateUI(null);
+        ObjectReference.Instance.GetGameObject("ShipMiniature").SetActive(false);
+        spaceSystem.SetActivateSpaceSystem(false);
+        SetActivatePlanetTerrain((int)selectPlanet, true);
         CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShip);
     }
 
     [ClientRpc] public void OnClientEscapePlanet()
     {
-        //미니어쳐 Ship 보여주고
-        ObjectReference.Instance.GetGameObject("ShipMiniature").SetActive(true);
-        //spaceSystem 보여주고
-        SpaceSystem.Instance.SetActivateSpaceSystem(true);
-        //terrain 비활성화하고
-        SetActivatePlanetTerrain((int)selectPlanet, false);
-        //방 삭제하고
-        OnDestoryRoom();
         MonsterReference.Instance.DestroyAll();
         ItemReference.Instance.DestroyAll();
-
-
-        Debug.Log("VirtualCameraType.SpaceShipMiniature");
-        //카메라 옮기고
-        CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShipMiniature);
-        //UI 보여주고
+        OnDestoryRoom();
+        
         UIController.Instance.SetActivateUI(typeof(UI_Selecter));
+        ObjectReference.Instance.GetGameObject("ShipMiniature").SetActive(true);
+        spaceSystem.SetActivateSpaceSystem(true);
+        SetActivatePlanetTerrain((int)selectPlanet, false);
+        CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShipMiniature);
     }
 
     [ClientRpc] public void OnClientStartHyperDrive()
     {
         VolumeController.Instance.StartWarpGlitch();
     }
-
     [ClientRpc] public void OnCLientActiveLocalPlayerCamera()
     {
         CameraReference.Instance.SetActiveLocalPlayerVirtualCamera();
     }
-
     [ClientRpc] public void OnCLientSetActivePlayer(bool isActive)
     {
         localPlayerController?.SetActivateLocalPlayer(isActive);
     }
     #endregion
+    
     #region ClientRpc Action 서버가 원격 프로시저 호출(RPC)로 모든 클라이언트에서 실행되는 Action
-    /// <summary>
-    /// 현재 소지금 변경(모든 클라이언트)
-    /// </summary>
-    [ClientRpc] private void OnClientSetCurrentMoney(int money)
-    {
-        currentMoney = money;
-        CurrentMoneyDisplay?.Invoke(currentMoney.ToString());
-    }
-
-    /// <summary>
-    /// 목표 금액 변경(모든 클라이언트)
-    /// </summary>
-    [ClientRpc] private void OnClientSetTargetMoney(int targetMoney)
-    {
-        this.targetMoney = targetMoney;
-        TargetMoneyDisplay?.Invoke(this.targetMoney.ToString());
-    }
-
-    /// <summary>
-    /// 데드라인 변경(모든 클라이언트)
-    /// </summary>
-    [ClientRpc] private void OnClientSetDeadLine(int deadLine)
-    {
-        this.currentDeadline = deadLine;
-        DeadLineDisplay?.Invoke(currentDeadline.ToString());
-    }
-
-    /// <summary>
-    /// 캐릭터 상태 변경(모든 클라이언트)
-    /// </summary>
-    [ClientRpc] private void OnClientSetPlayerState(int targetMoney)
-    {
-        this.targetMoney = targetMoney;
-        PlayerStateDisplay?.Invoke();
-    }
-
-    /// <summary>
-    /// 총 수익 UI 출력 (모든 클라이언트)
-    /// </summary>
-    [ClientRpc] private void OnClientDisplayTotalRevenue()
-    {
-        TotalRevenueDisplay?.Invoke();
-    }
-
-    /// <summary>
-    /// 총 수익 UI 출력 (모든 클라이언트)
-    /// </summary>
-    [ClientRpc] private void OnClientDisplayTime()
-    {
-        GameTime time = GetCurrentTime();
-        //Debug.Log($"{time.hour} : {time.minute.ToString("D2")}");
-        TimeDisplay?.Invoke();
-    }
-
     /// <summary>
     /// 문 연결 (클라이언트)
     /// </summary>
@@ -637,7 +501,6 @@ public class GameManager : NetworkBehaviour
         extFrontDoor.LinkTransform = etrFrontDoor.transform;
         etrFrontDoor.LinkTransform = extFrontDoor.transform;
     }
-
     /// <summary>
     /// 몬스터 삭제 (클라이언트)
     /// </summary>
@@ -647,6 +510,52 @@ public class GameManager : NetworkBehaviour
         monsterReference.monsterList.Clear();
     }
     #endregion
+    
+    #region Client Hook Function 서버의 SyncVar가 변경되었을 때 호출되는 함수
+    /// <summary>
+    /// 현재 소지금 변경(모든 클라이언트)
+    /// </summary>
+    [Client] private void OnClientSetCurrentMoney(int oldValue, int newValue)
+    {
+        CurrentMoneyDisplay?.Invoke(newValue.ToString());
+    }
+    /// <summary>
+    /// 캐릭터 상태 변경(모든 클라이언트)
+    /// </summary>
+    [Client] private void OnClientSetPlayerState(int oldValue, int newValue)
+    {
+        PlayerStateDisplay?.Invoke();
+    }
+    /// <summary>
+    /// 목표 금액 변경(모든 클라이언트)
+    /// </summary>
+    [Client] private void OnClientSetTargetMoney(int oldValue, int newValue)
+    {
+        TargetMoneyDisplay?.Invoke(newValue.ToString());
+    }
+    /// <summary>
+    /// 데드라인 변경(모든 클라이언트)
+    /// </summary>
+    [Client] private void OnClientSetDeadLine(int oldValue, int newValue)
+    {
+        DeadLineDisplay?.Invoke(newValue.ToString());
+    }
+    /// <summary>
+    /// 시간 UI 출력 (모든 클라이언트)
+    /// </summary>
+    [Client] private void OnClientDisplayTime(int oldValue, int newValue)
+    {
+        TimeDisplay?.Invoke(newValue);
+    }
+    /// <summary>
+    /// 총 수익 UI 출력 (모든 클라이언트)
+    /// </summary>
+    [ClientRpc] private void OnClientDisplayTotalRevenue()
+    {
+        TotalRevenueDisplay?.Invoke();
+    }
+    #endregion
+    
     #region ActionRegist Action등록
     /// <summary>
     /// 현재 소지금 UI갱신 이벤트 등록
@@ -686,26 +595,24 @@ public class GameManager : NetworkBehaviour
     /// <summary>
     /// 시간 UI 출력 이벤트 등록
     /// </summary>
-    public void RegistTimeDisplayAction(Action action = null)
+    public void RegistTimeDisplayAction(Action<int> action = null)
     {
         TimeDisplay = action;
     }
     #endregion
+    
     #region IEnumerator
     [Server]
     private IEnumerator IncrementTimeCounter()
     {
-        currentTime = 0;
+        CurrentTime = 0;
         while (true)
         {
             // 1초 대기
             yield return new WaitForSeconds(1.0f);
             // 변수 증가
-            currentTime++;
-            // 증가한 값 출력 (디버그용)
-            //GameTime time = GetCurrentTime();
-            OnClientDisplayTime();
-            if (currentTime >= 960)
+            CurrentTime++;
+            if (CurrentTime >= 960)
             {
                 //함선 복귀 이벤트
                 yield break;
