@@ -12,17 +12,28 @@ public class GameRoomNetworkManager : NetworkRoomManager
     NetworkRoomPlayer roomPlayerObjectPrefab;
     [SerializeField]
     GameObject spaceSystem;*/
-
+    public Dictionary<NetworkConnectionToClient, bool> playersInGameScene = new Dictionary<NetworkConnectionToClient, bool>();
     public static GameRoomNetworkManager Instance => NetworkRoomManager.singleton as GameRoomNetworkManager;
 
-    public override void Start()
+    public override void OnRoomServerAddPlayer(NetworkConnectionToClient conn)
     {
-        base.Start();
-        //playerPrefab = gamePlayerObjectPrefab;
-        //roomPlayerPrefab = roomPlayerObjectPrefab;
+        base.OnRoomServerAddPlayer(conn);
+        playersInGameScene[conn] = false; // 초기화
     }
+    public override void OnRoomServerSceneChanged(string sceneName)
+    {
+        base.OnRoomServerSceneChanged(sceneName);
 
-
+        if (sceneName == GameplayScene)
+        {
+            // 새로운 씬에 들어왔음을 알리는 이벤트 등록
+            foreach (var conn in playersInGameScene.Keys)
+            {
+                playersInGameScene[conn] = false; // 모든 플레이어의 상태를 초기화
+            }
+        }
+    }
+    #region Temp
     /*//새로운 클라이언트가 서버에 연결되었을 때에 서버에서 호출되는 함수
     public override void OnRoomServerConnect(NetworkConnectionToClient conn)//GameObject OnRoomServerCreateRoomPlayer(NetworkConnectionToClient conn)
     {
@@ -79,6 +90,8 @@ public class GameRoomNetworkManager : NetworkRoomManager
             NetworkServer.Spawn(terrain);
         }
     }*/
+    #endregion
+    
     public override void OnRoomClientExit()
     {
         Cursor.visible = true;

@@ -152,15 +152,11 @@ public class ShipController : NetworkBehaviour
     [Command(requiresAuthority = false)]
     public void OpenDoor()
     {
-        //ShipController shipController = FindObjectOfType<ShipController>();
-        //shipController.StartOpenCoroutine();
         StartOpenCoroutine();
     }
     [Command(requiresAuthority = false)]
     public void CloseDoor()
     {
-        //ShipController shipController = FindObjectOfType<ShipController>();
-        //shipController.StartCloseCoroutine();
         StartCloseCoroutine();
     }
 

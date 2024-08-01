@@ -29,15 +29,15 @@ public class PlayerHealth : LivingEntity
     }
     public override void OnStartLocalPlayer()
     {
-        PlayerReference.Instance.AddLocalPlayer(this);
+        PlayerReference.Instance.InitLocalPlayer(this);
     }
 
     public override bool ApplyDamage(DamageMessage damageMessage)
     {
-        //µ¥¹ÌÁö ÁÖ´Â °ÍÀÌ ÀÚ±â ÀÚ½ÅÀÌ°Å³ª, ÀÚ½ÅÀÌ Á×¾úÀ¸¸é ½ÇÆÐ.
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ú±ï¿½ ï¿½Ú½ï¿½ï¿½Ì°Å³ï¿½, ï¿½Ú½ï¿½ï¿½ï¿½ ï¿½×¾ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
         if (!base.ApplyDamage(damageMessage)) return false;
 
-        Debug.Log("ÇÃ·¹ÀÌ¾î" + damageMessage.damage + " ÇÇÇØÀÔÀ½");
+        Debug.Log("ï¿½Ã·ï¿½ï¿½Ì¾ï¿½" + damageMessage.damage + " ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
         return true;
     }
     public void Revive()
@@ -53,12 +53,12 @@ public class PlayerHealth : LivingEntity
 
         dead = true;
         controller.PlayerDie();
-        //CameraReference.Instance.SetActiveFirstOtherPlayerVirtualCamera();
+        if(isLocalPlayer)
+            CameraReference.Instance.SetActiveFirstOtherPlayerVirtualCamera();
         controller.CmdTeleport(new Vector3(0, 2000, 0));
         InstantiateDeadBody();
         //base.Die();
         CmdPlayerDied();
-        Debug.Log("ÇÃ·¹ÀÌ¾î Á×À½");
     }
 
     public void SetActiveCharacterController(bool isActive)
@@ -77,7 +77,7 @@ public class PlayerHealth : LivingEntity
         MonsterReference.Instance.AddMonsterToList(deadBody);
         NetworkServer.Spawn(deadBody);
     }
-    // ÇÃ·¹ÀÌ¾î°¡ Á×¾úÀ½À» ¼­¹ö¿¡ ¾Ë¸²
+    // ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½×¾ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ë¸ï¿½
     [Command(requiresAuthority = false)]
     public void CmdPlayerDied()
     {

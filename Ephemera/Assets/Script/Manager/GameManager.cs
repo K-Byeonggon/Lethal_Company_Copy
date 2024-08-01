@@ -132,6 +132,15 @@ public class GameManager : NetworkBehaviour
             _navMeshGenerator.BakeNavMesh();
         }
     }
+    public void OnPlayerLoadedInit(NetworkConnectionToClient conn)
+    {
+        localPlayerController?.SetActivateLocalPlayer(false);
+        PlayerReference.Instance.localPlayer.controller.PlayerRespawn();
+        CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShipMiniature);
+        OnPlayerSceneLoaded(conn);
+    }
+    
+    
     #endregion
     #region MonoBehaviour Function
     private void Awake()
@@ -141,20 +150,37 @@ public class GameManager : NetworkBehaviour
     #endregion
     
     #region NetworkBehaviour Function
-    public override void OnStartServer()
+    /*public override void OnStartServer()
     {
         //모든 플레이어가 준비되었을 시
         OnServerGameReset();
-    }
+    }*/
+    [Command(requiresAuthority = false)]
+    private void OnPlayerSceneLoaded(NetworkConnectionToClient conn)
+    {
+        GameRoomNetworkManager.Instance.playersInGameScene[conn] = true; // 플레이어가 씬에 진입했음을 표시
 
-    public override void OnStartClient()
+        // 모든 플레이어가 씬에 진입했는지 확인
+        foreach (var entry in GameRoomNetworkManager.Instance.playersInGameScene)
+        {
+            if (!entry.Value) return; // 하나라도 진입하지 않은 플레이어가 있으면 리턴
+        }
+
+        // 모든 플레이어가 씬에 진입한 경우
+        OnServerGameReset();
+    }
+    /*public override void OnStartClient()
     {
         //캐릭터 제어 비활성화
         localPlayerController?.SetActivateLocalPlayer(false);
         //클라이언트 초기화
-        PlayerReference.Instance.localPlayer.controller.PlayerRespawn();
+        //GameObject go = GameObject.Find("Player(Clone)");
+        //PlayerReference.Instance.localPlayer.controller.PlayerRespawn();
+        Debug.Log(NetworkClient.localPlayer.gameObject.name);
+        NetworkClient.localPlayer.GetComponent<PlayerHealth>().controller.PlayerRespawn();
+        
         CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShipMiniature);
-    }
+    }*/
     #endregion
     #region 게임 흐름 제어
     /// <summary>
@@ -225,6 +251,9 @@ public class GameManager : NetworkBehaviour
     /// </summary>
     [Server] public void OnServerStartHyperDrive(int index)
     {
+        Debug.Log($"{selectPlanet}, {(Planet)index}");
+        if (selectPlanet == (Planet)index)
+            return;
         if (spaceSystem.StartWarpDrive(index))
         {
             OnClientStartHyperDrive();
@@ -238,7 +267,6 @@ public class GameManager : NetworkBehaviour
     {
         if (TerrainController.Instance.GetTerrainCount() <= (int)selectPlanet)
             return;
-        
         if(shipController == null)
             shipController = FindObjectOfType<ShipController>();
         
@@ -259,10 +287,10 @@ public class GameManager : NetworkBehaviour
             shipController = FindObjectOfType<ShipController>();
 
         OnClientSetCharacterController(false);
+        OnClientEscapePlanet();
         IsLand = false;
 
         EscapeSquance();
-        //Invoke("EscapeSquance", 3f);
     }
     /// <summary>
     /// 탈출 시퀸스
@@ -274,16 +302,7 @@ public class GameManager : NetworkBehaviour
         //게임 시간 비활성화
         if (_timeCoroutine != null)
             StopCoroutine(_timeCoroutine);
-
-        /*foreach (var monster in MonsterReference.Instance.monsterList)
-        {
-            NetworkServer.Destroy(monster);
-        }
-        foreach (var item in ItemReference.Instance.itemList)
-        {
-            NetworkServer.Destroy(item);
-        }*/
-
+        
         StartCoroutine(DestroyAllObjectsAfterDelay());
     }
     /// <summary>
@@ -387,7 +406,7 @@ public class GameManager : NetworkBehaviour
         ItemReference.Instance.DestroyAll();
         if (_navMeshGenerator != null)
             Destroy(_navMeshGenerator.gameObject);
-        OnClientEscapePlanet();
+        OnClientArriveSpace();
         OnServerDayPasses();
 
         Debug.Log("VirtualCameraType.SpaceShipMiniature");
@@ -427,6 +446,7 @@ public class GameManager : NetworkBehaviour
     [Command(requiresAuthority = false)]
     public void DestroyObject(NetworkIdentity identity)
     {
+        Debug.Log(identity.gameObject.name);
         NetworkServer.Destroy(identity.gameObject);
     }
     #endregion
@@ -458,11 +478,13 @@ public class GameManager : NetworkBehaviour
         SetActivatePlanetTerrain((int)selectPlanet, true);
         CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShip);
     }
-
     [ClientRpc] public void OnClientEscapePlanet()
     {
-        MonsterReference.Instance.DestroyAll();
-        ItemReference.Instance.DestroyAll();
+        UIController.Instance.SetActivateUI(null);
+        CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShip);
+    }
+    [ClientRpc] public void OnClientArriveSpace()
+    {
         OnDestoryRoom();
         
         UIController.Instance.SetActivateUI(typeof(UI_Selecter));

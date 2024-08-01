@@ -182,7 +182,6 @@ public class YipeeAI : MonsterAI
     //���� ������ ����(�ѹ��� ����)(���ƴٴϱ� ������)
     private Node.State SetDest()
     {
-        Debug.Log("SetDest");
         if (itemFind) return Node.State.FAILURE;        //�������� ã�Ƽ� �������� �����ϴ� ���¸�,
         else if (setDesti) return Node.State.SUCCESS;   //�̹� ������ ������ �Ǿ�������,
         else
@@ -198,8 +197,6 @@ public class YipeeAI : MonsterAI
     //�������� �̵�(���ƴٴϱ� ������)
     private Node.State MoveToDest()
     {
-        Debug.Log("MoveToDest");
-
         if (itemFind) return Node.State.FAILURE;
 
         //�������� ������.
@@ -214,7 +211,6 @@ public class YipeeAI : MonsterAI
     //��ǰ���� ������ ����(Ž�� ������)
     private Node.State SetDestToScrap()
     {
-        Debug.Log("SetDestToScrap");
         if (itemFind)
         {
             navMeshAgent.SetDestination(detectedItem.transform.position);
@@ -311,13 +307,11 @@ public class YipeeAI : MonsterAI
 
         if(!beWatched)
         {
-            Debug.Log("�Ⱥ��� ����");
             startBeWatched = false;
         }
 
         if (beWatched && Time.time - lastBeWatchedTime > 7f)
         {
-            Debug.Log("7�� �Ĵ� ����");
             isAttacked = true;
             player = watchedBy.transform;
         }

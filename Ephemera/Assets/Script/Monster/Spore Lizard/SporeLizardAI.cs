@@ -113,7 +113,6 @@ public class SporeLizardAI : MonsterAI
 
         if (!setDesti)
         {
-            Debug.Log("������ ����");
             Vector3 newDest = RandomNavMeshMovement.RandomNavSphere(transform.position, wanderRadius, -1);
             setDesti = true;
             navMeshAgent.SetDestination(newDest);
@@ -121,7 +120,6 @@ public class SporeLizardAI : MonsterAI
 
         if (Vector3.Distance(head.position, navMeshAgent.destination) <= 1f)
         {
-            Debug.Log("������ ����");
             setDesti = false;
             return Node.State.SUCCESS;
         }

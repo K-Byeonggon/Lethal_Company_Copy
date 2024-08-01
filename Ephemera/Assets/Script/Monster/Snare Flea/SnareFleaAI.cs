@@ -302,12 +302,10 @@ public class SnareFleaAI : MonsterAI
         if (Physics.Raycast(transform.position, Vector3.down, out hit, checkDistance, groundLayer))
         {
             isGrounded = true;
-            Debug.Log("Grounded");
         }
         else
         {
             isGrounded = false;
-            Debug.Log("Not Grounded");
         }
     }
 

@@ -18,9 +18,10 @@ public class PlayerReference : MonoBehaviour
     {
         Instance = this;
     }
-    public void AddLocalPlayer(PlayerHealth player)
+    public void InitLocalPlayer(PlayerHealth player)
     {
         localPlayer = player;
+        GameManager.Instance.OnPlayerLoadedInit(player.connectionToClient);
     }
     public void AddPlayerToDic(PlayerHealth player)
     {
@@ -39,13 +40,13 @@ public class PlayerReference : MonoBehaviour
     }
     public int GetPlayerOrder(uint playerKey)
     {
-        // DictionaryÀÇ Å°¸¦ Á¤·ÄÇÕ´Ï´Ù.
+        // Dictionaryì˜ í‚¤ë¥¼ ì •ë ¬í•©ë‹ˆë‹¤.
         var sortedKeys = playerDic.Keys.OrderBy(key => key).ToList();
 
-        // ÀÚ½ÅÀÇ Å°°¡ ¸î ¹øÂ°¿¡ ÀÖ´ÂÁö Ã£½À´Ï´Ù.
+        // ìžì‹ ì˜ í‚¤ê°€ ëª‡ ë²ˆì§¸ì— ìžˆëŠ”ì§€ ì°¾ìŠµë‹ˆë‹¤.
         int index = sortedKeys.IndexOf(playerKey);
 
-        // 0ºÎÅÍ ½ÃÀÛÇÏ´Â ÀÎµ¦½º¸¦ 1ºÎÅÍ ½ÃÀÛÇÏ´Â ¼ø¼­·Î ¹ÝÈ¯ÇÕ´Ï´Ù.
+        // 0ë¶€í„° ì‹œìž‘í•˜ëŠ” ì¸ë±ìŠ¤ë¥¼ 1ë¶€í„° ì‹œìž‘í•˜ëŠ” ìˆœì„œë¡œ ë°˜í™˜í•©ë‹ˆë‹¤.
         return index;
     }
 
