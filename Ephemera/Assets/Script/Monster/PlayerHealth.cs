@@ -57,7 +57,7 @@ public class PlayerHealth : LivingEntity
             CameraReference.Instance.SetActiveFirstOtherPlayerVirtualCamera();
         controller.CmdTeleport(new Vector3(0, 2000, 0));
         InstantiateDeadBody();
-        //base.Die();
+        
         CmdPlayerDied();
     }
 

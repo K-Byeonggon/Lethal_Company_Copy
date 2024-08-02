@@ -169,18 +169,6 @@ public class GameManager : NetworkBehaviour
         // 모든 플레이어가 씬에 진입한 경우
         OnServerGameReset();
     }
-    /*public override void OnStartClient()
-    {
-        //캐릭터 제어 비활성화
-        localPlayerController?.SetActivateLocalPlayer(false);
-        //클라이언트 초기화
-        //GameObject go = GameObject.Find("Player(Clone)");
-        //PlayerReference.Instance.localPlayer.controller.PlayerRespawn();
-        Debug.Log(NetworkClient.localPlayer.gameObject.name);
-        NetworkClient.localPlayer.GetComponent<PlayerHealth>().controller.PlayerRespawn();
-        
-        CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShipMiniature);
-    }*/
     #endregion
     #region 게임 흐름 제어
     /// <summary>
@@ -274,6 +262,8 @@ public class GameManager : NetworkBehaviour
         shipController.StartLanding(TerrainController.Instance.GetLandingZone(selectPlanet).position);
         _timeCoroutine = StartCoroutine(IncrementTimeCounter());
         int seed = Environment.TickCount;
+        
+        Debug.Log("OnServerEnterPlanet");
         OnClientEnterPlanet(seed);
 
         IsLand = true;
@@ -469,6 +459,8 @@ public class GameManager : NetworkBehaviour
     }
     [ClientRpc] public void OnClientEnterPlanet(int seed)
     {
+        Debug.Log("OnClientEnterPlanet");
+        
         CreateRoom(seed);
         GenerationObject();
         

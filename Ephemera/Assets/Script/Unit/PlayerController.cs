@@ -244,13 +244,10 @@ public class PlayerController : NetworkBehaviour
 
     public void PlayerDie()
     {
-        //CameraReference.Instance
         SetActivateLocalPlayer(false);
     }
     public void PlayerRespawn()
     {
-        //CameraReference.Instance.
-        //SetActivateLocalPlayer(true);
         playerHealth.Revive();
 
         if (GameManager.Instance.shipController == null)

@@ -18,6 +18,8 @@ public class ShipController : NetworkBehaviour
     [SerializeField]
     List<GameObject> items = new List<GameObject>();
 
+    private Coroutine _escapeCoroutine;
+
     #region OnTrigger Function
     private void OnTriggerEnter(Collider other)
     {
@@ -56,6 +58,8 @@ public class ShipController : NetworkBehaviour
         direction.y = 0;
         if (direction != Vector3.zero)
             OnServerChangeRotation(Quaternion.LookRotation(direction));
+        if(_escapeCoroutine != null)
+            StopCoroutine(_escapeCoroutine);
         StartCoroutine(Landing(destination));
     }
 
@@ -75,6 +79,8 @@ public class ShipController : NetworkBehaviour
             //transform.rotation = Quaternion.Slerp(transform.rotation, lookAt, 0.01f);
             OnServerChangePosition(Vector3.Slerp(transform.position, destination, 0.01f));
             yield return null;
+            Debug.Log("Landing");
+            Debug.Log($"Distance {Vector3.Distance(transform.position, destination)}");
         }
     }
     [Server]
@@ -86,7 +92,7 @@ public class ShipController : NetworkBehaviour
         direction.y = 0;
         if (direction != Vector3.zero)
             OnServerChangeRotation(Quaternion.LookRotation(direction));
-        StartCoroutine(Escape(destination));
+        _escapeCoroutine = StartCoroutine(Escape(destination));
     }
     [Server]
     IEnumerator Escape(Vector3 destination)
@@ -101,7 +107,7 @@ public class ShipController : NetworkBehaviour
                 yield break;
             }
             //transform.rotation = Quaternion.Slerp(transform.rotation, lookAt, 0.01f);
-            OnServerChangePosition(Vector3.Slerp(transform.position, destination, 0.01f));
+            OnServerChangePosition(Vector3.Lerp(transform.position, destination, 0.01f));
             yield return null;
         }
     }
