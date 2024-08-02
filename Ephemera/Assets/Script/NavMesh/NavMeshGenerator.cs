@@ -32,7 +32,6 @@ public class NavMeshGenerator : MonoBehaviour
         AsyncOperation async = NavMeshBuilder.UpdateNavMeshDataAsync(data, surface.GetBuildSettings(), sources, bounds);
         while (!async.isDone)
         {
-            Debug.Log("Update Progress: " + async.progress);
             yield return null;
         }
         Debug.Log("Nav Mesh Time: " + (Time.unscaledTime - timer));

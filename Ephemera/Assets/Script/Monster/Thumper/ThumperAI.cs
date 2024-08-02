@@ -36,7 +36,7 @@ public class ThumperAI : MonsterAI
     {
         enabled = true;
         navMeshAgent.enabled = true;
-        MonsterReference.Instance.AddMonsterToList(gameObject);
+        MonsterReference.Instance.AddMonsterToList(transform.parent.gameObject);
         
         ConstructBehaviorTree();
 
