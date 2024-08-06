@@ -42,6 +42,7 @@ public class UI_Game : MonoBehaviour
     private void Start()
     {
         Init();
+        GameManager.Instance.RegistPlayerStateDisplayAction(CurrentPlayerHpChangeEvent);
         GameManager.Instance.RegistCurrentMoneyDisplayAction(CurrentMonnyChangeEvent);
     }
     private void Update()
@@ -58,12 +59,12 @@ public class UI_Game : MonoBehaviour
             uISpriteSetup?.OnSetup();
         }
     }
-    //Å¬¶óÀÌ¾ğÆ® Ãß°¡, UI hpbar Ãß°¡
+    //í´ë¼ì´ì–¸íŠ¸ ì¶”ê°€, UI hpbar ì¶”ê°€
     public void AddClient()
     {
 
     }
-    //UI »óÈ£ÀÛ¿ë Ç¥½Ã
+    //UI ìƒí˜¸ì‘ìš© í‘œì‹œ
     public void UIInteraction(bool isActive)
     {
         interactionImage.SetActive(isActive);
@@ -89,6 +90,10 @@ public class UI_Game : MonoBehaviour
     public void AddItem(int index, Sprite image)
     {
         items[index].sprite = image;
+    }
+    public void CurrentPlayerHpChangeEvent(float value)
+    {
+        playerHpBar.value = value;
     }
     public void CurrentMonnyChangeEvent(string value)
     {

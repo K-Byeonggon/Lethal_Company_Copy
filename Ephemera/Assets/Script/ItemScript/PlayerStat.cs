@@ -1,3 +1,4 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -22,24 +23,24 @@ public class PlayerStat : LivingEntity
 
     public override bool ApplyDamage(DamageMessage damageMessage)
     {
-        //µ¥¹ÌÁö ÁÖ´Â °ÍÀÌ ÀÚ±â ÀÚ½ÅÀÌ°Å³ª, ÀÚ½ÅÀÌ Á×¾úÀ¸¸é ½ÇÆĞ.
+        //ë°ë¯¸ì§€ ì£¼ëŠ” ê²ƒì´ ìê¸° ìì‹ ì´ê±°ë‚˜, ìì‹ ì´ ì£½ì—ˆìœ¼ë©´ ì‹¤íŒ¨.
         if (!base.ApplyDamage(damageMessage)) return false;
 
-        Debug.Log("ÇÃ·¹ÀÌ¾î" + damageMessage.damage + " ÇÇÇØÀÔÀ½");
+        Debug.Log("í”Œë ˆì´ì–´" + damageMessage.damage + " í”¼í•´ì…ìŒ");
         return true;
     }
 
     public override void Die()
     {
         base.Die();
-        Debug.Log("ÇÃ·¹ÀÌ¾î Á×À½");
+        Debug.Log("í”Œë ˆì´ì–´ ì£½ìŒ");
     }
     public void UpdateStamina()
     {
         if (this != null)
         {
             stamina -= Runtime*Time.deltaTime;
-            Debug.Log("½ºÅÂ¹Ì³ª°¡ ÁÙ¾îµå´Â°¡? " + stamina);
+            Debug.Log("ìŠ¤íƒœë¯¸ë‚˜ê°€ ì¤„ì–´ë“œëŠ”ê°€? " + stamina);
         }
     }
     public void RefillStamina()
@@ -49,7 +50,7 @@ public class PlayerStat : LivingEntity
             stamina += Runtime*Time.deltaTime;
             if (stamina >= maxstamina)
             {
-                Debug.Log("½ºÅÂ¹Ì³ª°¡ µ¹¾Æ¿À´Â°¡?" + stamina);
+                Debug.Log("ìŠ¤íƒœë¯¸ë‚˜ê°€ ëŒì•„ì˜¤ëŠ”ê°€?" + stamina);
                 stamina = maxstamina;
                 
             }

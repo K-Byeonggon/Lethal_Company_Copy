@@ -74,6 +74,8 @@ public class ShipController : NetworkBehaviour
                 GameManager.Instance.OnServerActiveLocalPlayerCamera();
                 GameManager.Instance.OnServerSetActivePlayer(true);
                 SetGameUI();
+
+                GameManager.Instance.OnClientResetCharacterPosition();
                 yield break;
             }
             //transform.rotation = Quaternion.Slerp(transform.rotation, lookAt, 0.01f);
@@ -104,6 +106,8 @@ public class ShipController : NetworkBehaviour
                 OnServerChangePosition(destination);
                 GameManager.Instance.OnServerSetActivePlayer(false);
                 SetSelecterUI();
+                
+                GameManager.Instance.OnClientResetCharacterPosition();
                 yield break;
             }
             //transform.rotation = Quaternion.Slerp(transform.rotation, lookAt, 0.01f);

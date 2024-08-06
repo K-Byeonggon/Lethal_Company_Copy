@@ -44,7 +44,7 @@ public class LivingEntity : NetworkBehaviour, IDamageable
 
         return true;
     }
-
+   
     public virtual void RestoreHealth(float newHealth)
     {
         if (dead) return;

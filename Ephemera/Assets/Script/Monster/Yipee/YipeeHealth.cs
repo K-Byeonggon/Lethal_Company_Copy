@@ -1,3 +1,4 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,14 +10,14 @@ public class YipeeHealth : LivingEntity
 
     /*private void OnEnable()
     {
-        //ºñÃà¹ú·¹´Â »ğ 2´ë¿¡ Á×´Â´Ù.
+        //ë¹„ì¶•ë²Œë ˆëŠ” ì‚½ 2ëŒ€ì— ì£½ëŠ”ë‹¤.
         maxHealth = 20f;
         health = maxHealth;
         dead = false;
     }*/
     public override void OnStartServer()
     {
-        //ºñÃà¹ú·¹´Â »ğ 2´ë¿¡ Á×´Â´Ù.
+        //ë¹„ì¶•ë²Œë ˆëŠ” ì‚½ 2ëŒ€ì— ì£½ëŠ”ë‹¤.
         maxHealth = 20f;
         health = maxHealth;
         dead = false;
@@ -24,12 +25,12 @@ public class YipeeHealth : LivingEntity
 
     public override bool ApplyDamage(DamageMessage damageMessage)
     {
-        //µ¥¹ÌÁö ÁÖ´Â °ÍÀÌ ÀÚ±â ÀÚ½ÅÀÌ°Å³ª, ÀÚ½ÅÀÌ Á×¾úÀ¸¸é ½ÇÆĞ.
+        //ë°ë¯¸ì§€ ì£¼ëŠ” ê²ƒì´ ìê¸° ìì‹ ì´ê±°ë‚˜, ìì‹ ì´ ì£½ì—ˆìœ¼ë©´ ì‹¤íŒ¨.
         if(!base.ApplyDamage(damageMessage)) return false;
         
-        Debug.Log("ºñÃà¹ú·¹" + damageMessage.damage + " ÇÇÇØÀÔÀ½");
+        Debug.Log("ë¹„ì¶•ë²Œë ˆ" + damageMessage.damage + " í”¼í•´ì…ìŒ");
 
-        //ºñÃà¹ú·¹´Â °ø°İ¹ŞÀ¸¸é °ø°İÇÑÀÚ¸¦ °ø°İÇÏ´Â °ø°İ½ÃÄö½º°¡ ½ÇÇàµÊ.
+        //ë¹„ì¶•ë²Œë ˆëŠ” ê³µê²©ë°›ìœ¼ë©´ ê³µê²©í•œìë¥¼ ê³µê²©í•˜ëŠ” ê³µê²©ì‹œí€€ìŠ¤ê°€ ì‹¤í–‰ë¨.
         yipee.isAttacked = true;
         if(yipee.player == null) { yipee.player = damageMessage.damager.transform; }
 
@@ -39,6 +40,6 @@ public class YipeeHealth : LivingEntity
     public override void Die()
     {
         base.Die();
-        Debug.Log("ºñÃà¹ú·¹ Á×À½");
+        Debug.Log("ë¹„ì¶•ë²Œë ˆ ì£½ìŒ");
     }
 }

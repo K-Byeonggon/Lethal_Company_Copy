@@ -1,3 +1,4 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,12 +24,12 @@ public class ThumperHealth : LivingEntity
 
     public override bool ApplyDamage(DamageMessage damageMessage)
     {
-        //µ¥¹ÌÁö ÁÖ´Â °ÍÀÌ ÀÚ±â ÀÚ½ÅÀÌ°Å³ª, ÀÚ½ÅÀÌ Á×¾úÀ¸¸é ½ÇÆĞ.
+        //ë°ë¯¸ì§€ ì£¼ëŠ” ê²ƒì´ ìê¸° ìì‹ ì´ê±°ë‚˜, ìì‹ ì´ ì£½ì—ˆìœ¼ë©´ ì‹¤íŒ¨.
         if (!base.ApplyDamage(damageMessage)) return false;
 
-        Debug.Log("½æÆÛ" + damageMessage.damage + " ÇÇÇØÀÔÀ½");
+        Debug.Log("ì¸í¼" + damageMessage.damage + " í”¼í•´ì…ìŒ");
 
-        //½æÆÛ´Â °ø°İ¹ŞÀ¸¸é °ø°İ¹ŞÀº ¹æÇâÀ» ¸ñÀûÁö·Î ¼³Á¤ÇÑ´Ù.
+        //ì¸í¼ëŠ” ê³µê²©ë°›ìœ¼ë©´ ê³µê²©ë°›ì€ ë°©í–¥ì„ ëª©ì ì§€ë¡œ ì„¤ì •í•œë‹¤.
         thumper.destination = damageMessage.damager.transform.position;
         thumper.setDesti = true;
 
@@ -38,7 +39,7 @@ public class ThumperHealth : LivingEntity
     public override void Die()
     {
         base.Die();
-        Debug.Log("½æÆÛ Á×À½");
+        Debug.Log("ì¸í¼ ì£½ìŒ");
     }
 
 }

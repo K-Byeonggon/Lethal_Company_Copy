@@ -99,7 +99,7 @@ public class GameManager : NetworkBehaviour
     private event Action<string> CurrentMoneyDisplay;
     private event Action<string> DeadLineDisplay;
     private event Action<string> TargetMoneyDisplay;
-    private event Action PlayerStateDisplay;
+    private event Action<float> PlayerStateDisplay;
     private event Action<int> TimeDisplay;
     #endregion
     #region Function
@@ -344,7 +344,6 @@ public class GameManager : NetworkBehaviour
                 break;
             }
         }
-
         if (allDead)
         {
             Debug.Log("All Player Die");
@@ -417,7 +416,7 @@ public class GameManager : NetworkBehaviour
             "Thumper",
             "Yipee",
         };
-
+        
         for (int i = 0; i < monsterSpawnCount; i++)
         {
             Vector3 vec = RoomReference.Instance.GetRandomPosition();
@@ -440,7 +439,15 @@ public class GameManager : NetworkBehaviour
         NetworkServer.Destroy(identity.gameObject);
     }
     #endregion
+    
     #region ClientRpc Function 서버가 원격 프로시저 호출(RPC)로 모든 클라이언트에서 실행되는 함수
+    /// <summary>
+    /// 플레이어 위치 초기화
+    /// </summary>
+    [ClientRpc] public void OnClientResetCharacterPosition()
+    {
+        PlayerReference.Instance.localPlayer.controller.PlayerRespawn();
+    }
     /// <summary>
     /// 캐릭터 제어 활성화
     /// </summary>
@@ -448,12 +455,12 @@ public class GameManager : NetworkBehaviour
     [ClientRpc] public void OnClientSetCharacterController(bool isActive)
     {
         foreach (PlayerHealth player in PlayerReference.Instance.playerDic.Values)
-        {
             player.SetActiveCharacterController(isActive);
-        }
     }
     [ClientRpc] public void OnClientGameStartInit()
     {
+        Debug.Log("OnClientGameStartInit");
+        
         PlayerReference.Instance.localPlayer.controller.PlayerRespawn();
         CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShipMiniature);
     }
@@ -534,13 +541,6 @@ public class GameManager : NetworkBehaviour
         CurrentMoneyDisplay?.Invoke(newValue.ToString());
     }
     /// <summary>
-    /// 캐릭터 상태 변경(모든 클라이언트)
-    /// </summary>
-    [Client] private void OnClientSetPlayerState(int oldValue, int newValue)
-    {
-        PlayerStateDisplay?.Invoke();
-    }
-    /// <summary>
     /// 목표 금액 변경(모든 클라이언트)
     /// </summary>
     [Client] private void OnClientSetTargetMoney(int oldValue, int newValue)
@@ -570,6 +570,14 @@ public class GameManager : NetworkBehaviour
     }
     #endregion
     
+    /// <summary>
+    /// 캐릭터 상태 변경(모든 클라이언트)
+    /// </summary>
+    public void OnClientSetPlayerState(float value)
+    {
+        PlayerStateDisplay?.Invoke(value);
+    }
+    
     #region ActionRegist Action등록
     /// <summary>
     /// 현재 소지금 UI갱신 이벤트 등록
@@ -595,7 +603,7 @@ public class GameManager : NetworkBehaviour
     /// <summary>
     /// 플레이어 상태 변경 출력 이벤트 등록
     /// </summary>
-    public void RegistPlayerStateDisplayAction(Action action = null)
+    public void RegistPlayerStateDisplayAction(Action<float> action = null)
     {
         PlayerStateDisplay = action;
     }
@@ -604,7 +612,7 @@ public class GameManager : NetworkBehaviour
     /// </summary>
     public void RegistTotalRevenueDisplayAction(Action action = null)
     {
-        PlayerStateDisplay = action;
+        //PlayerStateDisplay = action;
     }
     /// <summary>
     /// 시간 UI 출력 이벤트 등록

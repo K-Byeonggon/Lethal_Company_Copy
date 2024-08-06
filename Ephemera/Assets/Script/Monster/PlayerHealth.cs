@@ -34,9 +34,11 @@ public class PlayerHealth : LivingEntity
 
     public override bool ApplyDamage(DamageMessage damageMessage)
     {
-        //������ �ִ� ���� �ڱ� �ڽ��̰ų�, �ڽ��� �׾����� ����.
         if (!base.ApplyDamage(damageMessage)) return false;
 
+        float ratio = health / maxHealth;
+        GameManager.Instance.OnClientSetPlayerState(ratio);
+        
         Debug.Log("�÷��̾�" + damageMessage.damage + " ��������");
         return true;
     }
@@ -77,6 +79,7 @@ public class PlayerHealth : LivingEntity
         MonsterReference.Instance.AddMonsterToList(deadBody);
         NetworkServer.Spawn(deadBody);
     }
+    
     // �÷��̾ �׾����� ������ �˸�
     [Command(requiresAuthority = false)]
     public void CmdPlayerDied()
