@@ -76,23 +76,19 @@ public class SporeLizardAI : MonsterAI
 
     private void ConstructBehaviorTree()
     {
+        ActionNode wander = new ActionNode(Wander);
 
-        //���� �������� children Node
         ActionNode threaten = new ActionNode(Threaten);
+
         ActionNode explodeSpore = new ActionNode(ExplodeSpore);
 
-        //����
         ActionNode run = new ActionNode(Run);
 
-        //���� �������� children Node��
         ActionNode moveToPlayer = new ActionNode(MoveToPlayer);
         ActionNode attackPlayer = new ActionNode(AttackPlayer);
 
-        //��ȸ �������� children Node��
-        ActionNode wander = new ActionNode(Wander);
-
-        //������ ��忡 �� ������ ����
         SequenceNode attackSequence = new SequenceNode(new List<Node> { moveToPlayer, attackPlayer });
+
         topNode = new SelectorNode(new List<Node> { wander, threaten, explodeSpore, run, attackSequence });
     }
 

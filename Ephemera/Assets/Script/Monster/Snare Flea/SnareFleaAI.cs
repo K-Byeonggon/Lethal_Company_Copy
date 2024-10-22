@@ -59,25 +59,19 @@ public class SnareFleaAI : MonsterAI
 
     private void ConstructBehaviorTree()
     {
-        //죽음 시퀀스의 children Node
         ActionNode dead = new ActionNode(Dead);
 
-        //스폰 시퀀스
         ActionNode spawned = new ActionNode(Spawned);
 
-        //탐색 시퀀스
         ActionNode detect = new ActionNode(Detect);
 
-        //공격 시퀀스
         ActionNode bind = new ActionNode(Bind);
         ActionNode attackPlayer = new ActionNode(AttackPlayer);
 
-        //지상 공격 시퀀스
         ActionNode moveToPlayer = new ActionNode(MoveToPlayer);
         ActionNode bindFromGround = new ActionNode(BindFromGround);
         //ActionNode attackPlayer
 
-        //도망 시퀀스
         ActionNode runFromPlayer = new ActionNode(RunFromPlayer);
         ActionNode toCeiling = new ActionNode(ToCeiling);
         ActionNode hangOn = new ActionNode(HangOn);
@@ -86,9 +80,7 @@ public class SnareFleaAI : MonsterAI
         SequenceNode groundAttackSequence = new SequenceNode(new List<Node> { moveToPlayer, bindFromGround, attackPlayer });
         SequenceNode runSequence = new SequenceNode(new List<Node> { runFromPlayer, toCeiling, hangOn });
 
-
         topNode = new SelectorNode(new List<Node> { dead, spawned, detect, attackSequence, groundAttackSequence, runSequence });
-        
     }
 
     private Node.State Dead()

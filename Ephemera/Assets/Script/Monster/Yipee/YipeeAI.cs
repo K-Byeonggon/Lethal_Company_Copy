@@ -61,32 +61,27 @@ public class YipeeAI : MonsterAI
 
     private void ConstructBehaviorTree()
     {
-        //���� �������� children Node
         ActionNode dead = new ActionNode(Dead);
 
-        //���� �������� children Node��
         ActionNode attackWill = new ActionNode(AttackWill);
         ActionNode moveToPlayer = new ActionNode(MoveToPlayer);
         ActionNode attackPlayer = new ActionNode(AttackPlayer);
 
-        //��ȸ �������� children Node��
         ActionNode setDest = new ActionNode(SetDest);
         ActionNode moveToDest = new ActionNode(MoveToDest);
 
-        //Ž�� �������� children Node��
         ActionNode setDestToScrap = new ActionNode(SetDestToScrap);
         ActionNode moveToScrap = new ActionNode(MoveToScrap);
         ActionNode getScrap = new ActionNode(GetScrap);
         ActionNode moveToNest = new ActionNode(MoveToNest);
         ActionNode setScrap = new ActionNode(SetScrap);
 
-        //���� �������� children Node
         ActionNode threathen = new ActionNode(Threaten);
 
-        //������ ��忡 �� ������ ����
         SequenceNode attackSequence = new SequenceNode(new List<Node> { attackWill, moveToPlayer, attackPlayer });
         SequenceNode wanderSequence = new SequenceNode(new List<Node> { setDest, moveToDest });
         SequenceNode detectSequence = new SequenceNode(new List<Node> { setDestToScrap, moveToScrap, getScrap, moveToNest, setScrap });
+        
         topNode = new SelectorNode(new List<Node> { dead, attackSequence, threathen, wanderSequence, detectSequence, });
     }
 

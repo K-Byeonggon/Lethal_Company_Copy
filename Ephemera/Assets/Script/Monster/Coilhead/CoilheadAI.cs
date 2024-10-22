@@ -35,17 +35,12 @@ public class CoilheadAI : MonsterAI
     
     private void ConstructBehaviorTree()
     {
-        //코일헤드는 처치 불가능 몬스터. 체력도 죽음도 없음.
-
-        //정지 시퀀스
         ActionNode stop = new ActionNode(Stop);
 
-        //공격 시퀀스의 children Node들
         ActionNode attackWill = new ActionNode(AttackWill);
         ActionNode moveToPlayer = new ActionNode(MoveToPlayer);
         ActionNode attackPlayer = new ActionNode(AttackPlayer);
 
-        //배회 시퀀스의 children Node들
         ActionNode setDest = new ActionNode(SetDest);
         ActionNode moveToDest = new ActionNode(MoveToDest);
 

@@ -55,23 +55,19 @@ public class ThumperAI : MonsterAI
 
     private void ConstructBehaviorTree()
     {
-        //���� �������� children Node
         ActionNode dead = new ActionNode(Dead);
 
-        //���� ������
         ActionNode attackWill = new ActionNode(AttackWill);
         ActionNode moveToPlayer = new ActionNode(MoveToPlayer);
         ActionNode attackPlayer = new ActionNode(AttackPlayer);
 
-        
-        //��ȸ �������� children Node��
         ActionNode setDest = new ActionNode(SetDest);
         ActionNode moveToDest = new ActionNode(MoveToDest);
 
         SequenceNode attackSequence = new SequenceNode(new List<Node> { attackWill, moveToPlayer, attackPlayer });
         SequenceNode wanderSequence = new SequenceNode(new List<Node> { setDest, moveToDest });
-        topNode = new SelectorNode(new List<Node> { dead, attackSequence, wanderSequence });
 
+        topNode = new SelectorNode(new List<Node> { dead, attackSequence, wanderSequence });
     }
 
     //���� ������ ���
