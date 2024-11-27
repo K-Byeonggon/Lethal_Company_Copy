@@ -17,6 +17,7 @@ public class SnareFleaDetect : MonoBehaviour
         {
             snare.sawPlayer = true;
             snare.player = other.transform;
+            Debug.Log($"올무벌레가 플레이어{other.name} 탐지.");
         }
         
     }

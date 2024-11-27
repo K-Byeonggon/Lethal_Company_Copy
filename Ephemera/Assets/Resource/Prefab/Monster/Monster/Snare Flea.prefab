@@ -130,6 +130,9 @@ MonoBehaviour:
   isAttacked: 0
   isRunning: 0
   jumped: 0
+  boxSize: {x: 2, y: 2, z: 1}
+  castDirection: {x: 0, y: -1, z: 0}
+  castDistance: 50
 --- !u!114 &3285152763983176780
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -404,7 +407,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5425669935541741657
 Transform:
   m_ObjectHideFlags: 0

@@ -81,8 +81,8 @@ public class ShipController : NetworkBehaviour
             //transform.rotation = Quaternion.Slerp(transform.rotation, lookAt, 0.01f);
             OnServerChangePosition(Vector3.Slerp(transform.position, destination, 0.01f));
             yield return null;
-            Debug.Log("Landing");
-            Debug.Log($"Distance {Vector3.Distance(transform.position, destination)}");
+            //Debug.Log("Landing");
+            //Debug.Log($"Distance {Vector3.Distance(transform.position, destination)}");
         }
     }
     [Server]
