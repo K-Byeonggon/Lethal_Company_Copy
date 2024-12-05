@@ -1,18 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class InventoryTest : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public static InventoryTest instance;
+    public List<ItemData> data = new List<ItemData>(); 
+
+    public void Awake()
     {
-        
+        instance = this;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Add(ItemData item)
     {
-        
+
+    }
+
+    public void Remove(ItemData itme)
+    {
+
     }
 }

@@ -88,19 +88,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45fac1424df44990a90443d3cf649a75, type: 3}
   m_Name: AnalogGlitchVolume
   m_EditorClassIdentifier: 
-  active: 0
+  active: 1
   scanLineJitter:
     m_OverrideState: 1
-    m_Value: 0.414
+    m_Value: 0
   verticalJump:
     m_OverrideState: 1
-    m_Value: 0.044
+    m_Value: 0
   horizontalShake:
     m_OverrideState: 1
-    m_Value: 0.283
+    m_Value: 0.00000018976628
   colorDrift:
     m_OverrideState: 1
-    m_Value: 0.673
+    m_Value: 0.00000045128166
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0

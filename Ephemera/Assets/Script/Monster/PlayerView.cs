@@ -11,7 +11,7 @@ public class PlayerView : FieldOfView
         List<MonsterAI> currentlyVisibleTargets = new List<MonsterAI>();
         Collider[] targetsInViewRadius = Physics.OverlapSphere(transform.position, viewRadius, targetMask);
 
-        // ±¸Ã¼·Î °¨ÁöÇØ¼­, ½Ã¾ß °¢µµ ¸¸Å­¸¸ ÁøÂ¥ °¨Áö
+        // êµ¬ì²´ë¡œ ê°ì§€í•´ì„œ, ì‹œì•¼ ê°ë„ ë§Œí¼ë§Œ ì§„ì§œ ê°ì§€
         foreach (Collider target in targetsInViewRadius)
         {
             Transform targetTransform = target.transform;
@@ -23,20 +23,20 @@ public class PlayerView : FieldOfView
 
                 if (!Physics.Raycast(transform.position, directionToTarget, distanceToTarget, obstacleMask))
                 {
-                    // ÁøÂ¥ ½Ã¾ß°¢¿¡ ÀÖ´Â ¸ó½ºÅÍ
-                    Debug.Log("ÇÃ·¹ÀÌ¾î°¡ " + targetTransform.name + " º¸°í ÀÖÀ½.");
+                    // ì§„ì§œ ì‹œì•¼ê°ì— ìˆëŠ” ëª¬ìŠ¤í„°
+                    //Debug.Log("í”Œë ˆì´ì–´ê°€ " + targetTransform.name + " ë³´ê³  ìˆìŒ.");
                     MonsterAI targetAI = targetTransform.GetComponent<MonsterAI>();
                     if (targetAI != null)
                     {
                         targetAI.BeWatched = true;
-                        targetAI.WatchedBy = transform.parent.gameObject; // ½Ã¾ß ¿ÀºêÁ§Æ®¸¦ ÇÃ·¹ÀÌ¾îÀÇ ÇÏÀ§¿¡ ³ÖÀ» ¿¹Á¤
+                        targetAI.WatchedBy = transform.parent.gameObject; // ì‹œì•¼ ì˜¤ë¸Œì íŠ¸ë¥¼ í”Œë ˆì´ì–´ì˜ í•˜ìœ„ì— ë„£ì„ ì˜ˆì •
                         currentlyVisibleTargets.Add(targetAI);
                     }
                 }
             }
         }
 
-        // ÀÌÀü¿¡ °¨ÁöµÈ Å¸°Ù Áß ÇöÀç °¨ÁöµÇÁö ¾ÊÀº Å¸°Ù Ã³¸®
+        // ì´ì „ì— ê°ì§€ëœ íƒ€ê²Ÿ ì¤‘ í˜„ì¬ ê°ì§€ë˜ì§€ ì•Šì€ íƒ€ê²Ÿ ì²˜ë¦¬
         foreach (MonsterAI targetAI in previouslyVisibleTargets)
         {
             if (!currentlyVisibleTargets.Contains(targetAI))
@@ -46,7 +46,7 @@ public class PlayerView : FieldOfView
             }
         }
 
-        // ÇöÀç °¨ÁöµÈ Å¸°Ù ¸ñ·ÏÀ» ÀÌÀü °¨ÁöµÈ Å¸°Ù ¸ñ·ÏÀ¸·Î °»½Å
+        // í˜„ì¬ ê°ì§€ëœ íƒ€ê²Ÿ ëª©ë¡ì„ ì´ì „ ê°ì§€ëœ íƒ€ê²Ÿ ëª©ë¡ìœ¼ë¡œ ê°±ì‹ 
         previouslyVisibleTargets = currentlyVisibleTargets;
     }
 

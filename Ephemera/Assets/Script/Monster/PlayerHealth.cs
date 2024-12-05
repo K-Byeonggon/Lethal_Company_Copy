@@ -1,28 +1,89 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem.XR;
+using UnityEngine.UIElements;
 
 public class PlayerHealth : LivingEntity
 {
-    private void OnEnable()
+    [SerializeField] public GameObject DeadBody;
+    [SerializeField] public PlayerController controller;
+    [SerializeField] public CharacterController characterController;
+    [SerializeField] public Inventory inventory;
+    /*private void OnEnable()
+    {
+        maxHealth = 100f;
+        health = maxHealth;
+        dead = false;
+    }*/
+    public override void OnStartServer()
+    {
+        maxHealth = 100f;
+        health = maxHealth;
+        dead = false;
+    }
+    public override void OnStartClient()
+    {
+        PlayerReference.Instance.AddPlayerToDic(this);
+    }
+    public override void OnStartLocalPlayer()
+    {
+        PlayerReference.Instance.InitLocalPlayer(this);
+    }
+
+    public override bool ApplyDamage(DamageMessage damageMessage)
+    {
+        if (!base.ApplyDamage(damageMessage)) return false;
+
+        float ratio = health / maxHealth;
+        GameManager.Instance.OnClientSetPlayerState(ratio);
+        
+        Debug.Log("ï¿½Ã·ï¿½ï¿½Ì¾ï¿½" + damageMessage.damage + " ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
+        return true;
+    }
+    public void Revive()
     {
         maxHealth = 100f;
         health = maxHealth;
         dead = false;
     }
 
-    public override bool ApplyDamage(DamageMessage damageMessage)
-    {
-        //µ¥¹ÌÁö ÁÖ´Â °ÍÀÌ ÀÚ±â ÀÚ½ÅÀÌ°Å³ª, ÀÚ½ÅÀÌ Á×¾úÀ¸¸é ½ÇÆÐ.
-        if (!base.ApplyDamage(damageMessage)) return false;
-
-        Debug.Log("ÇÃ·¹ÀÌ¾î" + damageMessage.damage + " ÇÇÇØÀÔÀ½");
-        return true;
-    }
-
     public override void Die()
     {
-        base.Die();
-        Debug.Log("ÇÃ·¹ÀÌ¾î Á×À½");
+        inventory.ThrowAllItem();
+
+        dead = true;
+        controller.PlayerDie();
+        if(isLocalPlayer)
+            CameraReference.Instance.SetActiveFirstOtherPlayerVirtualCamera();
+        controller.CmdTeleport(new Vector3(0, 2000, 0));
+        InstantiateDeadBody();
+        
+        CmdPlayerDied();
+    }
+
+    public void SetActiveCharacterController(bool isActive)
+    {
+        if (isLocalPlayer)
+        {
+            characterController.enabled = isActive;
+        }
+    }
+
+    [Command(requiresAuthority = false)]
+    public void InstantiateDeadBody()
+    {
+        GameObject deadBody = Instantiate(DeadBody);
+        deadBody.transform.position = transform.position;
+        MonsterReference.Instance.AddMonsterToList(deadBody);
+        NetworkServer.Spawn(deadBody);
+    }
+    
+    // ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½×¾ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ë¸ï¿½
+    [Command(requiresAuthority = false)]
+    public void CmdPlayerDied()
+    {
+        GameManager.Instance.PlayerDieEvent();
     }
 }

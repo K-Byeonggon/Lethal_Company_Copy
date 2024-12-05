@@ -9,14 +9,20 @@ public class SingleTon<T> : MonoBehaviour where T : MonoBehaviour
     {
         get
         {
-            if (GameObject.Find(typeof(T).Name) == null)
+            if(instance == null)
             {
-                GameObject go = new GameObject() { name = typeof(T).Name };
-                if (go.GetComponent<T>() == null)
+                GameObject go = GameObject.Find(typeof(T).Name);
+                if (go == null)
                 {
-                    DontDestroyOnLoad(go);
-                    instance = go.AddComponent<T>();
+                    go = new GameObject() { name = typeof(T).Name };
                 }
+                T t = go.GetComponent<T>();
+                if (t == null)
+                {
+                    t = go.AddComponent<T>();
+                }
+                instance = t;
+                DontDestroyOnLoad(go);
             }
             return instance;
         }

@@ -1,39 +1,42 @@
+using DunGen;
 using Mirror;
-using Newtonsoft.Json;
+using Mirror.Examples.CCU;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.InputSystem.Layouts;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 
 public class GameManager : NetworkBehaviour
 {
     #region Field
     public static GameManager Instance;
+    //ìµœëŒ€ ë§ˆê°ì¼
+    private const int MAX_DEADLINE = 3;
+    
+    RuntimeDungeon _runtimeDungeon;
+    NavMeshGenerator _navMeshGenerator;
+    
+    Coroutine _timeCoroutine;
 
-    //µ·
-    [SyncVar]
-    private int currentMoney;
-    //¸ñÇ¥ ±İ¾×
-    [SyncVar]
-    private int targetMoney;
+    public ShipController shipController;
+    public PlayerController localPlayerController;
 
-    //ÃÖ´ë ¸¶°¨ÀÏ
-    private const int maxDeadline = 3;
+    [SerializeField] private SpaceSystem spaceSystem;
+    
+    [SerializeField] private Transform MonsterParent;
+    [SerializeField] private Transform ItemParent;
+    
+    
 
-    //³²Àº ¸¶°¨ÀÏ
-    [SyncVar]
-    private int currentDeadline;
-
-    //ÇöÀç °ÔÀÓ »óÅÂ
-    //[SyncVar]
-    //private GameState currentGameState;
-
-    //private Dictionary<GameStateType, GameState> gameStates = new Dictionary<GameStateType, GameState>();
-
-    //ÆÇ¸Å ¹èÀ²
+    /// <summary>
+    /// íŒë§¤ ë°°ìœ¨
+    /// </summary>
     private int SalePriceMagnification
     {
         get
@@ -51,362 +54,603 @@ public class GameManager : NetworkBehaviour
                 default:
                     return 10;
             }
-            
         }
     }
-
-    //ÇÃ·¹ÀÌ¾î »óÅÂ
-    //List<PlayerStatue> statue;
-
-    //³ªÀÇ ÇÃ·¹ÀÌ¾î Ä³¸¯ÅÍ
-    //PlayerStatue myPlayerStatue;
-
+    #endregion
+    #region Sync Field
+    //ì†Œì§€ê¸ˆ
+    [SyncVar(hook = nameof(OnClientSetCurrentMoney))] private int currentMoney;
+    //ëª©í‘œ ê¸ˆì•¡
+    [SyncVar(hook = nameof(OnClientSetTargetMoney))] private int targetMoney;
+    //ë‚¨ì€ ë§ˆê°ì¼
+    [SyncVar(hook = nameof(OnClientSetDeadLine))] private int currentDeadline;
+    //í˜„ì¬ ì‹œê°„
+    [SyncVar(hook = nameof(OnClientDisplayTime))] private int currentTime;
+    //ì„ íƒ í–‰ì„±
+    [SyncVar] private Planet selectPlanet;
+    //ì°©ë¥™ì—¬ë¶€
+    [SyncVar] public bool IsLand = false;
+    #endregion
+    #region Property
+    public int CurrentMoney
+    {
+        get => currentMoney;
+        set => currentMoney = value;
+    }
+    public int TargetMoney
+    {
+        get => targetMoney;
+        set => targetMoney = value;
+    }
+    public int CurrentDeadline
+    {
+        get => currentDeadline;
+        set => currentDeadline = value;
+    }
+    public int CurrentTime
+    {
+        get => currentTime;
+        set => currentTime = value;
+    }
     #endregion
 
     #region Action
     private event Action TotalRevenueDisplay;
-    private event Action CurrentMoneyDisplay;
-    private event Action DeadLineDisplay;
-    private event Action TargetMoneyDisplay;
-    private event Action PlayerStateDisplay;
+    private event Action<string> CurrentMoneyDisplay;
+    private event Action<string> DeadLineDisplay;
+    private event Action<string> TargetMoneyDisplay;
+    private event Action<float> PlayerStateDisplay;
+    private event Action<int> TimeDisplay;
     #endregion
-
-    #region UnityEngine Function
+    #region Function
+    ///<summary>
+    ///terrainí™œì„±í™”
+    ///</summary>
+    private void SetActivatePlanetTerrain(int index, bool isActive)
+    {
+        TerrainController.Instance.SetActivePlanetTerrain((Planet)index, isActive);
+    }
+    private void CreateRoom(int seed)
+    {
+        //ì„ì‹œ ì£¼ì„
+        _runtimeDungeon = Instantiate(ResourceManager.Instance.GetPrefab("DungeonGenerator")).GetComponent<RuntimeDungeon>();
+        _runtimeDungeon.Generator.ShouldRandomizeSeed = false;
+        _runtimeDungeon.Generator.Seed = seed;
+        _runtimeDungeon.Generate();
+    }
+    private void OnDestoryRoom()
+    {
+        if(_runtimeDungeon != null)
+            Destroy(_runtimeDungeon.gameObject);
+        RoomReference.Instance.ClearRoom();
+    }
+    private void GenerationObject()
+    {
+        if (isServer)
+        {
+            _navMeshGenerator = Instantiate(ResourceManager.Instance.GetPrefab("NavMeshBake")).GetComponent<NavMeshGenerator>();
+            _navMeshGenerator.BakeNavMesh();
+        }
+    }
+    public void OnPlayerLoadedInit(NetworkConnectionToClient conn)
+    {
+        localPlayerController?.SetActivateLocalPlayer(false);
+        PlayerReference.Instance.localPlayer.controller.PlayerRespawn();
+        CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShipMiniature);
+        OnPlayerSceneLoaded(conn);
+    }
+    
+    
+    #endregion
+    #region MonoBehaviour Function
     private void Awake()
     {
         Instance = this;
     }
-    private void Start()
+    #endregion
+    
+    #region NetworkBehaviour Function
+    /*public override void OnStartServer()
     {
-        //¸ğµç ÇÃ·¹ÀÌ¾î°¡ ÁØºñµÇ¾úÀ» ½Ã
-        //OnServerChangeGameState(GameStateType.ResetState);
-        if(isServer == true)
+        //ëª¨ë“  í”Œë ˆì´ì–´ê°€ ì¤€ë¹„ë˜ì—ˆì„ ì‹œ
+        OnServerGameReset();
+    }*/
+    [Command(requiresAuthority = false)]
+    private void OnPlayerSceneLoaded(NetworkConnectionToClient conn)
+    {
+        GameRoomNetworkManager.Instance.playersInGameScene[conn] = true; // í”Œë ˆì´ì–´ê°€ ì”¬ì— ì§„ì…í–ˆìŒì„ í‘œì‹œ
+
+        // ëª¨ë“  í”Œë ˆì´ì–´ê°€ ì”¬ì— ì§„ì…í–ˆëŠ”ì§€ í™•ì¸
+        foreach (var entry in GameRoomNetworkManager.Instance.playersInGameScene)
         {
-            GameReset();
+            if (!entry.Value) return; // í•˜ë‚˜ë¼ë„ ì§„ì…í•˜ì§€ ì•Šì€ í”Œë ˆì´ì–´ê°€ ìˆìœ¼ë©´ ë¦¬í„´
         }
+
+        // ëª¨ë“  í”Œë ˆì´ì–´ê°€ ì”¬ì— ì§„ì…í•œ ê²½ìš°
+        OnServerGameReset();
     }
     #endregion
-
-    #region Server Function ¼­¹ö¿¡¼­ ½ÇÇàµÇ´Â ÇÔ¼ö
+    #region ê²Œì„ íë¦„ ì œì–´
     /// <summary>
-    /// °ÔÀÓ ¸®¼Â(¼­¹ö¿¡¼­¸¸ È£Ãâ)
+    /// ê²Œì„ ë¦¬ì…‹(ì„œë²„ì—ì„œë§Œ í˜¸ì¶œ)
     /// </summary>
-    [Server]
-    public void GameReset()
+    [Server] public void OnServerGameReset()
     {
-        //¼ÒÁö±İ ¸®¼Â
-        SetCurrentMoney(0);
-        //¸ñÇ¥±İ¾× ¸®¼Â
-        TargetMoneyChanged(150);
-        //µ¥µå¶óÀÎ ¸®¼Â
-        DeadlineReset();
+        Debug.Log("GameReset");
+        currentMoney = 0;
+        TargetMoney = 150;
+        CurrentDeadline = MAX_DEADLINE;
+        
+        //ìºë¦­í„° ì œì–´ ë¹„í™œì„±í™”
+        OnServerSetActivePlayer(false);
+        //í´ë¼ì´ì–¸íŠ¸ ì´ˆê¸°í™”
+        OnClientGameStartInit();
+    }
+    #endregion
+    #region Server Function ì„œë²„ì—ì„œ ì‹¤í–‰ë˜ëŠ” í•¨ìˆ˜
+    /// <summary>
+    /// ë°ë“œë¼ì¸ ì°¨ê° í•¨ìˆ˜
+    /// </summary>
+    [Server] public void OnServerDayPasses()
+    {
+        if(CurrentDeadline - 1 < 0)
+        {
+            //ë‹¤ìŒ ì´ë²¤íŠ¸
+            if(CurrentMoney > TargetMoney)
+            {
+                CurrentMoney = 0;
+                TargetMoney = targetMoney * 2;
+                CurrentDeadline = MAX_DEADLINE;
+            }
+            //íŒ¨ë°° ì´ë²¤íŠ¸
+            else
+            {
+                currentMoney = 0;
+                TargetMoney = 150;
+                CurrentDeadline = MAX_DEADLINE;
+            }
+            //ìºë¦­í„° ì œì–´ ë¹„í™œì„±í™”
+            OnServerSetActivePlayer(false);
+            //í´ë¼ì´ì–¸íŠ¸ ì´ˆê¸°í™”
+            OnClientGameStartInit();
+        }
+        else
+        {
+            CurrentDeadline -= 1;
+            OnClientGameStartInit();
+        }
     }
     /// <summary>
-    /// ¼ÒÁö ±İ¾× º¯°æ(¼­¹ö¿¡¼­¸¸ È£Ãâ)
+    /// ì•„ì´í…œ íŒë§¤
     /// </summary>
-    [Server]
-    public void CurrentMoneyChanged(int money)
-    {
-        currentMoney += money;
-        SetCurrentMoney(currentMoney);
-    }
-    /// <summary>
-    /// ¸ñÇ¥ ±İ¾× º¯°æ(¼­¹ö¿¡¼­¸¸ È£Ãâ)
-    /// </summary>
-    [Server]
-    public void TargetMoneyChanged(int targetMoney)
-    {
-        this.targetMoney = targetMoney;
-        SetTargetMoney(this.targetMoney);
-    }
-    /// <summary>
-    /// µ¥µå¶óÀÎ 1 Â÷°¨
-    /// </summary>
-    [Server]
-    public void DayPasses()
-    {
-        SetDeadLine(currentDeadline - 1);
-    }
-    /// <summary>
-    /// µ¥µå¶óÀÎ ¸®¼Â
-    /// </summary>
-    [Server]
-    public void DeadlineReset()
-    {
-        SetDeadLine(maxDeadline);
-    }
-    /// <summary>
-    /// ¾ÆÀÌÅÛ ÆÇ¸Å
-    /// </summary>
-    [Server]
-    public void SellItem(Item[] items)
+    [Server] public void OnServerSellItem(Item[] items)
     {
         int totalPrice = 0;
         foreach (Item item in items)
         {
-            totalPrice += item.itemPrice;
+            totalPrice += item.ItemPrice;
         }
 
-        CurrentMoneyChanged(totalPrice);
-        DisplayTotalRevenue();
+        CurrentMoney += totalPrice;
+        OnClientDisplayTotalRevenue();
     }
     /// <summary>
-    /// °ÔÀÓ »óÅÂ º¯°æ
+    /// ì„±ê°„ì´ë™
     /// </summary>
-    /*[Server]
-    public void OnServerChangeGameState(GameStateType gameStateType)
+    [Server] public void OnServerStartHyperDrive(int index)
     {
-        ChangeState(gameStateType);
-    }*/
-    #endregion
+        Debug.Log($"{selectPlanet}, {(Planet)index}");
+        if (selectPlanet == (Planet)index)
+            return;
+        if (spaceSystem.StartWarpDrive(index))
+        {
+            OnClientStartHyperDrive();
+            selectPlanet = (Planet)index;
+        }
+    }
+    /// <summary>
+    /// í–‰ì„± ì§„ì…
+    /// </summary>
+    [Server] public void OnServerEnterPlanet()
+    {
+        if (TerrainController.Instance.GetTerrainCount() <= (int)selectPlanet)
+            return;
+        if(shipController == null)
+            shipController = FindObjectOfType<ShipController>();
+        
+        shipController.OnServerChangePosition(TerrainController.Instance.shipStartTransform.position);
+        shipController.StartLanding(TerrainController.Instance.GetLandingZone(selectPlanet).position);
+        _timeCoroutine = StartCoroutine(IncrementTimeCounter());
+        int seed = Environment.TickCount;
+        
+        Debug.Log("OnServerEnterPlanet");
+        OnClientEnterPlanet(seed);
 
-    #region Command Function Å¬¶óÀÌ¾ğÆ®¿¡¼­ È£ÃâÇÏ°í ¼­¹ö¿¡¼­ ½ÇÇàµÇ´Â ÇÔ¼ö
-    //ÇÃ·¹ÀÌ¾î »óÅÂ º¯È­
-    /*[Command]
-    public void CmdPlayerStateChange(NetworkMessage message)
+        IsLand = true;
+    }
+    /// <summary>
+    /// í–‰ì„± íƒˆì¶œ
+    /// </summary>
+    [Server] public void OnServerEscapePlanet()
     {
-        //myPlayerStatue.Hp -= message.damage;
-        //SetPlayerState(myPlayerStatue);
-    }*/
-    #endregion
+        if (shipController == null)
+            shipController = FindObjectOfType<ShipController>();
 
-    #region ClientRpc Function ¼­¹ö°¡ ¿ø°İ ÇÁ·Î½ÃÀú È£Ãâ(RPC)·Î ¸ğµç Å¬¶óÀÌ¾ğÆ®¿¡¼­ ½ÇÇàµÇ´Â ÇÔ¼ö
-    /// <summary>
-    /// ÇöÀç ¼ÒÁö±İ º¯°æ(¸ğµç Å¬¶óÀÌ¾ğÆ®)
-    /// </summary>
-    [ClientRpc]
-    private void SetCurrentMoney(int money)
-    {
-        currentMoney = money;
-        CurrentMoneyDisplay?.Invoke();
+        OnClientSetCharacterController(false);
+        OnClientEscapePlanet();
+        IsLand = false;
+
+        EscapeSquance();
     }
     /// <summary>
-    /// ¸ñÇ¥ ±İ¾× º¯°æ(¸ğµç Å¬¶óÀÌ¾ğÆ®)
+    /// íƒˆì¶œ ì‹œí€¸ìŠ¤
     /// </summary>
-    [ClientRpc]
-    private void SetTargetMoney(int targetMoney)
+    [Server] public void EscapeSquance()
     {
-        this.targetMoney = targetMoney;
-        TargetMoneyDisplay?.Invoke();
+        //í•¨ì„  ì¶œë°œ
+        shipController.StartEscape(TerrainController.Instance.shipStartTransform.position);
+        //ê²Œì„ ì‹œê°„ ë¹„í™œì„±í™”
+        if (_timeCoroutine != null)
+            StopCoroutine(_timeCoroutine);
+        
+        StartCoroutine(DestroyAllObjectsAfterDelay());
     }
     /// <summary>
-    /// µ¥µå¶óÀÎ º¯°æ(¸ğµç Å¬¶óÀÌ¾ğÆ®)
+    /// ëª¨ë“  í”Œë ˆì´ì–´ ì¹´ë©”ë¼ ì…‹íŒ…
     /// </summary>
-    [ClientRpc]
-    private void SetDeadLine(int deadLine)
+    [Server] public void OnServerActiveLocalPlayerCamera()
     {
-        this.currentDeadline = deadLine;
-        DeadLineDisplay?.Invoke();
+        OnCLientActiveLocalPlayerCamera();
     }
     /// <summary>
-    /// Ä³¸¯ÅÍ »óÅÂ º¯°æ(¸ğµç Å¬¶óÀÌ¾ğÆ®)
+    /// í”Œë ˆì´ì–´ í™œì„±í™”
     /// </summary>
-    [ClientRpc]
-    private void SetPlayerState(int targetMoney)
+    /// <param name="isActive"></param>
+    [Server] public void OnServerSetActivePlayer(bool isActive)
     {
-        this.targetMoney = targetMoney;
-        PlayerStateDisplay?.Invoke();
+        OnCLientSetActivePlayer(isActive);
     }
     /// <summary>
-    /// ÃÑ ¼öÀÍ UI Ãâ·Â (¸ğµç Å¬¶óÀÌ¾ğÆ®)
+    /// ë¬¸ ì—°ê²° (ì„œë²„)
     /// </summary>
-    [ClientRpc]
-    private void DisplayTotalRevenue()
+    [Server] public void OnServerDoorLinkSequence()
+    {
+        OnClientDoorLinkSequence();
+    }
+    /// <summary>
+    /// ëª¬ìŠ¤í„° ì‚­ì œ (ì„œë²„)
+    /// </summary>
+    [Server] public void OnServerClearMonster()
+    {
+        MonsterReference monsterReference = MonsterReference.Instance;
+        foreach (GameObject monster in monsterReference.monsterList)
+        {
+            NetworkServer.Destroy(monster);
+        }
+        monsterReference.monsterList.Clear();
+        OnClientClearMonster();
+    }
+    /// <summary>
+    /// í”Œë ˆì´ì–´ ì‚¬ë§ ì´ë²¤íŠ¸
+    /// </summary>
+    [Server] public void PlayerDieEvent()
+    {
+        bool allDead = true;
+        foreach (PlayerHealth player in PlayerReference.Instance.playerDic.Values)
+        {
+            if (player.dead == false)
+            {
+                allDead = false;
+                break;
+            }
+        }
+        if (allDead)
+        {
+            Debug.Log("All Player Die");
+            OnServerEscapePlanet();
+        }
+    }
+    /// <summary>
+    /// ì•„ì´í…œ ìŠ¤í°
+    /// </summary>
+    [Server] public void SpawnItem()
+    {
+        int itemSpawnCount = UnityEngine.Random.Range(RoomReference.Instance.RoomCount / 2, RoomReference.Instance.RoomCount);
+
+        List<string> itemKey = new List<string>()
+        {
+            "asynchronous_motor",
+            "Barrel",
+            "Camera_on",
+            "circular_saw",
+            "Crowbar",
+            "duck",
+            "Laptop",
+            "Metal container",
+            "Mine",
+            "Phone_1",
+            "ProFlashlight_Low",
+            "Tablet_pc",
+        };
+
+        for (int i = 0; i < itemSpawnCount; i++)
+        {
+            Vector3 vec = RoomReference.Instance.GetRandomPosition();
+            int itemIndex = UnityEngine.Random.Range(0, itemKey.Count);
+            GameObject item = Instantiate(ResourceManager.Instance.GetPrefab(itemKey[itemIndex]), ItemParent);
+            item.transform.position = vec;
+            NetworkServer.Spawn(item);
+            ItemReference.Instance.AddItemToList(item);
+        }
+    }
+    /// <summary>
+    /// ì¼ì • ì‹œê°„ì´ ì§€ë‚œ í›„ì— ëª¨ë“  ëª¬ìŠ¤í„°ì™€ ì•„ì´í…œì„ íŒŒê´´
+    /// </summary>
+    [Server] private IEnumerator DestroyAllObjectsAfterDelay()
+    {
+        float delay = 5.0f;
+        yield return new WaitForSeconds(delay);
+
+        MonsterReference.Instance.DestroyAll();
+        ItemReference.Instance.DestroyAll();
+        if (_navMeshGenerator != null)
+            Destroy(_navMeshGenerator.gameObject);
+        OnClientArriveSpace();
+        OnServerDayPasses();
+
+        Debug.Log("VirtualCameraType.SpaceShipMiniature");
+        CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShipMiniature);
+    }
+    /// <summary>
+    /// ëª¬ìŠ¤í„° ìŠ¤í°
+    /// </summary>
+    [Server] public void SpawnMonster()
+    {
+        int monsterSpawnCount = UnityEngine.Random.Range(2, 4);
+
+        List<string> monsterKey = new List<string>()
+        {
+            "Coilhead",
+            "Snare Flea",
+            "Spore Lizard",
+            "Thumper",
+            "Yipee",
+        };
+        
+        for (int i = 0; i < monsterSpawnCount; i++)
+        {
+            Vector3 vec = RoomReference.Instance.GetRandomPosition();
+            int itemIndex = UnityEngine.Random.Range(0, monsterKey.Count);
+            GameObject monster = Instantiate(ResourceManager.Instance.GetPrefab(monsterKey[itemIndex]), MonsterParent);
+            monster.transform.position = vec;
+            NetworkServer.Spawn(monster);
+            MonsterReference.Instance.AddMonsterToList(monster);
+        }
+    }
+    #endregion
+    #region Command Function í´ë¼ì´ì–¸íŠ¸ì—ì„œ í˜¸ì¶œí•´ì„œ ì„œë²„ì—ì„œ ì‹¤í–‰í•˜ëŠ” í•¨ìˆ˜
+    /// <summary>
+    /// ì˜¤ë¸Œì íŠ¸ íŒŒê´´
+    /// </summary>
+    [Command(requiresAuthority = false)]
+    public void DestroyObject(NetworkIdentity identity)
+    {
+        Debug.Log(identity.gameObject.name);
+        NetworkServer.Destroy(identity.gameObject);
+    }
+    #endregion
+    
+    #region ClientRpc Function ì„œë²„ê°€ ì›ê²© í”„ë¡œì‹œì € í˜¸ì¶œ(RPC)ë¡œ ëª¨ë“  í´ë¼ì´ì–¸íŠ¸ì—ì„œ ì‹¤í–‰ë˜ëŠ” í•¨ìˆ˜
+    /// <summary>
+    /// í”Œë ˆì´ì–´ ìœ„ì¹˜ ì´ˆê¸°í™”
+    /// </summary>
+    [ClientRpc] public void OnClientResetCharacterPosition()
+    {
+        PlayerReference.Instance.localPlayer.controller.PlayerRespawn();
+    }
+    /// <summary>
+    /// ìºë¦­í„° ì œì–´ í™œì„±í™”
+    /// </summary>
+    /// <param name="isActive"></param>
+    [ClientRpc] public void OnClientSetCharacterController(bool isActive)
+    {
+        foreach (PlayerHealth player in PlayerReference.Instance.playerDic.Values)
+            player.SetActiveCharacterController(isActive);
+    }
+    [ClientRpc] public void OnClientGameStartInit()
+    {
+        Debug.Log("OnClientGameStartInit");
+        
+        PlayerReference.Instance.localPlayer.controller.PlayerRespawn();
+        CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShipMiniature);
+    }
+    [ClientRpc] public void OnClientEnterPlanet(int seed)
+    {
+        Debug.Log("OnClientEnterPlanet");
+        
+        CreateRoom(seed);
+        GenerationObject();
+        
+        UIController.Instance.SetActivateUI(null);
+        ObjectReference.Instance.GetGameObject("ShipMiniature").SetActive(false);
+        spaceSystem.SetActivateSpaceSystem(false);
+        SetActivatePlanetTerrain((int)selectPlanet, true);
+        CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShip);
+    }
+    [ClientRpc] public void OnClientEscapePlanet()
+    {
+        UIController.Instance.SetActivateUI(null);
+        CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShip);
+    }
+    [ClientRpc] public void OnClientArriveSpace()
+    {
+        OnDestoryRoom();
+        
+        UIController.Instance.SetActivateUI(typeof(UI_Selecter));
+        ObjectReference.Instance.GetGameObject("ShipMiniature").SetActive(true);
+        spaceSystem.SetActivateSpaceSystem(true);
+        SetActivatePlanetTerrain((int)selectPlanet, false);
+        CameraReference.Instance.SetActiveVirtualCamera(VirtualCameraType.SpaceShipMiniature);
+    }
+
+    [ClientRpc] public void OnClientStartHyperDrive()
+    {
+        VolumeController.Instance.StartWarpGlitch();
+    }
+    [ClientRpc] public void OnCLientActiveLocalPlayerCamera()
+    {
+        CameraReference.Instance.SetActiveLocalPlayerVirtualCamera();
+    }
+    [ClientRpc] public void OnCLientSetActivePlayer(bool isActive)
+    {
+        localPlayerController?.SetActivateLocalPlayer(isActive);
+    }
+    #endregion
+    
+    #region ClientRpc Action ì„œë²„ê°€ ì›ê²© í”„ë¡œì‹œì € í˜¸ì¶œ(RPC)ë¡œ ëª¨ë“  í´ë¼ì´ì–¸íŠ¸ì—ì„œ ì‹¤í–‰ë˜ëŠ” Action
+    /// <summary>
+    /// ë¬¸ ì—°ê²° (í´ë¼ì´ì–¸íŠ¸)
+    /// </summary>
+    [ClientRpc] public void OnClientDoorLinkSequence()
+    {
+        Debug.Log(GameObject.Find("Entrance").transform.GetChild(0).name);
+        Debug.Log(TerrainController.Instance.GetFrontDoor(selectPlanet).name);
+
+        LinkDoor extFrontDoor = GameObject.Find("Entrance").transform.GetChild(0).GetComponent<LinkDoor>();
+        LinkDoor etrFrontDoor = TerrainController.Instance.GetFrontDoor(selectPlanet).GetComponent<LinkDoor>();
+
+        extFrontDoor.LinkTransform = etrFrontDoor.transform;
+        etrFrontDoor.LinkTransform = extFrontDoor.transform;
+    }
+    /// <summary>
+    /// ëª¬ìŠ¤í„° ì‚­ì œ (í´ë¼ì´ì–¸íŠ¸)
+    /// </summary>
+    [ClientRpc] public void OnClientClearMonster()
+    {
+        MonsterReference monsterReference = MonsterReference.Instance;
+        monsterReference.monsterList.Clear();
+    }
+    #endregion
+    
+    #region Client Hook Function ì„œë²„ì˜ SyncVarê°€ ë³€ê²½ë˜ì—ˆì„ ë•Œ í˜¸ì¶œë˜ëŠ” í•¨ìˆ˜
+    /// <summary>
+    /// í˜„ì¬ ì†Œì§€ê¸ˆ ë³€ê²½(ëª¨ë“  í´ë¼ì´ì–¸íŠ¸)
+    /// </summary>
+    [Client] private void OnClientSetCurrentMoney(int oldValue, int newValue)
+    {
+        CurrentMoneyDisplay?.Invoke(newValue.ToString());
+    }
+    /// <summary>
+    /// ëª©í‘œ ê¸ˆì•¡ ë³€ê²½(ëª¨ë“  í´ë¼ì´ì–¸íŠ¸)
+    /// </summary>
+    [Client] private void OnClientSetTargetMoney(int oldValue, int newValue)
+    {
+        TargetMoneyDisplay?.Invoke(newValue.ToString());
+    }
+    /// <summary>
+    /// ë°ë“œë¼ì¸ ë³€ê²½(ëª¨ë“  í´ë¼ì´ì–¸íŠ¸)
+    /// </summary>
+    [Client] private void OnClientSetDeadLine(int oldValue, int newValue)
+    {
+        DeadLineDisplay?.Invoke(newValue.ToString());
+    }
+    /// <summary>
+    /// ì‹œê°„ UI ì¶œë ¥ (ëª¨ë“  í´ë¼ì´ì–¸íŠ¸)
+    /// </summary>
+    [Client] private void OnClientDisplayTime(int oldValue, int newValue)
+    {
+        TimeDisplay?.Invoke(newValue);
+    }
+    /// <summary>
+    /// ì´ ìˆ˜ìµ UI ì¶œë ¥ (ëª¨ë“  í´ë¼ì´ì–¸íŠ¸)
+    /// </summary>
+    [ClientRpc] private void OnClientDisplayTotalRevenue()
     {
         TotalRevenueDisplay?.Invoke();
     }
-    /// <summary>
-    /// °ÔÀÓ »óÅÂ º¯°æ (¸ğµç Å¬¶óÀÌ¾ğÆ®)
-    /// </summary>
-    /*[ClientRpc]
-    private void ChangeState(GameStateType gameStateType)
-    {
-        currentGameState?.OnStateExit();
-        currentGameState = gameStates[gameStateType];
-        currentGameState.OnStateEnter();
-    }*/
     #endregion
-
-    #region ActionRegist Actionµî·Ï
+    
     /// <summary>
-    /// ÇöÀç ¼ÒÁö±İ UI°»½Å ÀÌº¥Æ® µî·Ï
+    /// ìºë¦­í„° ìƒíƒœ ë³€ê²½(ëª¨ë“  í´ë¼ì´ì–¸íŠ¸)
     /// </summary>
-    public void RegistCurrentMoneyDisplayAction(Action action = null)
+    public void OnClientSetPlayerState(float value)
+    {
+        PlayerStateDisplay?.Invoke(value);
+    }
+    
+    #region ActionRegist Actionë“±ë¡
+    /// <summary>
+    /// í˜„ì¬ ì†Œì§€ê¸ˆ UIê°±ì‹  ì´ë²¤íŠ¸ ë“±ë¡
+    /// </summary>
+    public void RegistCurrentMoneyDisplayAction(Action<string> action = null)
     {
         CurrentMoneyDisplay = action;
     }
     /// <summary>
-    /// ¸ñÇ¥ ±İ¾× UI°»½Å ÀÌº¥Æ® µî·Ï
+    /// ëª©í‘œ ê¸ˆì•¡ UIê°±ì‹  ì´ë²¤íŠ¸ ë“±ë¡
     /// </summary>
-    public void RegistTargetMoneyDisplayAction(Action action = null)
+    public void RegistTargetMoneyDisplayAction(Action<string> action = null)
     {
         TargetMoneyDisplay = action;
     }
     /// <summary>
-    /// ÇÃ·¹ÀÌ¾î »óÅÂ º¯°æ Ãâ·Â ÀÌº¥Æ® µî·Ï
+    /// í”Œë ˆì´ì–´ ìƒíƒœ ë³€ê²½ ì¶œë ¥ ì´ë²¤íŠ¸ ë“±ë¡
     /// </summary>
-    public void RegistDeadLineDisplayAction(Action action = null)
+    public void RegistDeadLineDisplayAction(Action<string> action = null)
     {
         DeadLineDisplay = action;
     }
     /// <summary>
-    /// ÇÃ·¹ÀÌ¾î »óÅÂ º¯°æ Ãâ·Â ÀÌº¥Æ® µî·Ï
+    /// í”Œë ˆì´ì–´ ìƒíƒœ ë³€ê²½ ì¶œë ¥ ì´ë²¤íŠ¸ ë“±ë¡
     /// </summary>
-    public void RegistPlayerStateDisplayAction(Action action = null)
+    public void RegistPlayerStateDisplayAction(Action<float> action = null)
     {
         PlayerStateDisplay = action;
     }
     /// <summary>
-    /// ÃÑ ¼öÀÍ UI Ãâ·Â ÀÌº¥Æ® µî·Ï
+    /// ì´ ìˆ˜ìµ UI ì¶œë ¥ ì´ë²¤íŠ¸ ë“±ë¡
     /// </summary>
     public void RegistTotalRevenueDisplayAction(Action action = null)
     {
-        PlayerStateDisplay = action;
+        //PlayerStateDisplay = action;
+    }
+    /// <summary>
+    /// ì‹œê°„ UI ì¶œë ¥ ì´ë²¤íŠ¸ ë“±ë¡
+    /// </summary>
+    public void RegistTimeDisplayAction(Action<int> action = null)
+    {
+        TimeDisplay = action;
+    }
+    #endregion
+    
+    #region IEnumerator
+    [Server]
+    private IEnumerator IncrementTimeCounter()
+    {
+        CurrentTime = 0;
+        while (true)
+        {
+            // 1ì´ˆ ëŒ€ê¸°
+            yield return new WaitForSeconds(1.0f);
+            // ë³€ìˆ˜ ì¦ê°€
+            CurrentTime++;
+            if (CurrentTime >= 960)
+            {
+                //í•¨ì„  ë³µê·€ ì´ë²¤íŠ¸
+                yield break;
+            }
+        }
     }
     #endregion
 }
-/*
-#region GameStateClass °ÔÀÓ »óÅÂ Å¬·¡½º
-// ÁøÇà ¼ø¼­ ResetState - SelectPlanetState - MapLoadState - EntryPlanetState - GameProgressState - ReturnState - GameOverState
-/// <summary>
-/// °ÔÀÓ ¸®¼Â
-/// </summary>
-class ResetState : GameState
+
+public struct GameTime
 {
-    public ResetState(GameManager manager) : base(manager)
+    public int hour;
+    public int minute;
+    public GameTime(int time)
     {
-    }
-
-    public override void OnStateEnter()
-    {
-        gameManager.GameReset();
-        gameManager.OnServerChangeGameState(GameStateType.SelectPlanetState);
-    }
-
-    public override void OnStateExit()
-    {
-        
+        hour = time / 60 + 8;
+        minute = time % 60;
     }
 }
-/// <summary>
-/// Çà¼º ¼±ÅÃ
-/// </summary>
-class SelectPlanetState : GameState
-{
-    public SelectPlanetState(GameManager manager) : base(manager)
-    {
-    }
-
-    public override void OnStateEnter()
-    {
-        //Çà¼º¼±ÅÃ UI È°¼ºÈ­
-        
-    }
-
-    public override void OnStateExit()
-    {
-
-    }
-}
-/// <summary>
-/// ¸Ê ·Îµå
-/// </summary>
-class MapLoadState : GameState
-{
-    public MapLoadState(GameManager manager) : base(manager)
-    {
-    }
-
-    public override void OnStateEnter()
-    {
-        //¸ğµç À¯Àú ¸Ê ºñµ¿±â ·Îµù
-        //¸ğµÎ ·Îµù ¿Ï·á ½Ã ´ÙÀ½ ¾ÀÀ¸·Î ÀüÈ¯
-    }
-
-    public override void OnStateExit()
-    {
-
-    }
-}
-/// <summary>
-/// Çà¼º ÁøÀÔ
-/// </summary>
-class EntryPlanetState : GameState
-{
-    public EntryPlanetState(GameManager manager) : base(manager)
-    {
-    }
-
-    public override void OnStateEnter()
-    {
-        //Çà¼º ÁøÀÔ È­¸é º¸¿©ÁÜ
-        //ÁøÀÔ ¿Ï·á½Ã GameProgressState·Î ÁøÀÔ
-    }
-
-    public override void OnStateExit()
-    {
-
-    }
-}
-/// <summary>
-/// ¸ñÇ¥ ÁøÇà
-/// </summary>
-class GameProgressState: GameState
-{
-    public GameProgressState(GameManager manager) : base(manager)
-    {
-    }
-
-    public override void OnStateEnter()
-    {
-        //¸ñÇ¥ ÁøÇà
-        //ÇÔ¼± º¹±Í ¹öÆ°À» ´©¸¦ ½Ã ReturnState·Î ÁøÀÔ
-        //¸ğµÎ »ç¸Á È¤Àº ½Ã°£ ÃÊ°ú½Ã GameOverState·Î ÁøÀÔ
-    }
-
-    public override void OnStateExit()
-    {
-
-    }
-}
-/// <summary>
-/// º¹±Í
-/// </summary>
-class ReturnState : GameState
-{
-    public ReturnState(GameManager manager) : base(manager)
-    {
-    }
-
-    public override void OnStateEnter()
-    {
-        //Çà¼º Å»Ãâ È­¸é º¸¿©ÁÜ
-        //Å»Ãâ ¿Ï·á½Ã SelectPlanetState·Î ÁøÀÔ
-    }
-
-    public override void OnStateExit()
-    {
-
-    }
-}
-/// <summary>
-/// °ÔÀÓ ¿À¹ö
-/// </summary>
-class GameOverState : GameState
-{
-    public GameOverState(GameManager manager) : base(manager)
-    {
-    }
-
-    public override void OnStateEnter()
-    {
-        //°ÔÀÓ ÇÃ·¹ÀÌ ¾ÀÀ» ´Ù½Ã ºÒ·¯¿È
-    }
-
-    public override void OnStateExit()
-    {
-
-    }
-}
-#endregion
-*/

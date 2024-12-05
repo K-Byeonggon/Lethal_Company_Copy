@@ -1,55 +1,215 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using TMPro;
 using UnityEngine;
 
-public class ShipController : MonoBehaviour
+public class ShipController : NetworkBehaviour
 {
-    bool hasDestination = false;
-    Vector3 Destination = Vector3.zero;
-    Quaternion lookAt;
+    public Transform spawnPoint;
+    [SerializeField]
+    Transform leftDoor;
+    [SerializeField]
+    Transform rightDoor;
 
-    bool landingPlanet = false;
-    private void FixedUpdate()
+    [SerializeField]
+    List<GameObject> players = new List<GameObject>();
+    [SerializeField]
+    List<GameObject> items = new List<GameObject>();
+
+    private Coroutine _escapeCoroutine;
+
+    #region OnTrigger Function
+    private void OnTriggerEnter(Collider other)
     {
-        if (hasDestination == true)
+        OnServerSetParent(other.transform);
+        if(other.TryGetComponent<PlayerController>(out PlayerController player))
         {
-            Debug.Log("isLerp");
-            transform.rotation = Quaternion.Slerp(transform.rotation, lookAt, 0.01f);
-
-            // µÎ ÄõÅÍ´Ï¾ğ »çÀÌÀÇ »ó´ëÀûÀÎ È¸ÀüÀ» ³ªÅ¸³»´Â ÄõÅÍ´Ï¾ğ °è»ê
-            Quaternion relativeRotationQuaternion = lookAt * Quaternion.Inverse(transform.rotation);
-
-            // »ó´ëÀûÀÎ È¸Àü ÄõÅÍ´Ï¾ğÀ» °¢Ãà°ú °¢µµ·Î º¯È¯
-            float angle;
-            Vector3 axis;
-            relativeRotationQuaternion.ToAngleAxis(out angle, out axis);
-
-            // »õ·Î¿î ÄõÅÍ´Ï¾ğ »ı¼º
-            Quaternion newQuaternion = Quaternion.AngleAxis(angle, axis);
-
-            // °á°ú Ãâ·Â
-            Debug.Log("New Quaternion: " + newQuaternion);
-            if (newQuaternion.x < 0.1f)
-            {
-                hasDestination = false;
-                landingPlanet = true;
-            }
+            players.Add(player.gameObject);
         }
-        if(landingPlanet == true)
+        else if(other.TryGetComponent<Item>(out Item item))
         {
-            Debug.Log("isLanding");
-            transform.position = Vector3.Slerp(transform.position, Destination, 0.01f);
+            items.Add(item.gameObject);
+            ItemReference.Instance.ExceptItemToList(item.gameObject);
         }
     }
-
-    public void SetDestination()
+    private void OnTriggerExit(Collider other)
     {
-        Destination = Vector3.zero;
-        Vector3 targetDirection = Destination - transform.position;
-        lookAt = Quaternion.FromToRotation(transform.forward, targetDirection);
-        hasDestination = true;
+        OnServerUnsetParent(other.transform);
+        if (players.Contains(other.gameObject))
+        {
+            players.Remove(other.gameObject);
+        }
+        else if (items.Contains(other.gameObject))
+        {
+            items.Remove(other.gameObject);
+            ItemReference.Instance.AddItemToList(other.gameObject);
+        }
+    }
+    #endregion
+    #region Server Function
+    [Server]
+    public void StartLanding(Vector3 destination)
+    {
+        // ëŒ€ìƒ ìœ„ì¹˜ì—ì„œ í˜„ì¬ ìœ„ì¹˜ë¥¼ ë¹¼ì„œ ë°©í–¥ ë²¡í„° ê³„ì‚°
+        Vector3 direction = destination - transform.position;
 
-        Debug.Log(Destination);
-        Debug.Log(lookAt);
+        direction.y = 0;
+        if (direction != Vector3.zero)
+            OnServerChangeRotation(Quaternion.LookRotation(direction));
+        if(_escapeCoroutine != null)
+            StopCoroutine(_escapeCoroutine);
+        StartCoroutine(Landing(destination));
+    }
+
+    [Server]
+    IEnumerator Landing(Vector3 destination)
+    {
+        while (true)
+        {
+            if (Vector3.Distance(transform.position, destination) < 0.1f)
+            {
+                OnServerChangePosition(destination);
+                GameManager.Instance.OnServerActiveLocalPlayerCamera();
+                GameManager.Instance.OnServerSetActivePlayer(true);
+                SetGameUI();
+
+                GameManager.Instance.OnClientResetCharacterPosition();
+                yield break;
+            }
+            //transform.rotation = Quaternion.Slerp(transform.rotation, lookAt, 0.01f);
+            OnServerChangePosition(Vector3.Slerp(transform.position, destination, 0.01f));
+            yield return null;
+            //Debug.Log("Landing");
+            //Debug.Log($"Distance {Vector3.Distance(transform.position, destination)}");
+        }
+    }
+    [Server]
+    public void StartEscape(Vector3 destination)
+    {
+        // ëŒ€ìƒ ìœ„ì¹˜ì—ì„œ í˜„ì¬ ìœ„ì¹˜ë¥¼ ë¹¼ì„œ ë°©í–¥ ë²¡í„° ê³„ì‚°
+        Vector3 direction = destination - transform.position;
+
+        direction.y = 0;
+        if (direction != Vector3.zero)
+            OnServerChangeRotation(Quaternion.LookRotation(direction));
+        _escapeCoroutine = StartCoroutine(Escape(destination));
+    }
+    [Server]
+    IEnumerator Escape(Vector3 destination)
+    {
+        while (true)
+        {
+            if (Vector3.Distance(transform.position, destination) < 0.1f)
+            {
+                OnServerChangePosition(destination);
+                GameManager.Instance.OnServerSetActivePlayer(false);
+                SetSelecterUI();
+                
+                GameManager.Instance.OnClientResetCharacterPosition();
+                yield break;
+            }
+            //transform.rotation = Quaternion.Slerp(transform.rotation, lookAt, 0.01f);
+            OnServerChangePosition(Vector3.Lerp(transform.position, destination, 0.01f));
+            yield return null;
+        }
+    }
+    [Server]
+    public void OnServerChangePosition(Vector3 vec)
+    {
+        transform.position = vec;
+    }
+    [Server]
+    public void OnServerChangeRotation(Quaternion quaternion)
+    {
+        transform.rotation = quaternion;
+    }
+    [Server]
+    public void OnServerSetParent(Transform player)
+    {
+        OnClientSetParent(player);
+    }
+    [Server]
+    public void OnServerUnsetParent(Transform player)
+    {
+        OnClientUnsetParent(player);
+    }
+    #endregion
+    #region ClientRpc Function
+    [ClientRpc]
+    public void OnClientSetParent(Transform player)
+    {
+        player.parent = this.gameObject.transform;
+    }
+    [ClientRpc]
+    public void OnClientUnsetParent(Transform player)
+    {
+        player.parent = null;
+    }
+    #endregion
+    [ClientRpc]
+    public void SetGameUI()
+    {
+        UIController.Instance.SetActivateUI(typeof(UI_Setup));
+    }
+    [ClientRpc]
+    public void SetSelecterUI()
+    {
+        UIController.Instance.SetActivateUI(typeof(UI_Selecter));
+    }
+
+    [Command(requiresAuthority = false)]
+    public void OpenDoor()
+    {
+        StartOpenCoroutine();
+    }
+    [Command(requiresAuthority = false)]
+    public void CloseDoor()
+    {
+        StartCloseCoroutine();
+    }
+
+    [ClientRpc]
+    public void StartOpenCoroutine()
+    {
+        Debug.Log("CmdOpenDoor called");
+        StartCoroutine(DoorOpenCoroutine());
+    }
+    [ClientRpc]
+    public void StartCloseCoroutine()
+    {
+        StartCoroutine(DoorCloseCoroutine());
+    }
+
+    IEnumerator DoorOpenCoroutine()
+    {
+        while (true)
+        {
+            leftDoor.localScale = Vector3.Lerp(leftDoor.localScale, new Vector3(0, 1, 1), 0.1f);
+            rightDoor.localScale = Vector3.Lerp(rightDoor.localScale, new Vector3(0, 1, 1), 0.1f);
+            if (leftDoor.localScale.x < 0.01f && rightDoor.localScale.x < 0.01f)
+            {
+                leftDoor.localScale = new Vector3(0, 1, 1);
+                rightDoor.localScale = new Vector3(0, 1, 1);
+                break;
+            }
+            yield return null;
+        }
+    }
+    IEnumerator DoorCloseCoroutine()
+    {
+        while (true)
+        {
+            leftDoor.localScale = Vector3.Lerp(leftDoor.localScale, new Vector3(1, 1, 1), 0.1f);
+            rightDoor.localScale = Vector3.Lerp(rightDoor.localScale, new Vector3(1, 1, 1), 0.1f);
+            if (leftDoor.localScale.x > 0.99f && rightDoor.localScale.x > 0.99f)
+            {
+                leftDoor.localScale = Vector3.one;
+                rightDoor.localScale = Vector3.one;
+                break;
+            }
+            yield return null;
+        }
     }
 }

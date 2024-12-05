@@ -5,6 +5,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.Rendering.DebugUI;
 
 public class UI_Game : MonoBehaviour
 {
@@ -12,21 +13,27 @@ public class UI_Game : MonoBehaviour
     private Slider playerHpBar;
     [SerializeField]
     private Slider playerStaminaBar;
-    [SerializeField]
-    private UI_Blink settingIcon;
-    [SerializeField]
-    private UI_Blink missionIcon;
-    [SerializeField]
-    private List<OtherPlayerStatus> OtherPlayers;
+    //[SerializeField]
+    //private UI_Blink settingIcon;
+    //[SerializeField]
+    //private UI_Blink missionIcon;
+    //[SerializeField]
+    //private List<OtherPlayerStatus> OtherPlayers;
     [SerializeField]
     private List<Image> items;
-    [SerializeField]
-    private Image weapon;
-    [SerializeField]
-    private TextMeshProUGUI weaponName;
+    //[SerializeField]
+    //private Image weapon;
+    //[SerializeField]
+    //private TextMeshProUGUI weaponName;
 
     [SerializeField]
-    private List<UISpriteSetup> uISpriteSetups;
+    private GameObject interactionImage;
+
+    [SerializeField]
+    private List<UI_SpriteSetup> uISpriteSetups;
+
+    [SerializeField]
+    private TextMeshProUGUI monnyText;
 
     private List<Slider> otherHpBars;
 
@@ -34,48 +41,33 @@ public class UI_Game : MonoBehaviour
 
     private void Start()
     {
-        foreach (var uISpriteSetup in uISpriteSetups)
-        {
-            uISpriteSetup.OnSetup();
-        }
+        Init();
+        GameManager.Instance.RegistPlayerStateDisplayAction(CurrentPlayerHpChangeEvent);
+        GameManager.Instance.RegistCurrentMoneyDisplayAction(CurrentMonnyChangeEvent);
     }
-
-
     private void Update()
     {
         if (isActive == false)
             return;
-
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            ItemSelection(0);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            ItemSelection(1);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            ItemSelection(2);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            ItemSelection(3);
-        }
     }
     public void Init()
     {
-
+        if (uISpriteSetups == null)
+            return;
+        foreach (var uISpriteSetup in uISpriteSetups)
+        {
+            uISpriteSetup?.OnSetup();
+        }
     }
-    //≈¨∂Û¿Ãæ∆Æ √ﬂ∞°, UI hpbar √ﬂ∞°
+    //ÌÅ¥ÎùºÏù¥Ïñ∏Ìä∏ Ï∂îÍ∞Ä, UI hpbar Ï∂îÍ∞Ä
     public void AddClient()
     {
 
     }
-    //UI ªÛ»£¿€øÎ ±Ùπ⁄¿”
-    public void UIInteraction()
+    //UI ÏÉÅÌò∏ÏûëÏö© ÌëúÏãú
+    public void UIInteraction(bool isActive)
     {
-
+        interactionImage.SetActive(isActive);
     }
     public void SetUp()
     {
@@ -99,5 +91,12 @@ public class UI_Game : MonoBehaviour
     {
         items[index].sprite = image;
     }
-
+    public void CurrentPlayerHpChangeEvent(float value)
+    {
+        playerHpBar.value = value;
+    }
+    public void CurrentMonnyChangeEvent(string value)
+    {
+        monnyText.text = $"Monny : {value}";
+    }
 }

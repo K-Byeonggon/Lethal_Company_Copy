@@ -1,13 +1,16 @@
+using Mirror;
 using System;
 using UnityEngine;
 
-//µ¥¹ÌÁö ÁÖ´Â ¿ÀºêÁ§Æ®ÀÇ ½ºÅ©¸³Æ®¿¡¼­ LivingEntity ÄÄÆ÷³ÍÆ® °¡Á®¿Í¼­ ApplyDamage()½ÇÇà.
-//½ÇÇàÀü DamageMessage »õ·Î ¸¸µé¾î¼­ .damage ÆíÁı
-public class LivingEntity : MonoBehaviour, IDamageable
+//ë°ë¯¸ì§€ ì£¼ëŠ” ì˜¤ë¸Œì íŠ¸ì˜ ìŠ¤í¬ë¦½íŠ¸ì—ì„œ LivingEntity ì»´í¬ë„ŒíŠ¸ ê°€ì ¸ì™€ì„œ ApplyDamage()ì‹¤í–‰.
+//ì‹¤í–‰ì „ DamageMessage ìƒˆë¡œ ë§Œë“¤ì–´ì„œ .damage í¸ì§‘
+public class LivingEntity : NetworkBehaviour, IDamageable
 {
     public float maxHealth = 100f;
-    public float health { get; protected set; }
-    public bool dead { get; protected set; }
+    [SyncVar]
+    public float health;
+    [SyncVar]
+    public bool dead = false;
 
     public event Action OnDeath;
 
@@ -20,7 +23,12 @@ public class LivingEntity : MonoBehaviour, IDamageable
         }
     }
 
-    protected virtual void OnEnable()
+    /*protected virtual void OnEnable()
+    {
+        dead = false;
+        health = maxHealth;
+    }*/
+    public override void OnStartServer()
     {
         dead = false;
         health = maxHealth;
@@ -36,7 +44,7 @@ public class LivingEntity : MonoBehaviour, IDamageable
 
         return true;
     }
-
+   
     public virtual void RestoreHealth(float newHealth)
     {
         if (dead) return;
@@ -48,6 +56,8 @@ public class LivingEntity : MonoBehaviour, IDamageable
     {
         if (OnDeath != null) OnDeath();
         dead = true;
+        NetworkIdentity identity = GetComponent<NetworkIdentity>();
+        GameManager.Instance.DestroyObject(identity);
     }
-
+    
 }

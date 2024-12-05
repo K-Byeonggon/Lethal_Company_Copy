@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class CameraMove : MonoBehaviour
 {
-    [SerializeField] private float mouseSpeed = 8.0f;
+    public static CameraMove instance;
+
+    [SerializeField] public float mouseSpeed;
     private float mouseX = 0f;
     private float mouseY = 0f;
 
@@ -17,6 +19,8 @@ public class CameraMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        instance = this;
+
         mouseX += Input.GetAxis("Mouse X") * mouseSpeed;
         mouseY += Input.GetAxis("Mouse Y") * mouseSpeed;
 

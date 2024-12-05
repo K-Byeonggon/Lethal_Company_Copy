@@ -4,72 +4,42 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using Unity.VisualScripting;
-using static UnityEditor.Progress;
-public class Item : MonoBehaviour,IUIVisible,IItemUsable,IItemObtainable
+using Mirror;
+public class Item : NetworkBehaviour, IItemUsable, IItemObtainable, IUIVisible
 {
     [SerializeField] public ItemData itemData;
-    [SerializeField] public int itemPrice;
-    public bool IsBothHandGrab { get { return itemData.isBothHand; } }
-    
+    [SyncVar] private int itemPrice;
+    public int ItemPrice => itemPrice;
+    public Sprite itemSprite => itemData.image;
+    public bool IsBothHandGrab => itemData.isBothHand;
 
-    [SerializeField]
-    private Image image;
+    [SerializeField] public Collider itemCollider;
+    [SerializeField] public Rigidbody rigid;
+    [SerializeField] public List<MeshRenderer> renderers;
 
-    Collider collider;
-    Rigidbody rb;
-
-    private void Awake()
+    public override void OnStartServer()
     {
-        collider = GetComponent<Collider>();
-        rb = GetComponent<Rigidbody>();
+        //rigid.isKinematic = true;
+        //rigid.useGravity = false;
+        //rigid.velocity = Vector3.zero;
+        //rigid.angularVelocity = Vector3.zero;
+
         itemPrice = itemData.GetRandomPrice();
+
     }
-
-    public void PickDown(Inventory owner)
-    {
-        Debug.Log("Pickdown");
-        transform.SetParent(null);
-        collider.enabled = true;
-        rb.isKinematic = false;
-        rb.useGravity = true;
-        transform.position = owner.pickedItem.transform.position + owner.pickedItem.transform.forward;
-        rb.AddForce(owner.pickedItem.transform.forward * 5.0f, ForceMode.Impulse); 
-    }
-
-    public void PickUp(Inventory owner)//gamemanager
-    {
-        if (owner != null)
-        {
-            transform.SetParent(owner.pickedItem);
-            collider.enabled = false;
-            rb.isKinematic = true;
-            rb.useGravity = false;
-            rb.velocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-            transform.position = owner.pickedItem.position;
-            transform.rotation = owner.pickedItem.transform.rotation;
-
-        }
-    }
-
     public void ShowPickupUI()
     {
-        image.gameObject.SetActive(true);
+        //image.gameObject.SetActive(true);
     }
 
-    public void UIvisible()
+    public virtual void UseItem() { }
+
+
+    [ClientRpc]
+    public void SetRendererActive(bool isActive)
     {
-        //Image image = UIManager.Instance.GetUI<Image>("UIÀÌ¸§");
-        image.gameObject.SetActive(true);
+        renderers.ForEach(rend => rend.enabled = isActive);
     }
 
-    public virtual void UseItem()
-    {
-        
-    }
-    public int SellItem()
-    {
-        return itemPrice;
-    }
     
 }

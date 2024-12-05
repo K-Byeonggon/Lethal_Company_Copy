@@ -1,23 +1,16 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Buzzer_Item : Item, IItemUsable
+public class Buzzer_Item : Item
 {
-    public AudioClip audioClip;
+    [SerializeField]
+    private AudioClip audioClip;
+    [SerializeField]
     private AudioSource audioSource;
-    private Inventory playerInventory;
 
-    private void Start()
-    {
-        audioSource = GetComponent<AudioSource>();
-        if (audioSource == null)
-        {
-            audioSource = gameObject.AddComponent<AudioSource>();
-        }
-        audioSource.clip = audioClip;
-    }
-
+    [ClientRpc]
     public override void UseItem()
     {
         if (!audioSource.isPlaying)

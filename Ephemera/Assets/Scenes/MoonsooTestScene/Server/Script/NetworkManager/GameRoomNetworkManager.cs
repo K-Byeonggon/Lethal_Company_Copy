@@ -6,30 +6,40 @@ using UnityEngine;
 
 public class GameRoomNetworkManager : NetworkRoomManager
 {
-    [SerializeField]
+    /*[SerializeField]
     GameObject gamePlayerObjectPrefab;
     [SerializeField]
     NetworkRoomPlayer roomPlayerObjectPrefab;
-
+    [SerializeField]
+    GameObject spaceSystem;*/
+    public Dictionary<NetworkConnectionToClient, bool> playersInGameScene = new Dictionary<NetworkConnectionToClient, bool>();
     public static GameRoomNetworkManager Instance => NetworkRoomManager.singleton as GameRoomNetworkManager;
-     
-    public override void Start()
+
+    public override void OnRoomServerAddPlayer(NetworkConnectionToClient conn)
     {
-        base.Start();
-        //spawnPrefabs.Add(roomPlayerObjectPrefab.gameObject);
-        //spawnPrefabs.Add(gamePlayerObjectPrefab);
-        playerPrefab = gamePlayerObjectPrefab;
-        roomPlayerPrefab = roomPlayerObjectPrefab;
+        base.OnRoomServerAddPlayer(conn);
+        playersInGameScene[conn] = false; // ì´ˆê¸°í™”
     }
+    public override void OnRoomServerSceneChanged(string sceneName)
+    {
+        base.OnRoomServerSceneChanged(sceneName);
 
-    
-
-    //»õ·Î¿î Å¬¶óÀÌ¾ğÆ®°¡ ¼­¹ö¿¡ ¿¬°áµÇ¾úÀ» ¶§¿¡ ¼­¹ö¿¡¼­ È£ÃâµÇ´Â ÇÔ¼ö
+        if (sceneName == GameplayScene)
+        {
+            // ìƒˆë¡œìš´ ì”¬ì— ë“¤ì–´ì™”ìŒì„ ì•Œë¦¬ëŠ” ì´ë²¤íŠ¸ ë“±ë¡
+            foreach (var conn in playersInGameScene.Keys)
+            {
+                playersInGameScene[conn] = false; // ëª¨ë“  í”Œë ˆì´ì–´ì˜ ìƒíƒœë¥¼ ì´ˆê¸°í™”
+            }
+        }
+    }
+    #region Temp
+    /*//ìƒˆë¡œìš´ í´ë¼ì´ì–¸íŠ¸ê°€ ì„œë²„ì— ì—°ê²°ë˜ì—ˆì„ ë•Œì— ì„œë²„ì—ì„œ í˜¸ì¶œë˜ëŠ” í•¨ìˆ˜
     public override void OnRoomServerConnect(NetworkConnectionToClient conn)//GameObject OnRoomServerCreateRoomPlayer(NetworkConnectionToClient conn)
     {
         Debug.Log("OnRoomServerCreateRoomPlayer");
         GameObject gameobject = Instantiate(ResourceManager.Instance.GetPrefab("RoomPlayer")); //Instantiate(roomPlayerObjectPrefab.gameObject);
-        //gameobjectÀÇ ÄÄÆ÷³ÍÆ®¸¦ °¡Á®¿Í message·Î ÃÊ±âÈ­
+        //gameobjectì˜ ì»´í¬ë„ŒíŠ¸ë¥¼ ê°€ì ¸ì™€ messageë¡œ ì´ˆê¸°í™”
 
         Debug.Log(gameobject.name);
         NetworkServer.AddPlayerForConnection(conn, gameobject);
@@ -38,57 +48,53 @@ public class GameRoomNetworkManager : NetworkRoomManager
         GameObject roomCharacter = Instantiate(ResourceManager.Instance.GetPrefab("LobbyScavenger"));
         NetworkServer.Spawn(roomCharacter, conn);
     }
-    //Å¬¶óÀÌ¾ğÆ®°¡ Á¢¼ÓÇßÀ» ¶§ Å¬¶óÀÌ¾ğÆ®¿¡¼­ È£ÃâµÇ´Â ÇÔ¼ö
-    public override void OnRoomClientConnect() 
+    //í´ë¼ì´ì–¸íŠ¸ê°€ ì ‘ì†í–ˆì„ ë•Œ í´ë¼ì´ì–¸íŠ¸ì—ì„œ í˜¸ì¶œë˜ëŠ” í•¨ìˆ˜
+    public override void OnRoomClientConnect()
     {
         Debug.Log("OnRoomClientConnect");
-        ResourceManager.Instance.GetPrefab("RoomPlayer");
-    }
+    }*/
 
-    //GamePlayer¸¦ »ı¼ºÇÒ ¶§ È£ÃâÇÏ´Â ÇÔ¼ö
-    public override GameObject OnRoomServerCreateGamePlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
+    //GamePlayerë¥¼ ìƒì„±í•  ë•Œ í˜¸ì¶œí•˜ëŠ” í•¨ìˆ˜
+    /*public override GameObject OnRoomServerCreateGamePlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
     {
-        GameObject gameobject = Instantiate(ResourceManager.Instance.GetPrefab("Scavenger")); //Instantiate(gamePlayerObjectPrefab);
-        //gameobjectÀÇ ÄÄÆ÷³ÍÆ®¸¦ °¡Á®¿Í message·Î ÃÊ±âÈ­
-
+        GameObject gameobject = Instantiate(ResourceManager.Instance.GetPrefab("Player"), SpawnPoint[SpawnCount].position, SpawnPoint[SpawnCount].rotation);
+        //gameobjectì˜ ì»´í¬ë„ŒíŠ¸ë¥¼ ê°€ì ¸ì™€ messageë¡œ ì´ˆê¸°í™”
+        SpawnCount++;
         NetworkServer.AddPlayerForConnection(conn, gameobject);
         return gameobject;
-    }
-
-
-    /*//roomÇÃ·¹ÀÌ¾î »ı¼º ÇÔ¼ö
-    void OnCreateRoomCharacter(NetworkConnectionToClient conn, CreateRoomCharacterMessage message)
-    {
-        GameObject gameobject = Instantiate(roomPlayerPrefab.gameObject);
-        //gameobjectÀÇ ÄÄÆ÷³ÍÆ®¸¦ °¡Á®¿Í message·Î ÃÊ±âÈ­
-
-        NetworkServer.AddPlayerForConnection(conn, gameobject);
     }*/
 
-    /*//(¼­¹ö¿¡¼­ È£Ãâ)È£½ºÆ®°¡ ½ÃÀÛµÉ ¶§¸¦ Æ÷ÇÔÇÏ¿© ¼­¹ö°¡ ½ÃÀÛµÉ ¶§ È£ÃâµË´Ï´Ù.
-    public override void OnStartServer()
+    /*public override void OnRoomServerSceneChanged(string sceneName)
     {
-        base.OnStartServer();
+        Debug.Log(sceneName);
+        if (sceneName == "Assets/Scenes/GamePlay.unity")
+        {
+            GameObject gameManager = Instantiate(ResourceManager.Instance.GetPrefab("GameManager"));
+            NetworkServer.Spawn(gameManager);
 
-        //NetworkServer.RegisterHandler<CreateCharacterMessage>(OnCreateCharacter);
-        //NetworkServer.RegisterHandler<CreateRoomCharacterMessage>(OnCreateRoomCharacter);
+            //GameObject ship = Instantiate(ResourceManager.Instance.GetPrefab("SpaceShip"));
+            //ship.transform.position = new Vector3(3000, 0, 0);
+            //NetworkServer.Spawn(ship);
 
-        //GameObject prefab = ResourceManager.Instance.GetPrefab("MoonsooTestScene/Server/Prefab/Player.prefab");
-    }
-    //°ÔÀÓÇÃ·¹ÀÌ¾î »ı¼º ÇÔ¼ö
-    void OnCreateCharacter(NetworkConnectionToClient conn, CreateCharacterMessage message)
-    {
-        GameObject gameobject = Instantiate(gamePlayerObjectPrefab);
-        //gameobjectÀÇ ÄÄÆ÷³ÍÆ®¸¦ °¡Á®¿Í message·Î ÃÊ±âÈ­
+            Transform spawnPointList = ship.GetComponent<ShipController>().spawnPoint;
+            foreach (Transform spawnPoint in spawnPointList)
+            {
+                SpawnPoint.Add(spawnPoint);
+            }
 
-        NetworkServer.AddPlayerForConnection(conn, gameobject);
-    }
-    //roomÇÃ·¹ÀÌ¾î »ı¼º ÇÔ¼ö
-    void OnCreateRoomCharacter(NetworkConnectionToClient conn, CreateRoomCharacterMessage message)
-    {
-        GameObject gameobject = Instantiate(roomPlayerPrefab.gameObject);
-        //gameobjectÀÇ ÄÄÆ÷³ÍÆ®¸¦ °¡Á®¿Í message·Î ÃÊ±âÈ­
 
-        NetworkServer.AddPlayerForConnection(conn, gameobject);
+            GameObject space = Instantiate(spaceSystem);
+            NetworkServer.Spawn(space);
+
+            GameObject terrain = Instantiate(ResourceManager.Instance.GetPrefab("Terrain"));
+            NetworkServer.Spawn(terrain);
+        }
     }*/
+    #endregion
+    
+    public override void OnRoomClientExit()
+    {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+    }
 }

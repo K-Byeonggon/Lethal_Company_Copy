@@ -1,101 +1,186 @@
+using Mirror;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
-public class Inventory : MonoBehaviour
+public class Inventory : NetworkBehaviour
 {
-    private PlayerEx player;
+    private int currentItemSlot = 0;
+    private int maxSlot = 4;
     public List<Slotdata> slots = new List<Slotdata>();
-    public int maxSlot = 4;
-    public int currentItemSlot = 0;
-    [SerializeField] public Transform pickedItem;
 
-    private void Awake()
+    [SerializeField] Transform pickTransform;
+
+    public Item GetCurrentItemComponent
     {
-        player = GetComponent<PlayerEx>();
-        if (player == null)
+        get
         {
-            Debug.LogError("PlayerEx component not found on this GameObject.");
+            if (slots[currentItemSlot].isEmpty != true)
+            {
+                return slots[currentItemSlot].slotObjComponent;
+            }
+            return null;
         }
+    }
+    public bool IsOutRange(int index) => (index < 0 || index >= maxSlot) ? true : false;
 
+
+    public override void OnStartClient()
+    {
         for (int i = 0; i < maxSlot; i++)
         {
             slots.Add(new Slotdata());
         }
+        ChangeItemSlot(0);
     }
-    private void FixedUpdate()
+    public void AddItem(GameObject item)
     {
-        if (Input.GetMouseButtonDown(0))
+        if (item == null)
         {
-            Debug.Log("GetMouseButtonDown");
-            UseItem();
+            Debug.Log("Item is Null");
+            return;
         }
-    }
-    public virtual void AddtoInventory(GameObject item)
-    {
-        if (slots[currentItemSlot].isEmpty)
+        if (slots[currentItemSlot].isEmpty == true)
         {
+            Debug.Log($"pickTransform : {pickTransform}");
             slots[currentItemSlot].isEmpty = false;
-            slots[currentItemSlot].slotObj = item;
             slots[currentItemSlot].slotObjComponent = item.GetComponent<Item>();
-            item.GetComponent<Item>().PickUp(this);
+            //PickUp(item.transform);
+            PickUp(item.GetComponent<NetworkIdentity>());
         }
     }
-
-    public void RemovetoInventory()
+    public void ThrowItem()
     {
-        if (!slots[currentItemSlot].isEmpty)
+        if (slots[currentItemSlot].isEmpty == false)
         {
-            slots[currentItemSlot].slotObj.GetComponent<Item>().PickDown(this);
             slots[currentItemSlot].isEmpty = true;
-            slots[currentItemSlot].slotObj = null;
+            //PickDown(slots[currentItemSlot].slotObjComponent.transform);
+            PickDown(slots[currentItemSlot].slotObjComponent.GetComponent<NetworkIdentity>());
+            slots[currentItemSlot].slotObjComponent = null;
         }
     }
-
-    public virtual void ChangeItemSlot(int index)
-    {
-        if (index < 0 || index >= maxSlot)
-            return;
-
-        var currentItem = GetCurrentItem()?.GetComponent<Item>();
-        if (currentItem != null && currentItem.IsBothHandGrab)
-        {
-            return;
-        }
-
-        GetCurrentItem()?.SetActive(false);
-        currentItemSlot = index;
-        GetCurrentItem()?.SetActive(true);
-
-        Debug.Log("슬롯 :  " + currentItemSlot);
-    }
-
-    //아이템 사용
-    public void UseItem()
-    {
-        GetCurrentItemComponent()?.UseItem();
-    }
-
-    /*public bool IsUsable(GameObject usableItem)
+    public void ThrowAllItem()
     {
         foreach (var slot in slots)
         {
-            if (slot.slotObj != null && slot.slotObj.CompareTag("UsableItem"))
+            if (slot.isEmpty == false)
             {
-                Debug.Log("Usable item found: " + slot.slotObj.name);
-                return true;
+                slot.isEmpty = true;
+                //PickDown(slots[currentItemSlot].slotObjComponent.transform);
+                PickDown(slot.slotObjComponent.GetComponent<NetworkIdentity>());
+                slot.slotObjComponent = null;
             }
         }
-        Debug.Log("No usable item found.");
-        return false;
-    }*/
-
-    public virtual GameObject GetCurrentItem()
-    {
-        return slots[currentItemSlot].slotObj;
+        
     }
-    public virtual Item GetCurrentItemComponent()
+    [Command]
+    public void RemoveItem()
     {
-        return slots[currentItemSlot].slotObjComponent;
+        if (slots[currentItemSlot].isEmpty == false)
+        {
+            slots[currentItemSlot].isEmpty = true;
+            NetworkServer.Destroy(slots[currentItemSlot].slotObjComponent.gameObject);
+            slots[currentItemSlot].slotObjComponent = null;
+        }
+        
+    }
+
+    public void ChangeItemSlot(int index)
+    {
+        if (IsOutRange(index)) return;
+
+        var currentItem = GetCurrentItemComponent;
+        if (currentItem != null && currentItem.IsBothHandGrab) return;
+
+        CmdSetCurrentItemActive(currentItemSlot, false);
+        currentItemSlot = index;
+        CmdSetCurrentItemActive(currentItemSlot, true);
+        UIController.Instance.ui_Game.ItemSelection(index);
+    }
+    [Command] public void UseItem()
+    {
+        GetCurrentItemComponent?.UseItem();
+    }
+
+    #region Command Function
+    [Command(requiresAuthority = false)] public void CmdSetCurrentItemActive(int itemSlotIndex, bool isActive)
+    {
+        Item item = slots[itemSlotIndex].slotObjComponent;
+        if (item != null)
+            OnClientSetCurrentItemActive(itemSlotIndex, isActive);
+    }
+    #endregion
+
+    #region ClientRpc Function
+    [Server] public void OnClientSetCurrentItemActive(int itemSlotIndex, bool isActive)
+    {
+        if(slots[itemSlotIndex].slotObjComponent != null)
+        {
+            slots[itemSlotIndex].slotObjComponent.SetRendererActive(isActive);
+        }
+        
+    }
+    #endregion
+
+
+    [Command]
+    public void PickUp(NetworkIdentity itemIdentity)
+    {
+        /*var itemComponent = item.GetComponent<Item>();
+
+        itemComponent.itemCollider.enabled = false;
+        itemComponent.rigid.isKinematic = true;
+        itemComponent.rigid.useGravity = false;
+        itemComponent.rigid.velocity = Vector3.zero;
+        itemComponent.rigid.angularVelocity = Vector3.zero;*/
+
+        OnClientSetParent(itemIdentity);
+    }
+    [Command]
+    public void PickDown(NetworkIdentity itemIdentity)
+    {
+        OnClientUnsetParent(itemIdentity);
+        /*var itemComponent = item.GetComponent<Item>();
+
+        itemComponent.itemCollider.enabled = true;
+        itemComponent.rigid.isKinematic = false;
+        itemComponent.rigid.useGravity = true;
+        item.position = transform.position + transform.forward;
+
+        OnClientUnsetParent(item);
+        itemComponent.rigid.AddForce(transform.forward * 5.0f, ForceMode.Impulse);*/
+    }
+    [ClientRpc]
+    public void OnClientSetParent(NetworkIdentity itemIdentity)
+    {
+        var itemComponent = itemIdentity.GetComponent<Item>();
+
+        itemComponent.itemCollider.enabled = false;
+        itemComponent.rigid.isKinematic = true;
+        itemComponent.rigid.useGravity = false;
+        itemComponent.rigid.velocity = Vector3.zero;
+        itemComponent.rigid.angularVelocity = Vector3.zero;
+
+
+        itemComponent.transform.parent = pickTransform;
+        itemComponent.transform.position = pickTransform.position;
+        itemComponent.transform.rotation = pickTransform.rotation;
+    }
+    [ClientRpc]
+    public void OnClientUnsetParent(NetworkIdentity itemIdentity)
+    {
+        var itemComponent = itemIdentity.GetComponent<Item>();
+
+        itemComponent.itemCollider.enabled = true;
+        itemComponent.rigid.isKinematic = false;
+        itemComponent.rigid.useGravity = true;
+        itemIdentity.transform.position = transform.position + transform.forward;
+
+        itemIdentity.transform.parent = null;
+        itemComponent.rigid.AddForce(transform.forward * 5.0f, ForceMode.Impulse);
+
+        //item.parent = null;
     }
 }

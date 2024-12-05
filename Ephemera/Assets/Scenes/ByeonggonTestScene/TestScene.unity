@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.12731715, g: 0.13414735, b: 0.121078536, a: 1}
+  m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -246,6 +246,81 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3c4cc88791c845b43aa3dc1a5fd98a4c, type: 3}
+--- !u!1 &431162115
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 431162117}
+  - component: {fileID: 431162116}
+  m_Layer: 0
+  m_Name: GameObject (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &431162116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 431162115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c32f8893cd52a224795962b674be8fed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dungeonGenerator:
+    allowImmediateRepeats: 0
+    Seed: 0
+    ShouldRandomizeSeed: 1
+    MaxAttemptCount: 20
+    UseMaximumPairingAttempts: 0
+    MaxPairingAttempts: 5
+    IgnoreSpriteBounds: 0
+    UpDirection: 2
+    OverrideRepeatMode: 0
+    RepeatMode: 0
+    OverrideAllowTileRotation: 0
+    AllowTileRotation: 0
+    DebugRender: 0
+    LengthMultiplier: 1
+    PlaceTileTriggers: 1
+    TileTriggerLayer: 2
+    GenerateAsynchronously: 0
+    MaxAsyncFrameMilliseconds: 50
+    PauseBetweenRooms: 0
+    RestrictDungeonToBounds: 0
+    TilePlacementBounds:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 5, y: 5, z: 5}
+    OverlapThreshold: 0.01
+    Padding: 0
+    DisallowOverhangs: 0
+    Root: {fileID: 431162115}
+    DungeonFlow: {fileID: 11400000, guid: 94d5356bb027fb648a0f1cde8dd88e53, type: 2}
+    fileVersion: 1
+  runtimeDungeon: {fileID: 0}
+--- !u!4 &431162117
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 431162115}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.7426417, y: 1.8530085, z: -1.246965}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &605597649 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: e4454e02b1341654baa128f20b726133, type: 3}
@@ -372,7 +447,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1254054330
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -411,6 +486,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1324344399}
   - component: {fileID: 1324344400}
+  - component: {fileID: 1324344401}
   m_Layer: 0
   m_Name: Generator
   m_TagString: Untagged
@@ -447,8 +523,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Generator:
     allowImmediateRepeats: 0
-    Seed: 0
-    ShouldRandomizeSeed: 1
+    Seed: 1
+    ShouldRandomizeSeed: 0
     MaxAttemptCount: 20
     UseMaximumPairingAttempts: 0
     MaxPairingAttempts: 5
@@ -475,8 +551,51 @@ MonoBehaviour:
     Root: {fileID: 0}
     DungeonFlow: {fileID: 11400000, guid: 94d5356bb027fb648a0f1cde8dd88e53, type: 2}
     fileVersion: 1
-  GenerateOnStart: 1
-  Root: {fileID: 0}
+  GenerateOnStart: 0
+  Root: {fileID: 1324344398}
+--- !u!114 &1324344401
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1324344398}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c32f8893cd52a224795962b674be8fed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dungeonGenerator:
+    allowImmediateRepeats: 0
+    Seed: 0
+    ShouldRandomizeSeed: 1
+    MaxAttemptCount: 20
+    UseMaximumPairingAttempts: 0
+    MaxPairingAttempts: 5
+    IgnoreSpriteBounds: 0
+    UpDirection: 2
+    OverrideRepeatMode: 0
+    RepeatMode: 0
+    OverrideAllowTileRotation: 0
+    AllowTileRotation: 0
+    DebugRender: 0
+    LengthMultiplier: 1
+    PlaceTileTriggers: 1
+    TileTriggerLayer: 2
+    GenerateAsynchronously: 0
+    MaxAsyncFrameMilliseconds: 50
+    PauseBetweenRooms: 0
+    RestrictDungeonToBounds: 0
+    TilePlacementBounds:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 5, y: 5, z: 5}
+    OverlapThreshold: 0.01
+    Padding: 0
+    DisallowOverhangs: 0
+    Root: {fileID: 0}
+    DungeonFlow: {fileID: 11400000, guid: 94d5356bb027fb648a0f1cde8dd88e53, type: 2}
+    fileVersion: 1
+  runtimeDungeon: {fileID: 0}
 --- !u!1001 &1362100184
 PrefabInstance:
   m_ObjectHideFlags: 0

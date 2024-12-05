@@ -70,7 +70,17 @@ namespace Heliograph
         [TargetRpc]
         public void TargetPlayAudio(NetworkConnection target, AudioPacket audio)
         {
+            if (helioPlayer == null)
+            {
+                helioPlayer = GetComponent<HelioPlayer>();
+                if (helioPlayer == null)
+                {
+                    Debug.LogError("HelioPlayer component not found on this GameObject.");
+                    return;
+                }
+            }
             helioPlayer.UpdateSoundSamples(audio);
         }
+
     }
 }

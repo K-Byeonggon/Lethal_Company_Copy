@@ -9,6 +9,12 @@ TagManager:
   - Mine
   - DiedPlayer
   - UsableItem
+  - TrackingObject
+  - Actors
+  - Monster
+  - Shop
+  - SellItem
+  - Door
   layers:
   - Default
   - TransparentFX
@@ -20,10 +26,10 @@ TagManager:
   - Plane
   - Player
   - Monster
-  - 
-  - 
-  - 
-  - 
+  - Ground
+  - Metal
+  - SpaceShip
+  - WalkDisable
   - 
   - 
   - 

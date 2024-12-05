@@ -5,5 +5,5 @@ using UnityEngine.UIElements;
 
 public interface IUIVisible
 {
-    public void UIvisible();
+
 }

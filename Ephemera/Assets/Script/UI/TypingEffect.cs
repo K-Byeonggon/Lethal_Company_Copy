@@ -12,7 +12,7 @@ public class TypingEffect : MonoBehaviour
     [SerializeField]
     private float startTime = 0.5f;
     [SerializeField]
-    private float typingTime = 0.1f;
+    private float typingTime = 0.3f;
 
     public TextMeshProUGUI textUI;
     public TextMeshProUGUI loadingUI;
@@ -25,80 +25,57 @@ public class TypingEffect : MonoBehaviour
     private string osVersion = "1.02";
 
     private string m_bootText;
-    private string m_resetText;
-    
+    private string m_resetText = @"
+============================================
+||         SYSTEM INITIALIZING...          ||
+============================================
+||                                         ||
+||    LOADING CORE MODULES...              ||
+||                                         ||
+||    AUTHENTICATION REQUIRED...           ||
+||                                         ||
+||    ACCESS GRANTED.                      ||
+||                                         ||
+============================================
+||                                         ||
+||    RETRIEVING MISSION DATA...           ||
+||                                         ||
+||    CONNECTION SECURED.                  ||
+||                                         ||
+||    ENCRYPTING COMMUNICATION CHANNEL...  ||
+||                                         ||
+||    MISSION OBJECTIVE:                   ||
+||    >> INFILTRATE THE ENEMY BASE         ||
+||    >> EXTRACT THE TARGET                ||
+||    >> RETURN TO SAFEHOUSE               ||
+||                                         ||
+============================================
+||                                         ||
+||    INITIALIZING SYSTEM CHECKS...        ||
+||                                         ||
+||    LOADING SATELLITE IMAGERY...         ||
+||                                         ||
+||    SCANNING FOR HOSTILES...             ||
+||                                         ||
+||    ALL SYSTEMS GO.                      ||
+||                                         ||
+============================================
+";
+
 
     private char[] loadingChar = { '-','/','|','\\'};
     // Start is called before the first frame update
-    void Start()
+    public void StartSystem()
     {
         m_bootText = $"Date is {date}\n" +
                  $"Time is {time}\n\n\n" +
                  $"{osString}\n" +
                  $"Version {osVersion}\n";
 
-        m_resetText = $"1\n" +
-                      $"2\n" +
-                      $"3\n" +
-                      $"4\n" +
-                      $"5\n" +
-                      $"6\n" +
-                      $"7\n" +
-                      $"8\n" +
-                      $"9\n" +
-                      $"1\n" +
-                      $"2\n" +
-                      $"3\n" +
-                      $"4\n" +
-                      $"5\n" +
-                      $"6\n" +
-                      $"7\n" +
-                      $"8\n" +
-                      $"9\n" +
-                      $"0\n" +
-                      $"1\n" +
-                      $"2\n" +
-                      $"3\n" +
-                      $"4\n" +
-                      $"5\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"6\n" +
-                      $"7\n" +
-                      $"8\n" +
-                      $"9\n" +
-                      $"0\n";
-
-        StartCoroutine(_typing());
+        StartCoroutine(TypingChar());
     }
 
-    IEnumerator _typing()
+    IEnumerator TypingChar()
     {
         int count = 0;
         yield return new WaitForSeconds(startTime);
@@ -124,10 +101,10 @@ public class TypingEffect : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
-        StartCoroutine(_typingLine());
+        StartCoroutine(TypingLine());
     }
 
-    IEnumerator _typingLine()
+    IEnumerator TypingLine()
     {
         int count = 0;
         yield return new WaitForSeconds(startTime);
@@ -141,10 +118,10 @@ public class TypingEffect : MonoBehaviour
 
         var resetTexts = m_resetText.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
 
-        foreach (var resetText in resetTexts)
+        /*foreach (var resetText in resetTexts)
         {
             Debug.Log(resetText);
-        }
+        }*/
 
         for (int i = 0; i < resetTexts.Length; i++)
         {
@@ -169,5 +146,6 @@ public class TypingEffect : MonoBehaviour
         loadingUI.text = "";
 
         this.gameObject.SetActive(false);
+        UIController.Instance.SetActivateUI(typeof(UI_Game));
     }
 }

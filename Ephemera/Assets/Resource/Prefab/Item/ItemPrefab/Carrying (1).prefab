@@ -1027,6 +1027,7 @@ GameObject:
   - component: {fileID: 2866187611858292622}
   - component: {fileID: 2327242872165730046}
   - component: {fileID: 2327242872165730045}
+  - component: {fileID: -1869777809659543932}
   m_Layer: 0
   m_Name: Carrying (1)
   m_TagString: Untagged
@@ -1069,7 +1070,9 @@ MonoBehaviour:
   linesize: 1.96
   image: {fileID: 0}
   moveVector: {x: 0, y: 0, z: 0}
-  pickedItem: {fileID: 2327242872331719211}
+  camera: {fileID: 0}
+  inventory: {fileID: 0}
+  playerHp: 100
 --- !u!114 &2327242872165730045
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1100,6 +1103,23 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &-1869777809659543932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3210344009595622708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  _assetId: 4019850017
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
 --- !u!1 &3324335981656867088
 GameObject:
   m_ObjectHideFlags: 0
