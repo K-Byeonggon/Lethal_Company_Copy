@@ -17,10 +17,10 @@ public class ThumperView : FieldOfView
 
     public override void FindVisibleTargets()
     {
-        List<GameObject> currentlyVisibleTargets = new List<GameObject>();
+        //List<GameObject> currentlyVisibleTargets = new List<GameObject>();
         Collider[] targetsInViewRadius = Physics.OverlapSphere(transform.position, viewRadius, targetMask);
 
-        //±¸Ã¼·Î °¨ÁöÇØ¼­, ½Ã¾ß °¢µµ ¸¸Å­¸¸ ÁøÂ¥ °¨Áö.
+        //êµ¬ì²´ë¡œ ê°ì§€í•´ì„œ, ì‹œì•¼ ê°ë„ ë§Œí¼ë§Œ ì§„ì§œ ê°ì§€.
         foreach (Collider target in targetsInViewRadius)
         {
             Transform targetTransform = target.transform;
@@ -32,20 +32,25 @@ public class ThumperView : FieldOfView
 
                 if (!Physics.Raycast(transform.position, directionToTarget, distanceToTarget, obstacleMask))
                 {
-                    //ÇÃ·¹ÀÌ¾î Á×¾úÀ¸¸é ¹«½Ã
-                    if(targetTransform.GetComponent<LivingEntity>().IsDead) { continue; }
-                    //´ıÆÛ°¡ ÇÃ·¹ÀÌ¾î º½.
-                    Debug.Log("´ıÆÛ°¡ " + targetTransform.name + " º¸°í ÀÖÀ½.");
-                    thumper.sawPlayer = true;
-                    thumper.destination = targetTransform.position;
+                    //í”Œë ˆì´ì–´ ì£½ì—ˆìœ¼ë©´ ë¬´ì‹œ
+                    if(!targetTransform.TryGetComponent<LivingEntity>(out LivingEntity player) || player.IsDead)
+                    {
+                        continue;
+                    }
+                    //ë¤í¼ê°€ í”Œë ˆì´ì–´ ë´„.
+                    Debug.Log("ë¤í¼ê°€ " + targetTransform.name + " ë³´ê³  ìˆìŒ.");
+                    //thumper.sawPlayer = true;
+                    //thumper.destination = targetTransform.position;
                     thumper.target = targetTransform;
-                    thumper.setDesti = true;
-                    currentlyVisibleTargets.Add(targetTransform.gameObject);
+                    //thumper.setDesti = true;
+                    thumper.isWillingToAttack = true;
+                    
+                    //currentlyVisibleTargets.Add(targetTransform.gameObject);
                 }
             }
         }
-
-        // ÀÌÀü¿¡ °¨ÁöµÈ Å¸°Ù Áß ÇöÀç °¨ÁöµÇÁö ¾ÊÀº Å¸°Ù Ã³¸®
+        /*
+        // ì´ì „ì— ê°ì§€ëœ íƒ€ê²Ÿ ì¤‘ í˜„ì¬ ê°ì§€ë˜ì§€ ì•Šì€ íƒ€ê²Ÿ ì²˜ë¦¬
         foreach (GameObject player in previouslyVisibleTargets)
         {
             if (!currentlyVisibleTargets.Contains(player))
@@ -54,7 +59,8 @@ public class ThumperView : FieldOfView
             }
         }
 
-        // ÇöÀç °¨ÁöµÈ Å¸°Ù ¸ñ·ÏÀ» ÀÌÀü °¨ÁöµÈ Å¸°Ù ¸ñ·ÏÀ¸·Î °»½Å
+        // í˜„ì¬ ê°ì§€ëœ íƒ€ê²Ÿ ëª©ë¡ì„ ì´ì „ ê°ì§€ëœ íƒ€ê²Ÿ ëª©ë¡ìœ¼ë¡œ ê°±ì‹ 
         previouslyVisibleTargets = currentlyVisibleTargets;
+        */
     }
 }
