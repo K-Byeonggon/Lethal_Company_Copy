@@ -7,10 +7,7 @@ using UnityEngine.AI;
 public class SporeLizardAI : MonsterAI
 {
     private Node topNode;
-    [SerializeField] public UnityEngine.AI.NavMeshAgent navMeshAgent;
-    private DamageMessage damageMessage;
-    [SerializeField] float attackCooltime = 1f;
-    private float lastAttackTime;
+    [SerializeField] public NavMeshAgent navMeshAgent;
     [SerializeField] float threatDuration;
     private float threatTime;
     [SerializeField] bool isThreatening = false;
@@ -34,24 +31,19 @@ public class SporeLizardAI : MonsterAI
     public GameObject sporeParticle;
     [SerializeField] int cornerRayCount = 8;
     [SerializeField] float cornerDetectionRadius = 5f;
-    [SerializeField] float attackDistance = 1f;
-    [SerializeField] bool attackState = false;
-
-
-    //���ο� ������ AI
-    //��ȿ���� ���� ������
-    public enum State
-    {
-        Wander,
-        Threaten,
-        Explode,
-        Run,
-        Attack
-    }
-    public State currentState;
+    
     public bool sawPlayer = false;
     private Vector3[] rayDirections;
 
+
+    //Attack
+    public bool isWillingToAttack = false;
+    public Transform target;
+    [SerializeField] float attackDistance = 1f;
+    [SerializeField] float attackCooltime = 1f;
+    private float lastAttackTime;
+    private bool isCooltime => Time.time - lastAttackTime < attackCooltime;
+    private DamageMessage damageMessage;
 
     public override void OnStartServer()
     {
@@ -60,7 +52,6 @@ public class SporeLizardAI : MonsterAI
         MonsterReference.Instance.AddMonsterToList(gameObject);
         
         openDoorDelay = 1f;
-        currentState = State.Wander;
         rayDirections = new Vector3[cornerRayCount];
         ConstructBehaviorTree();
 
@@ -92,11 +83,77 @@ public class SporeLizardAI : MonsterAI
         topNode = new SelectorNode(new List<Node> { wander, threaten, explodeSpore, run, attackSequence });
     }
 
-    //[��ȸ ������] ������ ���� �� �̵�
+    //[공격 시퀀스] 공격 의지 검사
+    private Node.State CheckAttackWill()
+    {
+        currentNodeName = "CheckAttackWill";
+
+        //공격 의지가 활성화 되면
+        if (isWillingToAttack)
+        {
+            Debug.Log($"[공격 시퀀스] {transform.name}가 공격 의지가 있음.");
+            navMeshAgent.destination = target.position;
+
+            return Node.State.SUCCESS;
+        }
+        else
+        {
+            return Node.State.FAILURE;
+        }
+    }
+
+    //[공격 시퀀스] 추적
+    private Node.State TrackTarget()
+    {
+        currentNodeName = "TrackTarget";
+
+        //포자도마뱀이 추적을 실패하는 경우가 있을까?
+
+        if(Vector3.Distance(transform.position, target.position) <= attackDistance)
+        {
+            Debug.Log($"[공격 시퀀스] {transform.name}이 타겟에 접근 성공.");
+            return Node.State.SUCCESS;
+        }
+        else
+        {
+            Debug.Log($"[공격 시퀀스] {transform.name}이 타겟에 접근중.");
+            return Node.State.RUNNING;
+        }
+    }
+
+    //[공격 시퀀스] 공격
+    private Node.State AttackTarget()
+    {
+        currentNodeName = "AttackTarget";
+
+        LivingEntity player = target.GetComponent<LivingEntity>();
+
+        if(!isCooltime && player != null && !player.IsDead)
+        {
+            Debug.Log($"{transform.name}이 플레이어 공격");
+            player.ApplyDamage(damageMessage);
+            lastAttackTime = Time.time;
+
+            return Node.State.SUCCESS;
+        }
+        return Node.State.FAILURE;
+    }
+
+    //[배회 시퀀스] 목적지 설정
+    private Node.State SetDestination()
+    {
+        currentNodeName = "SetDestination";
+
+        Vector3 newPos = RandomNavMeshMovement.RandomNavSphere(transform.position, wanderRadius, -1);
+
+        navMeshAgent.SetDestination(newPos);
+
+        return Node.State.SUCCESS;
+    }
+
+    //[배회 시퀀스] 목적지 이동
     private Node.State Wander()
     {
-        if (currentState != State.Wander) return Node.State.FAILURE;
-
         if (sawPlayer)
         {
             if (!bewareOf.GetComponent<LivingEntity>().IsDead)

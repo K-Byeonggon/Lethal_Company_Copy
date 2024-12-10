@@ -15,33 +15,41 @@ public class ThumperView : FieldOfView
         thumper = transform.parent.GetComponent<ThumperAI>();
     }
 
+    private bool IsTargetVisible(Transform targetTransform)
+    {
+        Vector3 directionToTarget = (targetTransform.position - transform.position).normalized;
+        float distanceToTarget = Vector3.Distance(transform.position, targetTransform.position);
+
+        // 시야 각도 안에 있는지 확인
+        if (Vector3.Angle(transform.forward, directionToTarget) >= viewAngle / 2)
+            return false;
+
+        // 장애물로 막혀 있는지 확인
+        if (Physics.Raycast(transform.position, directionToTarget, distanceToTarget, obstacleMask))
+            return false;
+
+        // 감지 타겟이 살아있는지 확인
+        if (!targetTransform.TryGetComponent(out LivingEntity player) || player.IsDead)
+            return false;
+
+        return true;
+    }
+
     public override void FindVisibleTargets()
     {
         Collider[] targetsInViewRadius = Physics.OverlapSphere(transform.position, viewRadius, targetMask);
 
-        //구체로 감지해서, 시야 각도 만큼만 진짜 감지.
+        //시야 범위 만큼만 감지
         foreach (Collider target in targetsInViewRadius)
         {
             Transform targetTransform = target.transform;
-            Vector3 directionToTarget = (targetTransform.position - transform.position).normalized;
 
-            if (Vector3.Angle(transform.forward, directionToTarget) < viewAngle / 2)
-            {
-                float distanceToTarget = Vector3.Distance(transform.position, targetTransform.position);
-
-                if (!Physics.Raycast(transform.position, directionToTarget, distanceToTarget, obstacleMask))
-                {
-                    //플레이어 죽었으면 무시
-                    if(!targetTransform.TryGetComponent<LivingEntity>(out LivingEntity player) || player.IsDead)
-                    {
-                        continue;
-                    }
-                    //덤퍼가 플레이어 봄.
-                    Debug.Log("덤퍼가 " + targetTransform.name + " 보고 있음.");
-                    thumper.target = targetTransform;
-                    thumper.isWillingToAttack = true;
-                }
-            }
+            if (!IsTargetVisible(targetTransform))
+                continue;
+            //덤퍼가 플레이어 봄.
+            Debug.Log("덤퍼가 " + targetTransform.name + " 보고 있음.");
+            thumper.target = targetTransform;
+            thumper.isWillingToAttack = true;
         }
     }
 }

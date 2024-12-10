@@ -16,7 +16,6 @@ public class SporeLizardDetect : MonoBehaviour
         if(other.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
             lizard.bewareOf = other.transform;
-            lizard.sawPlayer = true;
         }
     }
 
@@ -24,7 +23,7 @@ public class SporeLizardDetect : MonoBehaviour
     {
         if(other.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
-            lizard.sawPlayer = false;
+            lizard.bewareOf = null;
         }
     }
 }
