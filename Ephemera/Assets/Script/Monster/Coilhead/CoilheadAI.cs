@@ -6,15 +6,19 @@ using UnityEngine.AI;
 public class CoilheadAI : MonsterAI
 {
     private Node topNode;
-    [SerializeField] public UnityEngine.AI.NavMeshAgent navMeshAgent;
-    private DamageMessage damageMessage;
-    public bool sawPlayer = false;
+    [SerializeField] public NavMeshAgent navMeshAgent;
+
+    //Attack
     public Transform target;
     [SerializeField] float attackDistance = 1f;
-    private float lastAttackTime;
     [SerializeField] float attackCooltime = 0.2f;
+    private float lastAttackTime;
+    private bool isCooltime => Time.time - lastAttackTime < attackCooltime;
+    private DamageMessage damageMessage;
+
+    //Wander
     [SerializeField] float wanderRadius = 30f;
-    public bool setDesti = false;
+
 
     void Start()
     {
@@ -35,18 +39,16 @@ public class CoilheadAI : MonsterAI
     
     private void ConstructBehaviorTree()
     {
-        ActionNode stop = new ActionNode(Stop);
+        ActionNode checkAttackWill = new ActionNode(CheckAttackWill);
+        ActionNode trackTarget = new ActionNode(TrackTarget);
+        ActionNode attackTarget = new ActionNode(AttackTarget);
 
-        ActionNode attackWill = new ActionNode(AttackWill);
-        ActionNode moveToPlayer = new ActionNode(MoveToPlayer);
-        ActionNode attackPlayer = new ActionNode(AttackPlayer);
+        ActionNode setDestination = new ActionNode(SetDestination);
+        ActionNode wander = new ActionNode(Wander);
 
-        ActionNode setDest = new ActionNode(SetDest);
-        ActionNode moveToDest = new ActionNode(MoveToDest);
-
-        SequenceNode attackSequence = new SequenceNode(new List<Node> { attackWill, moveToPlayer, attackPlayer });
-        SequenceNode wanderSequence = new SequenceNode(new List<Node> { setDest, moveToDest });
-        topNode = new SelectorNode(new List<Node> { stop, attackSequence, wanderSequence } );
+        SequenceNode attackSequence = new SequenceNode(new List<Node> { checkAttackWill, trackTarget, attackTarget });
+        SequenceNode wanderSequence = new SequenceNode(new List<Node> { setDestination, wander });
+        topNode = new SelectorNode(new List<Node> { attackSequence, wanderSequence } );
     }
     
     void Update()
@@ -55,92 +57,114 @@ public class CoilheadAI : MonsterAI
         {
             topNode.Evaluate();
         }
-    }
 
-    //[정지 시퀀스] 정지
-    private Node.State Stop()
-    {
-        //플레이어가 보고 있으면 SUCCESS로 정지.
-        if(beWatched)
-        {
-            navMeshAgent.SetDestination(transform.position);
-            return Node.State.SUCCESS;
-        }
-        else { return Node.State.FAILURE; }
-        //아니면 FAILURE
+        Test_BehaviourTree.Instance.nodeStatus.text = $"Current Node: {currentNodeName}";
     }
 
     //[공격 시퀀스] 공격 의지
-    private Node.State AttackWill()
+    private Node.State CheckAttackWill()
     {
-        //플레이어를 발견했으면 속도가 빨라지고 대상 플레이어를 목표로 지정.
-        if(sawPlayer)
+        currentNodeName = "CheckAttackWill";
+
+        //플레이어를 발견했으면 대상 플레이어를 추적.
+        if(target != null)
         {
-            Debug.Log("플레이어 봤다.");
-            navMeshAgent.SetDestination(target.position);
+            Debug.Log($"{transform.name}가 플레이어 발견함.");
+
             return Node.State.SUCCESS;
         }
         else return Node.State.FAILURE;
     }
 
-    //[공격 시퀀스] 플레이어를 향해 이동
-    private Node.State MoveToPlayer()
+    // 코일헤드는 쳐다봐지면 정지함.
+    private void CheckBeWatched()
     {
-        Debug.Log("MoveToPlayer");
-        //Debug.Log(transform.name + transform.position + ", " + target.name + target.position);
-        //Debug.Log(Vector3.Distance(transform.position, target.position));
-        if(Vector3.Distance(transform.position, target.position) <= attackDistance)
+        if (beWatched)
         {
-            Debug.Log("다가갔다.");
-            return Node.State.SUCCESS;
+            navMeshAgent.isStopped = true;
         }
-        else return Node.State.RUNNING;
+        else
+        {
+            navMeshAgent.isStopped = false;
+        }
     }
 
-    //[공격 시퀀스] 플레이어 공격.
-    private Node.State AttackPlayer()
+    //[공격 시퀀스] 추적
+    private Node.State TrackTarget()
     {
-        if (Vector3.Distance(transform.position, target.position) <= attackDistance)
-        {
-            if (Time.time - lastAttackTime >= attackCooltime)
-            {
-                Debug.Log("공격한다.");
-                LivingEntity playerHealth = target.GetComponent<LivingEntity>();
-                playerHealth.ApplyDamage(damageMessage);
-                lastAttackTime = Time.time;
+        currentNodeName = "TrackTarget";
+        CheckBeWatched();
 
-                return Node.State.FAILURE;
-            }
+        //추적 대상을 잃거나 추적 대상이 죽으면 실패
+        if (target == null || target.GetComponent<LivingEntity>().IsDead)
+        {
+            return Node.State.FAILURE;
         }
-        return Node.State.SUCCESS;
+        else if (Vector3.Distance(transform.position, target.position) <= attackDistance)
+        {
+            Debug.Log($"{transform.name}가 플레이어에게 다가가기 성공");
+
+            return Node.State.SUCCESS;
+        }
+        else
+        {
+            //추적 위치 갱신
+            navMeshAgent.SetDestination(target.position);
+
+            return Node.State.RUNNING;
+        }
+    }
+
+    //[공격 시퀀스] 공격
+    private Node.State AttackTarget()
+    {
+        currentNodeName = "AttackTarget";
+
+        LivingEntity player = target.GetComponent<LivingEntity>();
+
+        if (!isCooltime && player != null && !player.IsDead)
+        {
+            Debug.Log($"{transform.name}가 플레이어 공격");
+            player.ApplyDamage(damageMessage);
+            lastAttackTime = Time.time;
+
+            return Node.State.SUCCESS;
+        }
+        return Node.State.FAILURE;
     }
     
 
     //[배회 시퀀스] 목적지 설정
-    private Node.State SetDest()
+    private Node.State SetDestination()
     {
-        if (sawPlayer) return Node.State.FAILURE;        //플레이어 추적하는 상태면,
-        else if (setDesti) return Node.State.SUCCESS;   //이미 목적지 설정이 되어있으면,
-        else
-        {
-            Vector3 newPos = RandomNavMeshMovement.RandomNavSphere(transform.position, wanderRadius, -1);
-            navMeshAgent.SetDestination(newPos);
-            setDesti = true;
-            return Node.State.SUCCESS;
-        }
+        currentNodeName = "SetDestination";
+
+        Vector3 newPos = RandomNavMeshMovement.RandomNavSphere(transform.position, wanderRadius, -1);
+            
+        navMeshAgent.SetDestination(newPos);
+            
+        return Node.State.SUCCESS;
     }
 
     //[배회 시퀀스] 목적지 이동
-    private Node.State MoveToDest()
+    private Node.State Wander()
     {
-        if (sawPlayer) return Node.State.FAILURE;
+        currentNodeName = "Wander";
 
-        //목적지에 도달함.
+        CheckBeWatched();
+
+        if (target != null)
+        {
+            return Node.State.FAILURE;
+        }
+        //목적지에 도달하면 SUCCESS 반환하고 다음 프레임에 새로운 목적지 설정
         else if (Vector3.Distance(transform.position, navMeshAgent.destination) <= .5f)
         {
-            setDesti = false;
             return Node.State.SUCCESS;
         }
-        else return Node.State.RUNNING;
+        else
+        {
+            return Node.State.RUNNING;
+        }
     }
 }

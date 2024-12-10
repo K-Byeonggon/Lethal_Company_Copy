@@ -7,53 +7,54 @@ public class CoilheadView : FieldOfView
 {
     CoilheadAI coilhead;
 
-    private List<GameObject> previouslyVisibleTargets = new List<GameObject>();
-    
-
     private void OnEnable()
     {
         coilhead = transform.parent.GetComponent<CoilheadAI>();
     }
 
+    private bool IsTargetVisible(Transform targetTransform)
+    {
+        Vector3 directionToTarget = (targetTransform.position - transform.position).normalized;
+        float distanceToTarget = Vector3.Distance(transform.position, targetTransform.position);
+
+        // ì‹œì•¼ ê°ë„ ì•ˆì— ìˆëŠ”ì§€ í™•ì¸
+        if (Vector3.Angle(transform.forward, directionToTarget) >= viewAngle / 2)
+            return false;
+
+        // ì¥ì• ë¬¼ë¡œ ë§‰í˜€ ìˆëŠ”ì§€ í™•ì¸
+        if (Physics.Raycast(transform.position, directionToTarget, distanceToTarget, obstacleMask))
+            return false;
+
+        // ê°ì§€ íƒ€ê²Ÿì´ ì‚´ì•„ìˆëŠ”ì§€ í™•ì¸
+        if (!targetTransform.TryGetComponent(out LivingEntity player) || player.IsDead)
+            return false;
+
+        return true;
+    }
+
     public override void FindVisibleTargets()
     {
-        List<GameObject> currentlyVisibleTargets = new List<GameObject>();
         Collider[] targetsInViewRadius = Physics.OverlapSphere(transform.position, viewRadius, targetMask);
 
-        //±¸Ã¼·Î °¨ÁöÇØ¼­, ½Ã¾ß °¢µµ ¸¸Å­¸¸ ÁøÂ¥ °¨Áö.
+        //ì‹œì•¼ ë²”ìœ„ ë§Œí¼ë§Œ ê°ì§€
         foreach (Collider target in targetsInViewRadius)
         {
             Transform targetTransform = target.transform;
-            Vector3 directionToTarget = (targetTransform.position - transform.position).normalized;
 
-            if (Vector3.Angle(transform.forward, directionToTarget) < viewAngle / 2)
+            if (!IsTargetVisible(targetTransform))
+                continue;
+
+            float distanceToTarget = Vector3.Distance(transform.position, targetTransform.position);
+
+            // ì½”ì¼ í—¤ë“œëŠ” ì‹œì•¼ì˜ ê°€ì¥ ê°€ê¹Œìš´ í”Œë ˆì´ì–´ë¥¼ targetìœ¼ë¡œ í•œë‹¤.
+            //ì´ì „ targetì´ ì—†ì—ˆìœ¼ë©´ targetTransformì„ targetìœ¼ë¡œ
+            //targetTransformì´ targetì˜ ìœ„ì¹˜ë³´ë‹¤ ê°€ê¹Œìš°ë©´ targetTransformì„ targetìœ¼ë¡œ
+            if (coilhead.target == null || 
+                Vector3.Distance(transform.position, coilhead.target.position) > distanceToTarget)
             {
-                float distanceToTarget = Vector3.Distance(transform.position, targetTransform.position);
-
-                if (!Physics.Raycast(transform.position, directionToTarget, distanceToTarget, obstacleMask))
-                {                    
-                    //ÇÃ·¹ÀÌ¾î Á×¾úÀ¸¸é ¹«½Ã
-                    if (targetTransform.GetComponent<LivingEntity>().IsDead) { continue; }
-                    //ÄÚÀÏÇìµå´Â ÇÃ·¹ÀÌ¾î¸¦ ¹ß°ßÇÏ¸é °ø°İ ½ÃÄö½º¸¦ ¼öÇàÇÑ´Ù.
-                    Debug.Log("ÄÚÀÏÇìµå°¡ " + targetTransform.name + " º¸°í ÀÖÀ½.");
-                    coilhead.sawPlayer = true;
-                    coilhead.target = targetTransform;
-                    currentlyVisibleTargets.Add(targetTransform.gameObject);
-                }
+                Debug.Log($"ì½”ì¼í—¤ë“œê°€ {target.name}ì„ ìƒˆë¡œìš´ íƒ€ê²Ÿìœ¼ë¡œ");
+                coilhead.target = targetTransform;
             }
         }
-
-        // ÀÌÀü¿¡ °¨ÁöµÈ Å¸°Ù Áß ÇöÀç °¨ÁöµÇÁö ¾ÊÀº Å¸°Ù Ã³¸®
-        foreach (GameObject player in previouslyVisibleTargets)
-        {
-            if (!currentlyVisibleTargets.Contains(player))
-            {
-                coilhead.sawPlayer = false;
-                coilhead.target = null;
-            }
-        }
-
-        // ÇöÀç °¨ÁöµÈ Å¸°Ù ¸ñ·ÏÀ» ÀÌÀü °¨ÁöµÈ Å¸°Ù ¸ñ·ÏÀ¸·Î °»½Å
-        previouslyVisibleTargets = currentlyVisibleTargets;
     }
 }
