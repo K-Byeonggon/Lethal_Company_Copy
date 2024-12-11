@@ -15,6 +15,9 @@ public class SporeLizardDetect : MonoBehaviour
     {
         if(other.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
+            if (!other.transform.TryGetComponent(out LivingEntity player) || player.IsDead)
+                return;
+
             lizard.bewareOf = other.transform;
         }
     }
@@ -23,6 +26,9 @@ public class SporeLizardDetect : MonoBehaviour
     {
         if(other.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
+            if (!other.transform.TryGetComponent(out LivingEntity player) || player.IsDead)
+                return;
+
             lizard.bewareOf = null;
         }
     }

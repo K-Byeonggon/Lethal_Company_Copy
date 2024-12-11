@@ -157,6 +157,7 @@ public class ThumperAI : MonsterAI
         }
     }
 
+    //[공격 시퀀스] 공격 
     private Node.State AttackTarget()
     {
         currentNodeName = "AttackTarget";
@@ -202,6 +203,7 @@ public class ThumperAI : MonsterAI
         return Node.State.SUCCESS;
     }
 
+    //[배회 시퀀스] 배회
     private Node.State Wander()
     {
         currentNodeName = "Wander";

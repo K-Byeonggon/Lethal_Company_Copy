@@ -58,7 +58,7 @@ public class CoilheadAI : MonsterAI
             topNode.Evaluate();
         }
 
-        Test_BehaviourTree.Instance.nodeStatus.text = $"Current Node: {currentNodeName}";
+        //Test_BehaviourTree.Instance.nodeStatus.text = $"Current Node: {currentNodeName}";
     }
 
     //[공격 시퀀스] 공격 의지
@@ -127,10 +127,10 @@ public class CoilheadAI : MonsterAI
             Debug.Log($"{transform.name}가 플레이어 공격");
             player.ApplyDamage(damageMessage);
             lastAttackTime = Time.time;
-
-            return Node.State.SUCCESS;
         }
-        return Node.State.FAILURE;
+
+        //공격에 성공하든 실패하든 다음 프레임에도 공격 수행
+        return Node.State.SUCCESS;
     }
     
 

@@ -379,32 +379,29 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   navMeshAgent: {fileID: 4440759354408764638}
+  bewareOf: {fileID: 0}
+  head: {fileID: 3558361349482716710}
+  pivot: {fileID: 3957379526496312935}
+  isWillingToAttack: 0
+  target: {fileID: 0}
+  attackDistance: 1
   attackCooltime: 1
+  defaultSpeed: 3.5
+  defaultAccel: 8
+  defaultAngle: 120
+  wanderRadius: 10
   threatDuration: 0
   isThreatening: 0
   threatDistance: 3.5
-  runDistance: 2
-  wanderRadius: 10
+  sporeParticle: {fileID: 6049267475415141862, guid: a70fe4512eed14b4e95e7077ad4fadd2, type: 3}
   sporePercentage: 0.7
   haveSpore: 1
   runRadius: 20
   runSpeed: 5
   runAccel: 16
   runAngle: 240
-  defaultSpeed: 3.5
-  defaultAccel: 8
-  defaultAngle: 120
-  setDesti: 0
-  bewareOf: {fileID: 0}
-  head: {fileID: 3558361349482716710}
-  pivot: {fileID: 3957379526496312935}
-  sporeParticle: {fileID: 6049267475415141862, guid: a70fe4512eed14b4e95e7077ad4fadd2, type: 3}
   cornerRayCount: 8
   cornerDetectionRadius: 5
-  attackDistance: 1
-  attackState: 0
-  currentState: 0
-  sawPlayer: 0
 --- !u!136 &6414842003054355546
 CapsuleCollider:
   m_ObjectHideFlags: 0
