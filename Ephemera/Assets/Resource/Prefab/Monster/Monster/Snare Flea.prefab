@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3285152763983176779}
   - component: {fileID: 7608950793226627683}
   - component: {fileID: 3285152763983176781}
+  - component: {fileID: 4396976889509782288}
   - component: {fileID: 3285152763983176780}
   - component: {fileID: 3285152763983176782}
   - component: {fileID: 3285152763983176783}
@@ -133,6 +134,43 @@ MonoBehaviour:
   boxSize: {x: 2, y: 2, z: 1}
   castDirection: {x: 0, y: -1, z: 0}
   castDistance: 50
+--- !u!114 &4396976889509782288
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1628853834701983074}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a8759f77b4614b4482ac6bf8c77893e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  rigidbody: {fileID: 3285152763983176782}
+  navMeshAgent: {fileID: 3285152763983176768}
+  health: {fileID: 3285152763983176780}
+  hasSeenPlayer: 0
+  player: {fileID: 0}
+  playersHead: {fileID: 0}
+  bindDistance: 1
+  groundBindDistance: 1.5
+  boxSize: {x: 2, y: 2, z: 1}
+  castDirection: {x: 0, y: -1, z: 0}
+  castDistance: 50
+  layerMaskWithoutSelf: 0
+  isAttacked: 0
+  hasDestination: 0
+  runDistance: 8
+  checkDistance: 1
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 1
+  lastAttackTime: 0
+  attackCooltime: 2
+  jumpForce: 100
 --- !u!114 &3285152763983176780
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -14,7 +14,7 @@ public class CheckCeiling : MonoBehaviour
     {
         if (other.gameObject.layer == LayerMask.NameToLayer("Default"))
         {
-            Debug.Log("õ����");
+            Debug.Log("올무벌레 천장에 닿음");
             snare.atCeiling = true;
 
             snare.SetDefault();
@@ -30,7 +30,7 @@ public class CheckCeiling : MonoBehaviour
     {
         if (other.gameObject.layer == LayerMask.NameToLayer("Default"))
         {
-            Debug.Log("õ��ƴ�");
+            Debug.Log("올무벌레 천장에서 떨어짐");
             snare.atCeiling = false;
         }
     }

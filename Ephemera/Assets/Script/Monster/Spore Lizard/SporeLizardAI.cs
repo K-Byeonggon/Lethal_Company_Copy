@@ -70,7 +70,7 @@ public class SporeLizardAI : MonsterAI
             topNode.Evaluate();
         }
 
-        Test_BehaviourTree.Instance.nodeStatus.text = $"Current Node: {currentNodeName}";
+        //Test_BehaviourTree.Instance.nodeStatus.text = $"Current Node: {currentNodeName}";
     }
 
     private void ConstructBehaviorTree()

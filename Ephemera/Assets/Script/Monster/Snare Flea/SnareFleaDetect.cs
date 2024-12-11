@@ -4,19 +4,21 @@ using UnityEngine;
 
 public class SnareFleaDetect : MonoBehaviour
 {
-    SnareFleaAI snare;
+    //SnareFleaAI snare;
+    SnareFleaStateAI snare;
 
     private void Start()
     {
-        snare = transform.parent.GetComponent<SnareFleaAI>();
+        snare = transform.parent.GetComponent<SnareFleaStateAI>();
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if(other.tag == "Player")
         {
-            snare.sawPlayer = true;
+            snare.hasSeenPlayer = true;
             snare.player = other.transform;
+            snare.playersHead = snare.player.GetChild(2);
             Debug.Log($"올무벌레가 플레이어{other.name} 탐지.");
         }
         
